@@ -12,5 +12,6 @@ namespace StockResearchPlatform.Data
         }
 
         public DbSet<Stock> Stocks { get; set; }
+        public DbSet<MutualFundClass> MutualFunds{ get; set;}
     }
 }
