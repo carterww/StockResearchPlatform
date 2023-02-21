@@ -1,4 +1,6 @@
-﻿using StockResearchPlatform.Models;
+﻿using Microsoft.EntityFrameworkCore;
+using StockResearchPlatform.Models;
+using System.Text.RegularExpressions;
 
 namespace StockResearchPlatform.Data
 {
@@ -52,11 +54,30 @@ namespace StockResearchPlatform.Data
             StreamReader file = new StreamReader($"Resources/{MUTUAL_FUNDS_TICKERS_TXT}");
             if (file == null) throw new Exception("File not found");
             string ln;
+            file.ReadLine();
+            Regex regex = new Regex(",(?=(?:(?:[^\"]*\"){2})*[^\"]*$)");
 
             while ((ln = file.ReadLine()) != null)
             {
-                string[] row = ln.Split(',');
-                _ = row[(int)MutualFundColumn.ADDRESS_1];
+                string[] row = regex.Split(ln);
+
+				if (row[(int)MutualFundColumn.CLASS_TICKER] == "[NULL]") continue;
+
+				ulong cik = (ulong)Convert.ToDouble(row[(int)MutualFundColumn.CIK_NUMBER]);
+				Stock s = new Stock(row[(int)MutualFundColumn.CLASS_TICKER]);
+                s.CIK = cik;
+                MutualFundClass m = new MutualFundClass(s.Id);
+                m.Stock = s;
+                m.SeriesID = row[(int)MutualFundColumn.SERIES_ID];
+                m.ClassID = row[(int)MutualFundColumn.CLASS_ID];
+                try
+                {
+                    _dbContext.MutualFunds.Add(m);
+                }
+                catch (Exception ex)
+                {
+                    _dbContext.MutualFunds.Remove(m);
+                }
             }
 			_dbContext.SaveChanges();
 			file.Close();
