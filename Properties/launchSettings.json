@@ -10,7 +10,6 @@
   "profiles": {
     "StockResearchPlatform": {
       "commandName": "Project",
-      "dotnetRunMessages": true,
       "launchBrowser": true,
       "applicationUrl": "https://localhost:7123;http://localhost:5091",
       "environmentVariables": {
@@ -19,7 +18,6 @@
     },
     "Load Data": {
       "commandName": "Project",
-      "launchBrowser": false,
       "applicationUrl": "https://localhost:7123;http://localhost:5091",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Staging"
