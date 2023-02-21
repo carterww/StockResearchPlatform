@@ -1,15 +1,21 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace StockResearchPlatform.Models
 {
-	public class MutualFundClass : Stock
+	public class MutualFundClass
 	{
-		public MutualFundClass(string ticker) : base(ticker)
+		public MutualFundClass(Guid Id)
 		{
+			this.Id = Id;
 		}
-		public string seriesID { get; set; }
-		public string classID { get; set; }
+		public string SeriesID { get; set; }
+		public string ClassID { get; set; }
+		[Required]
+		public virtual Stock Stock { get; set; }
+		[ForeignKey("Stock"), Key]
+		public Guid Id { get; set; }
 	}
 }
 
