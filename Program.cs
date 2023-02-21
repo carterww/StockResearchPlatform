@@ -14,6 +14,7 @@ var connectionString = builder.Configuration.GetConnectionString("CarterConnecti
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
     options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
+    options.EnableSensitiveDataLogging(true);
 });
 builder.Services.AddScoped<LoadStockDataToDatabaseService>();
 
@@ -23,6 +24,8 @@ if (app.Environment.IsStaging())
 {
     var loadDataService = app.Services.GetService<LoadStockDataToDatabaseService>();
     loadDataService?.LoadStocksToDatabase();
+    loadDataService?.LoadMutualFundsToDatabase();
+    return;
 }
 
 // Configure the HTTP request pipeline.
