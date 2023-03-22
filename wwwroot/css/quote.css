@@ -1,0 +1,32 @@
+﻿.table {
+
+}
+
+/* Label to data in table. ie Market Cap, Forward Dividend Yield, etc. */
+.table .label {
+    margin: 10px 0 0 0;
+}
+
+/* Data for label ie 4.9B, 8.9%, etc */
+.table .data {
+    margin: 10px 0 0 0;
+}
+
+.entry {
+    border-bottom: 1px solid black;
+    align-items:flex-end;
+}
+
+#table-section-selector {
+    display: flex;
+    text-decoration: none;
+    list-style-type: none;
+    width: 300px;
+    justify-content: space-between;
+    align-items: center;
+    padding-left: 0;
+}
+
+#table-section-selector li {
+    cursor: pointer;
+}
