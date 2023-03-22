@@ -1,4 +1,6 @@
 ﻿@inherits LayoutComponentBase
+@using StockResearchPlatform.Models
+@inject NavigationManager UriHelper
 
 <PageTitle>StockResearchPlatform</PageTitle>
 
@@ -8,8 +10,16 @@
     </div>
 
     <main>
-        <div class="top-row px-4">
-            <a href="https://docs.microsoft.com/aspnet/" target="_blank">About</a>
+        <div class="top-row px-4" style="justify-content: flex-start;">
+            <div class="stock-search">
+                <EditForm Model="@stockSearchModel" OnSubmit="@searchStock">
+                    <label for="ticker">Search</label>
+                    <InputText id="ticker" @bind-Value="stockSearchModel.Ticker" maxlength="255" placeholder="Stock Symbol"/>
+                    <button type="submit">
+                        <img src="svg/search.svg" />
+                    </button>
+                </EditForm>
+            </div>
         </div>
 
         <article class="content px-4">
@@ -17,3 +27,17 @@
         </article>
     </main>
 </div>
+
+<link href="css/main-layout.css" rel="stylesheet" />
+
+@code {
+    public StockSearchModel stockSearchModel = new();
+
+    public void searchStock()
+    {
+        if (String.IsNullOrEmpty(stockSearchModel.Ticker)) return;
+        bool forceReload = UriHelper.ToBaseRelativePath(UriHelper.Uri).Contains("quote");
+        UriHelper.NavigateTo($"quote?ticker={stockSearchModel.Ticker}", forceReload);
+
+    }
+}

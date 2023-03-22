@@ -1,0 +1,23 @@
+﻿.stock-search {
+
+}
+
+.stock-search label {
+    margin-right: 6px;
+}
+
+.stock-search #ticker {
+    width: 500px;
+    height: 30px;
+}
+
+.stock-search button {
+    height: 30px;
+    width: auto;
+    border: none;
+    border-radius: 20px;
+}
+
+.stock-search button:hover {
+    background: grey;
+}
