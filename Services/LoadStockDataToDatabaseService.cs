@@ -1,14 +1,16 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using StockResearchPlatform.Data;
 using StockResearchPlatform.Models;
 using System.Text.RegularExpressions;
 
-namespace StockResearchPlatform.Data
+namespace StockResearchPlatform.Services
 {
     public class LoadStockDataToDatabaseService
     {
         private const string STOCK_TICKERS_TXT = "tickers-cik.txt";
         private const string MUTUAL_FUNDS_TICKERS_TXT = "mutual-fund-tickers.csv";
-        public enum MutualFundColumn: int {
+        public enum MutualFundColumn : int
+        {
             REPORTING_FILE_NUMBER = 0,
             CIK_NUMBER,
             ENTITY_NAME,
@@ -41,12 +43,12 @@ namespace StockResearchPlatform.Data
                 string[] t = ln.Split('\t');
                 string ticker = t[0];
                 ulong cik = (ulong)Convert.ToDouble(t[1]);
-				Stock s = new Stock(ticker);
+                Stock s = new Stock(ticker);
                 s.CIK = cik;
                 _dbContext.Stocks.Add(s);
             }
-			_dbContext.SaveChanges();
-			file.Close();
+            _dbContext.SaveChanges();
+            file.Close();
         }
 
         public void LoadMutualFundsToDatabase()
@@ -61,10 +63,10 @@ namespace StockResearchPlatform.Data
             {
                 string[] row = regex.Split(ln);
 
-				if (row[(int)MutualFundColumn.CLASS_TICKER] == "[NULL]") continue;
+                if (row[(int)MutualFundColumn.CLASS_TICKER] == "[NULL]") continue;
 
-				ulong cik = (ulong)Convert.ToDouble(row[(int)MutualFundColumn.CIK_NUMBER]);
-				Stock s = new Stock(row[(int)MutualFundColumn.CLASS_TICKER]);
+                ulong cik = (ulong)Convert.ToDouble(row[(int)MutualFundColumn.CIK_NUMBER]);
+                Stock s = new Stock(row[(int)MutualFundColumn.CLASS_TICKER]);
                 s.CIK = cik;
                 MutualFundClass m = new MutualFundClass(s.Id);
                 m.Stock = s;
@@ -79,8 +81,8 @@ namespace StockResearchPlatform.Data
                     _dbContext.MutualFunds.Remove(m);
                 }
             }
-			_dbContext.SaveChanges();
-			file.Close();
+            _dbContext.SaveChanges();
+            file.Close();
         }
     }
 }

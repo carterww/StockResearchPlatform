@@ -1,22 +1,12 @@
 ﻿@page "/"
-@using StockResearchPlatform.Data
+@using StockResearchPlatform.Services
 @inject LoadStockDataToDatabaseService service;
 
-<PageTitle>Index</PageTitle>
+<PageTitle>Home</PageTitle>
 
-<h1>Hello, world!</h1>
+<h1>Home Page</h1>
 
-Welcome to your new app.
-
-<SurveyPrompt Title="How is Blazor working for you?" />
-<button @onclick="click"></button>
-<p>@output</p>
 
 @code {
-	public string output = "";
-
-	public void click()
-	{
-		service.LoadStocksToDatabase();
-	}
+	
 }
