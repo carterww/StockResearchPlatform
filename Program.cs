@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.EntityFrameworkCore;
 using StockResearchPlatform.Data;
+using StockResearchPlatform.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,6 +18,8 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.EnableSensitiveDataLogging(true);
 });
 builder.Services.AddScoped<LoadStockDataToDatabaseService>();
+builder.Services.AddSingleton<HttpService>();
+builder.Services.AddSingleton<StockSearchService>();
 
 var app = builder.Build();
 
