@@ -1,9 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using StockResearchPlatform.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+
 
 namespace StockResearchPlatform.Data
 {
-    public class ApplicationDbContext : DbContext
+    public class ApplicationDbContext : IdentityDbContext
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
