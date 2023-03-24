@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using StockResearchPlatform.Data;
 
@@ -10,9 +11,11 @@ using StockResearchPlatform.Data;
 namespace StockResearchPlatform.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230323060022_RestOfModels")]
+    partial class RestOfModels
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -25,12 +28,13 @@ namespace StockResearchPlatform.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<int>("FK_UserId")
-                        .HasColumnType("int");
+                    b.Property<string>("FK_UserEmail")
+                        .IsRequired()
+                        .HasColumnType("varchar(255)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("FK_UserId");
+                    b.HasIndex("FK_UserEmail");
 
                     b.ToTable("DividendLedgers");
                 });
@@ -59,12 +63,13 @@ namespace StockResearchPlatform.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<int>("FK_UserId")
-                        .HasColumnType("int");
+                    b.Property<string>("FK_UserEmail")
+                        .IsRequired()
+                        .HasColumnType("varchar(255)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("FK_UserId");
+                    b.HasIndex("FK_UserEmail");
 
                     b.ToTable("Portfolios");
                 });
@@ -80,15 +85,16 @@ namespace StockResearchPlatform.Migrations
                     b.Property<DateTime>("Expiration")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<int>("FK_UserId")
-                        .HasColumnType("int");
+                    b.Property<string>("FK_UserEmail")
+                        .IsRequired()
+                        .HasColumnType("varchar(255)");
 
                     b.Property<DateTime>("LastAccessed")
                         .HasColumnType("datetime(6)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("FK_UserId");
+                    b.HasIndex("FK_UserEmail");
 
                     b.ToTable("Sessions");
                 });
@@ -161,19 +167,14 @@ namespace StockResearchPlatform.Migrations
 
             modelBuilder.Entity("StockResearchPlatform.Models.User", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
                     b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasColumnType("varchar(255)");
 
                     b.Property<string>("Password")
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.HasKey("Id");
+                    b.HasKey("Email");
 
                     b.ToTable("Users");
                 });
@@ -182,7 +183,7 @@ namespace StockResearchPlatform.Migrations
                 {
                     b.HasOne("StockResearchPlatform.Models.User", "FK_User")
                         .WithMany("DividendLedgers")
-                        .HasForeignKey("FK_UserId")
+                        .HasForeignKey("FK_UserEmail")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -204,7 +205,7 @@ namespace StockResearchPlatform.Migrations
                 {
                     b.HasOne("StockResearchPlatform.Models.User", "FK_User")
                         .WithMany("Portfolios")
-                        .HasForeignKey("FK_UserId")
+                        .HasForeignKey("FK_UserEmail")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -215,7 +216,7 @@ namespace StockResearchPlatform.Migrations
                 {
                     b.HasOne("StockResearchPlatform.Models.User", "FK_User")
                         .WithMany()
-                        .HasForeignKey("FK_UserId")
+                        .HasForeignKey("FK_UserEmail")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
