@@ -1,11 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using StockResearchPlatform.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-
+using Microsoft.AspNetCore.Identity;
 
 namespace StockResearchPlatform.Data
 {
-    public class ApplicationDbContext : IdentityDbContext
+    public class ApplicationDbContext : IdentityDbContext<User>
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
@@ -17,6 +17,7 @@ namespace StockResearchPlatform.Data
         {
             modelBuilder.Entity<StockPortfolio>()
                 .HasKey(nameof(StockPortfolio.FK_Stock), nameof(StockPortfolio.FK_Portfolio));
+            base.OnModelCreating(modelBuilder);
         }
 
         public DbSet<DividendLedger> DividendLedgers { get; set; }
@@ -24,8 +25,8 @@ namespace StockResearchPlatform.Data
         public DbSet<Session> Sessions { get; set; }
         public DbSet<StockDividendLedger> StockDividendLedgers { get; set; }
         public DbSet<StockPortfolio> StockPortfolios { get; set; }
-        public DbSet<User> Users { get; set; }
         public DbSet<Stock> Stocks { get; set; }
+        public DbSet<User> ApplicationUsers { get; set; }
         public DbSet<MutualFundClass> MutualFunds{ get; set;}
     }
 }

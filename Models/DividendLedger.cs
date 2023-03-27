@@ -9,6 +9,6 @@ namespace StockResearchPlatform.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
         public User FK_User { get; set; }
-        public virtual ICollection<StockDividendLedger> stockDividendLedgers { get; set; }
+        public virtual ICollection<StockDividendLedger> StockDividendLedgers { get; set; }
     }
 }
