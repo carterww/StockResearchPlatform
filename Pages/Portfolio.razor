@@ -1,7 +1,65 @@
-﻿
+﻿@page "/portfolios"
+@using Microsoft.AspNetCore.Identity;
+@using StockResearchPlatform.Models;
+@using StockResearchPlatform.Data;
+@inject AuthenticationStateProvider AuthenticationStateProvide
+@inject ApplicationDbContext Context
+@inject UserManager<User> UserManager
 
-<h3>Portfolio</h3>
+<h1>Portfolio</h1>
+<ul>
+	@foreach(var portfolio in portfolios)
+	{
+		<li>@portfolio?.Name</li>
+	}
+</ul>
+<button @onclick=createNewPortfolio>Add Portfolio</button>
 
 @code {
+	List<Models.Portfolio> portfolios = new List<Models.Portfolio>();
+	User currentUser = null;
 
+	public async void getUsersPortfolios()
+	{
+		this.portfolios = Context.Portfolios.Where(p => p.FK_User.Id == this.currentUser.Id).ToList();
+	}
+
+	protected override async Task OnInitializedAsync()
+	{
+		if (await getCurrentUser())
+		{
+			getUsersPortfolios();
+		}
+		// If user not logged in
+		else
+		{
+
+		}
+	}
+
+	private async Task<bool> getCurrentUser()
+	{
+		if (this.currentUser != null) return true;
+		var authState = await AuthenticationStateProvide.GetAuthenticationStateAsync();
+		if (authState.User.Identity != null && authState.User.Identity.IsAuthenticated)
+		{
+			this.currentUser = await UserManager.GetUserAsync(authState.User);
+			return true;
+		}
+		return false;
+	}
+
+	public async void createNewPortfolio()
+	{
+		Models.Portfolio p = new Models.Portfolio();
+		if(await getCurrentUser() == true)
+		{
+			p.Name = "";
+			p.FK_User = this.currentUser;
+			Context.Portfolios.Add(p);
+			Context.SaveChanges();
+			getUsersPortfolios();
+		}
+	
+	}
 }
