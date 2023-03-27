@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace StockResearchPlatform.Migrations
 {
     /// <inheritdoc />
-    public partial class FirstMigration : Migration
+    public partial class Initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -40,11 +40,13 @@ namespace StockResearchPlatform.Migrations
                 {
                     Id = table.Column<string>(type: "varchar(255)", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
+                    Email = table.Column<string>(type: "varchar(256)", maxLength: 256, nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Password = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
                     UserName = table.Column<string>(type: "varchar(256)", maxLength: 256, nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     NormalizedUserName = table.Column<string>(type: "varchar(256)", maxLength: 256, nullable: true)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    Email = table.Column<string>(type: "varchar(256)", maxLength: 256, nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     NormalizedEmail = table.Column<string>(type: "varchar(256)", maxLength: 256, nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
@@ -74,7 +76,7 @@ namespace StockResearchPlatform.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
-                    Ticker = table.Column<string>(type: "longtext", nullable: false)
+                    Ticker = table.Column<string>(type: "varchar(10)", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     CIK = table.Column<ulong>(type: "bigint unsigned", nullable: false)
                 },
@@ -212,6 +214,72 @@ namespace StockResearchPlatform.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
+                name: "DividendLedgers",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    FK_UserId = table.Column<string>(type: "varchar(255)", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DividendLedgers", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_DividendLedgers_AspNetUsers_FK_UserId",
+                        column: x => x.FK_UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "Portfolios",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    FK_UserId = table.Column<string>(type: "varchar(255)", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Portfolios", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Portfolios_AspNetUsers_FK_UserId",
+                        column: x => x.FK_UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "Sessions",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "varchar(255)", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    FK_UserId = table.Column<string>(type: "varchar(255)", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Expiration = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    Creation = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    LastAccessed = table.Column<DateTime>(type: "datetime(6)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Sessions", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Sessions_AspNetUsers_FK_UserId",
+                        column: x => x.FK_UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
                 name: "MutualFunds",
                 columns: table => new
                 {
@@ -227,6 +295,62 @@ namespace StockResearchPlatform.Migrations
                     table.ForeignKey(
                         name: "FK_MutualFunds_Stocks_Id",
                         column: x => x.Id,
+                        principalTable: "Stocks",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "StockDividendLedgers",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    FK_StockId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
+                    FK_DividendLedgerId = table.Column<int>(type: "int", nullable: false),
+                    Amount = table.Column<double>(type: "double", nullable: false),
+                    Date = table.Column<DateTime>(type: "datetime(6)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_StockDividendLedgers", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_StockDividendLedgers_DividendLedgers_FK_DividendLedgerId",
+                        column: x => x.FK_DividendLedgerId,
+                        principalTable: "DividendLedgers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_StockDividendLedgers_Stocks_FK_StockId",
+                        column: x => x.FK_StockId,
+                        principalTable: "Stocks",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "StockPortfolios",
+                columns: table => new
+                {
+                    FK_Stock = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
+                    FK_Portfolio = table.Column<int>(type: "int", nullable: false),
+                    NumberOfShares = table.Column<int>(type: "int", nullable: false),
+                    CostBasis = table.Column<double>(type: "double", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_StockPortfolios", x => new { x.FK_Stock, x.FK_Portfolio });
+                    table.ForeignKey(
+                        name: "FK_StockPortfolios_Portfolios_FK_Portfolio",
+                        column: x => x.FK_Portfolio,
+                        principalTable: "Portfolios",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_StockPortfolios_Stocks_FK_Stock",
+                        column: x => x.FK_Stock,
                         principalTable: "Stocks",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -269,6 +393,36 @@ namespace StockResearchPlatform.Migrations
                 table: "AspNetUsers",
                 column: "NormalizedUserName",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DividendLedgers_FK_UserId",
+                table: "DividendLedgers",
+                column: "FK_UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Portfolios_FK_UserId",
+                table: "Portfolios",
+                column: "FK_UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Sessions_FK_UserId",
+                table: "Sessions",
+                column: "FK_UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_StockDividendLedgers_FK_DividendLedgerId",
+                table: "StockDividendLedgers",
+                column: "FK_DividendLedgerId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_StockDividendLedgers_FK_StockId",
+                table: "StockDividendLedgers",
+                column: "FK_StockId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_StockPortfolios_FK_Portfolio",
+                table: "StockPortfolios",
+                column: "FK_Portfolio");
         }
 
         /// <inheritdoc />
@@ -293,13 +447,28 @@ namespace StockResearchPlatform.Migrations
                 name: "MutualFunds");
 
             migrationBuilder.DropTable(
+                name: "Sessions");
+
+            migrationBuilder.DropTable(
+                name: "StockDividendLedgers");
+
+            migrationBuilder.DropTable(
+                name: "StockPortfolios");
+
+            migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
-                name: "AspNetUsers");
+                name: "DividendLedgers");
+
+            migrationBuilder.DropTable(
+                name: "Portfolios");
 
             migrationBuilder.DropTable(
                 name: "Stocks");
+
+            migrationBuilder.DropTable(
+                name: "AspNetUsers");
         }
     }
 }
