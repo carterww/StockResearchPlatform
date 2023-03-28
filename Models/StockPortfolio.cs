@@ -14,7 +14,7 @@ namespace StockResearchPlatform.Models
         [ForeignKey("Portfolio")]
         public int FK_Portfolio { get; set; }
 
-        public int NumberOfShares { get; set; }
+        public double NumberOfShares { get; set; }
         public double CostBasis { get; set; }
     }
 }

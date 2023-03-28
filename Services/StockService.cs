@@ -13,9 +13,17 @@ namespace StockResearchPlatform.Services
 			_context = context;
 		}
 
-        public async Task<Stock?> GetStock(System.Guid Id)
+        public async Task<Stock?> GetStock(string? ticker, System.Guid? Id)
 		{
-			return _context.Stocks.Find(Id);
+			if (Id == null && ticker != null)
+			{
+				return _context.Stocks.Where(s => s.Ticker == ticker).First();
+			}
+			else if (Id != null)
+			{
+                return _context.Stocks.Find(Id);
+            }
+			return null;
 		}
 
 
