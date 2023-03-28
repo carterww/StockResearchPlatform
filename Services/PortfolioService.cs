@@ -8,9 +8,11 @@ namespace StockResearchPlatform.Services
 	public class PortfolioService
 	{
 		ApplicationDbContext _context;
-		public PortfolioService(ApplicationDbContext context)
+		StockService _stockService;
+		public PortfolioService(ApplicationDbContext context, StockService stockService)
 		{
 			_context = context;
+			_stockService = stockService;
 		}
 
         #region PORTFOLIO_CRUD
@@ -26,22 +28,19 @@ namespace StockResearchPlatform.Services
 		public async Task AddPortfolio(Portfolio portfolio)
 		{
 			await _context.Portfolios.AddAsync(portfolio);
-			this.SaveChanges();
 		}
 
-		public async Task<Portfolio?> UpdatePortfolio(Portfolio portfolio)
+		public Portfolio? UpdatePortfolio(Portfolio portfolio)
 		{
 			_context.Portfolios.Update(portfolio);
-			this.SaveChanges();
 			return this.GetPortfolio(portfolio.Id);
 		}
 
-		public bool DeletePortfolio(Portfolio portfolio)
+		public bool RemovePortfolio(Portfolio portfolio)
 		{
 			try
 			{
 				_context.Portfolios.Remove(portfolio);
-				this.SaveChanges();
 				return true;
 			}
 			catch (Exception e)
@@ -52,18 +51,56 @@ namespace StockResearchPlatform.Services
 
         #endregion
 
+		public async Task<Dictionary<Stock, StockPortfolio>> GetStocksFromPortfolio(Portfolio p)
+		{
+			Dictionary<Stock, StockPortfolio> result = new Dictionary<Stock, StockPortfolio>(10);
+			foreach(var stockPort in p.StockPortfolios)
+			{
+				Stock tmp = await _stockService.GetStock(null, stockPort.FK_Stock);
+				result.Add(tmp, stockPort);
+			}
+			return result;
+		}
+
         #region PORTFOLIOSTOCK_CRUD
+
+		public StockPortfolio? GetStockPortfolio(StockPortfolio stockPortfolio)
+		{
+			return _context.StockPortfolios
+                .Where(s => s.FK_Stock == stockPortfolio.FK_Stock
+                    && s.FK_Portfolio == stockPortfolio.FK_Portfolio)
+                .First();
+        }
 
 		public async Task<Portfolio?> AddStockToPortfolio(StockPortfolio stockPortfolio)
 		{
 			await _context.StockPortfolios.AddAsync(stockPortfolio);
-			this.SaveChanges();
 			return this.GetPortfolio(stockPortfolio.FK_Portfolio);
+		}
+
+		public Portfolio? UpdateStockPortfolio(StockPortfolio stockPortfolio)
+		{
+			var entryToUpdate = this.GetStockPortfolio(stockPortfolio);
+			if (entryToUpdate != null)
+			{
+				entryToUpdate.CostBasis = stockPortfolio.CostBasis;
+				entryToUpdate.NumberOfShares = stockPortfolio.NumberOfShares;
+			}
+            return this.GetPortfolio(stockPortfolio.FK_Portfolio);
+        }
+
+		public void RemoveStockPortfolio(StockPortfolio stockPortfolio)
+		{
+			var tmp = this.GetStockPortfolio(stockPortfolio);
+			if (tmp != null)
+			{
+				_context.StockPortfolios.Remove(stockPortfolio);
+			}
 		}
 
         #endregion
 
-		private void SaveChanges()
+		public void SaveChanges()
 		{
 			_context.SaveChanges();
 		}

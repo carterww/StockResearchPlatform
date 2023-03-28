@@ -1,75 +1,101 @@
 ﻿@page "/portfolios/{id}"
 @using StockResearchPlatform.Models;
+@using StockResearchPlatform.Models.PageModels;
 @using StockResearchPlatform.Services;
 @inject StockService stockService
 @inject PortfolioService portfolioService
 
-<h1>@portfolio?.Name</h1>
+<h1>@this.PortfolioDisplayModel.Portfolio?.Name</h1>
 
-<ul>
-    @foreach (var stockPortfolio in portfolio.StockPortfolios ?? Array.Empty<StockPortfolio>())
+<table>
+    @if(this.PortfolioDisplayModel.Stocks != null && this.PortfolioDisplayModel.Stocks.Count > 0)
     {
-        <li>@stockPortfolio.FK_Stock</li>
+        <tr>
+            <th>Ticker</th>
+            <th>Quantity</th>
+            <th>Cost Per Share</th>
+            <th>Cost Basis</th>
+            <th>Current Value</th>
+        </tr>
+        double totalCostBasis = 0.0;
+        @foreach (var stock in this.PortfolioDisplayModel.Stocks)
+        {
+            totalCostBasis += stock.Value.NumberOfShares * stock.Value.CostBasis;
+            <tr>
+                <td>@stock.Key.Ticker.ToUpper()</td>
+                <td>@String.Format("{0:0.00}" ,stock.Value.NumberOfShares)</td>
+                <td>@String.Format("{0:C}" ,stock.Value.CostBasis)</td>
+                <td>@String.Format("{0:C}" ,stock.Value.NumberOfShares * stock.Value.CostBasis)</td>
+                <td>TODO</td>
+                <td><a role="button">Edit</a></td>
+                <td><a role="button" @onclick="() => this.removeStock(stock.Value)">Remove</a></td>
+            </tr>
+        }
+        <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td>@String.Format("{0:C}", totalCostBasis)</td>
+            <td>TODO</td>
+        </tr>
     }
-</ul>
-<input type="text" @bind=newTicker hidden="@hideNewStock" placeholder="Ticker"/>
-<input type="number" @bind=newCostBasis hidden="@hideNewStock" step="0.01" placeholder="Cost Basis" />
-<input type="number" @bind=numberOfShares hidden="@hideNewStock" step="0.01" placeholder="Number Of Shares" />
+</table>
+<input type="text" @bind=this.PortfolioDisplayModel.AddStockTicker hidden="@this.PortfolioDisplayModel.HideNewStock" placeholder="Ticker" />
+<br />
+<input type="number" @bind=this.PortfolioDisplayModel.AddStockCostBasis hidden="@this.PortfolioDisplayModel.HideNewStock" step="0.01" placeholder="Cost Per Share" />
+<br />
+<input type="number" @bind=this.PortfolioDisplayModel.AddStockNumOfShares hidden="@this.PortfolioDisplayModel.HideNewStock" step="0.01" placeholder="Number Of Shares" />
+<br />
 
-<button type="button" hidden="@hideNewStock" @onclick=submitNewStock>Add</button>
-<button type="button" hidden="@hideNewStock" @onclick=cancelNewStock>Cancel</button>
-<button @onclick=createNewStock hidden="@(hideNewStock == false)">Add Stock</button>
+<button type="button" hidden="@this.PortfolioDisplayModel.HideNewStock" @onclick=submitNewStock>Add</button>
+<button type="button" hidden="@this.PortfolioDisplayModel.HideNewStock" @onclick=cancelNewStock>Cancel</button>
+<button @onclick=createNewStock hidden="@(this.PortfolioDisplayModel.HideNewStock == false)">Add Stock</button>
+
+<link rel="stylesheet" href="css/portfolio-display.css" />
 
 @code {
     [Parameter]
     public string? Id { get; set; }
     public int id { get; set; }
-    Models.Portfolio portfolio = null;
-    bool hideNewStock = true;
-    string newTicker = "";
-    double newCostBasis = 0.0;
-    double numberOfShares = 0.0;
+
+    PortfolioDisplayModel PortfolioDisplayModel;
 
     protected override async Task OnInitializedAsync()
     {
         if (this.Id != null)
         {
-            this.id = int.Parse(Id);
-            var p = portfolioService.GetPortfolio(this.id);
-            if (p != null)
+            try
             {
-                this.portfolio = p;
+                this.id = int.Parse(Id);
+                this.PortfolioDisplayModel = new PortfolioDisplayModel(stockService, portfolioService);
+                await this.PortfolioDisplayModel.BuildPortfolioDisplayModel(this.id);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
             }
         }
     }
 
     public async void createNewStock()
     {
-        this.hideNewStock = false;
+        this.PortfolioDisplayModel.ShowNewStock();
     }
 
     public async void submitNewStock()
     {
-        if (!String.IsNullOrWhiteSpace(newTicker) && newCostBasis > 0.0 && numberOfShares > 0.0)
-        {
-            Models.StockPortfolio s = new StockPortfolio();
-            s.NumberOfShares = this.numberOfShares;
-            Stock a = await stockService.GetStock(newTicker, null);
-            s.CostBasis = this.newCostBasis;
-            s.FK_Portfolio = this.id;
-            s.FK_Stock = a.Id;
-
-            await this.portfolioService.AddStockToPortfolio(s);
-            this.cancelNewStock();
-        }
+        this.PortfolioDisplayModel.AddNewStock();
     }
 
     public void cancelNewStock()
     {
-        this.hideNewStock = true;
-        this.newTicker = "";
-        this.newCostBasis = 0.0;
-        this.numberOfShares = 0.0;
+        this.PortfolioDisplayModel.ClearNewStock();
+    }
+
+    public void removeStock(Models.StockPortfolio s)
+    {
+        Console.WriteLine("We clicked it");
+        this.PortfolioDisplayModel.RemoveStock(s);
     }
 
 }
