@@ -15,10 +15,12 @@ namespace StockResearchPlatform.Services
 
         #region PORTFOLIO_CRUD
 
-        public async Task<Portfolio?> GetPortfolio(long Id)
+        public Portfolio? GetPortfolio(int Id)
 		{
 			return _context.Portfolios
-				.Find(Id);
+				.Where(p => p.Id == Id)
+				.Include("StockPortfolios")
+				.First();
 		}
 
 		public async Task AddPortfolio(Portfolio portfolio)
@@ -31,7 +33,7 @@ namespace StockResearchPlatform.Services
 		{
 			_context.Portfolios.Update(portfolio);
 			this.SaveChanges();
-			return await this.GetPortfolio(portfolio.Id);
+			return this.GetPortfolio(portfolio.Id);
 		}
 
 		public bool DeletePortfolio(Portfolio portfolio)
@@ -56,7 +58,7 @@ namespace StockResearchPlatform.Services
 		{
 			await _context.StockPortfolios.AddAsync(stockPortfolio);
 			this.SaveChanges();
-			return await this.GetPortfolio(stockPortfolio.FK_Portfolio);
+			return this.GetPortfolio(stockPortfolio.FK_Portfolio);
 		}
 
         #endregion

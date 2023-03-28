@@ -2,44 +2,74 @@
 @using StockResearchPlatform.Models;
 @using StockResearchPlatform.Services;
 @inject StockService stockService
+@inject PortfolioService portfolioService
 
 <h1>@portfolio?.Name</h1>
 
 <ul>
-    @foreach (var stockPortfolio in portfolio.StockPortfolios)
+    @foreach (var stockPortfolio in portfolio.StockPortfolios ?? Array.Empty<StockPortfolio>())
     {
-        <li>@stockService.GetStock(stockPortfolio.FK_Stock)</li>
+        <li>@stockPortfolio.FK_Stock</li>
     }
 </ul>
-<input type="text" @bind=newTicker hidden="@hideNewStock" />
+<input type="text" @bind=newTicker hidden="@hideNewStock" placeholder="Ticker"/>
+<input type="number" @bind=newCostBasis hidden="@hideNewStock" step="0.01" placeholder="Cost Basis" />
+<input type="number" @bind=numberOfShares hidden="@hideNewStock" step="0.01" placeholder="Number Of Shares" />
+
 <button type="button" hidden="@hideNewStock" @onclick=submitNewStock>Add</button>
 <button type="button" hidden="@hideNewStock" @onclick=cancelNewStock>Cancel</button>
-<button @onclick=createNewStock hidden="@(hideNewStock == false)">Add Portfolio</button>
+<button @onclick=createNewStock hidden="@(hideNewStock == false)">Add Stock</button>
 
 @code {
-    Models.Portfolio portfolio = new Models.Portfolio();
+    [Parameter]
+    public string? Id { get; set; }
+    public int id { get; set; }
+    Models.Portfolio portfolio = null;
     bool hideNewStock = true;
     string newTicker = "";
     double newCostBasis = 0.0;
+    double numberOfShares = 0.0;
 
     protected override async Task OnInitializedAsync()
     {
-        portfolio.StockPortfolios = new List<StockPortfolio>();
+        if (this.Id != null)
+        {
+            this.id = int.Parse(Id);
+            var p = portfolioService.GetPortfolio(this.id);
+            if (p != null)
+            {
+                this.portfolio = p;
+            }
+        }
     }
 
     public async void createNewStock()
     {
-            
+        this.hideNewStock = false;
     }
 
     public async void submitNewStock()
     {
+        if (!String.IsNullOrWhiteSpace(newTicker) && newCostBasis > 0.0 && numberOfShares > 0.0)
+        {
+            Models.StockPortfolio s = new StockPortfolio();
+            s.NumberOfShares = this.numberOfShares;
+            Stock a = await stockService.GetStock(newTicker, null);
+            s.CostBasis = this.newCostBasis;
+            s.FK_Portfolio = this.id;
+            s.FK_Stock = a.Id;
 
+            await this.portfolioService.AddStockToPortfolio(s);
+            this.cancelNewStock();
+        }
     }
 
-    public async void cancelNewStock()
+    public void cancelNewStock()
     {
-
+        this.hideNewStock = true;
+        this.newTicker = "";
+        this.newCostBasis = 0.0;
+        this.numberOfShares = 0.0;
     }
 
 }

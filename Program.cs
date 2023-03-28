@@ -18,7 +18,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
     options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
     options.EnableSensitiveDataLogging(true);
-});
+}, ServiceLifetime.Transient);
 
 builder.Services.AddDefaultIdentity<User>()
     .AddEntityFrameworkStores<ApplicationDbContext>();

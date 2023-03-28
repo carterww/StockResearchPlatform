@@ -288,8 +288,8 @@ namespace StockResearchPlatform.Migrations
                     b.Property<double>("CostBasis")
                         .HasColumnType("double");
 
-                    b.Property<int>("NumberOfShares")
-                        .HasColumnType("int");
+                    b.Property<double>("NumberOfShares")
+                        .HasColumnType("double");
 
                     b.HasKey("FK_Stock", "FK_Portfolio");
 
