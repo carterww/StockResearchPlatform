@@ -26,6 +26,8 @@ builder.Services.AddDefaultIdentity<User>()
 builder.Services.AddScoped<LoadStockDataToDatabaseService>();
 builder.Services.AddSingleton<HttpService>();
 builder.Services.AddSingleton<StockSearchService>();
+builder.Services.AddTransient<PortfolioService>();
+builder.Services.AddTransient<StockService>();
 
 var app = builder.Build();
 

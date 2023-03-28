@@ -1,5 +1,45 @@
-﻿<h3>PortfolioDisplay</h3>
+﻿@page "/portfolios/{id}"
+@using StockResearchPlatform.Models;
+@using StockResearchPlatform.Services;
+@inject StockService stockService
+
+<h1>@portfolio?.Name</h1>
+
+<ul>
+    @foreach (var stockPortfolio in portfolio.StockPortfolios)
+    {
+        <li>@stockService.GetStock(stockPortfolio.FK_Stock)</li>
+    }
+</ul>
+<input type="text" @bind=newTicker hidden="@hideNewStock" />
+<button type="button" hidden="@hideNewStock" @onclick=submitNewStock>Add</button>
+<button type="button" hidden="@hideNewStock" @onclick=cancelNewStock>Cancel</button>
+<button @onclick=createNewStock hidden="@(hideNewStock == false)">Add Portfolio</button>
 
 @code {
+    Models.Portfolio portfolio = new Models.Portfolio();
+    bool hideNewStock = true;
+    string newTicker = "";
+    double newCostBasis = 0.0;
+
+    protected override async Task OnInitializedAsync()
+    {
+        portfolio.StockPortfolios = new List<StockPortfolio>();
+    }
+
+    public async void createNewStock()
+    {
+            
+    }
+
+    public async void submitNewStock()
+    {
+
+    }
+
+    public async void cancelNewStock()
+    {
+
+    }
 
 }
