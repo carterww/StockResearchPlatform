@@ -1,0 +1,94 @@
+﻿@page "/portfolios"
+@using Microsoft.AspNetCore.Identity;
+@using StockResearchPlatform.Models;
+@using StockResearchPlatform.Data;
+@inject AuthenticationStateProvider AuthenticationStateProvide
+@inject ApplicationDbContext Context
+@inject UserManager<User> UserManager
+@inject NavigationManager UriHelper
+
+<h1>Portfolio</h1>
+<ul>
+	@foreach(var portfolio in portfolios)
+	{
+		<li style="cursor: pointer;" @onclick=" () => redirectToPortfolio(portfolio) ">@portfolio?.Name</li>
+	}
+</ul>
+<input type="text" @bind=newPortfolioName hidden="@hidePortfolioInput"/>
+<button type="button" hidden="@hidePortfolioInput" @onclick=submitNewPortfolio>Add</button>
+<button type="button" hidden="@hidePortfolioInput" @onclick=cancelNewPortfolio>Cancel</button>
+<button @onclick=createNewPortfolio hidden="@(hidePortfolioInput == false)">Add Portfolio</button>
+
+@code {
+	List<Models.Portfolio> portfolios = new List<Models.Portfolio>();
+	User currentUser = null;
+	bool hidePortfolioInput = true;
+	string newPortfolioName = "";
+
+	public async void getUsersPortfolios()
+	{
+		this.portfolios = Context.Portfolios.Where(p => p.FK_User.Id == this.currentUser.Id).ToList();
+	}
+
+	protected override async Task OnInitializedAsync()
+	{
+		if (await getCurrentUser())
+		{
+			getUsersPortfolios();
+		}
+		// If user not logged in
+		else
+		{
+			UriHelper.NavigateTo("/Identity/Account/Login");
+		}
+	}
+
+	private async Task<bool> getCurrentUser()
+	{
+		if (this.currentUser != null) return true;
+		var authState = await AuthenticationStateProvide.GetAuthenticationStateAsync();
+		if (authState.User.Identity != null && authState.User.Identity.IsAuthenticated)
+		{
+			this.currentUser = await UserManager.GetUserAsync(authState.User);
+			return true;
+		}
+		return false;
+	}
+
+	public void redirectToPortfolio(Models.Portfolio portfolio)
+	{
+		if (portfolio != null)
+		{
+			UriHelper.NavigateTo($"/portfolios/{portfolio.Id}");
+		}
+	}
+
+	public async void createNewPortfolio()
+	{
+		this.hidePortfolioInput = false;
+	}
+
+	public async void submitNewPortfolio()
+	{
+		if (!String.IsNullOrEmpty(this.newPortfolioName))
+		{
+			Models.Portfolio p = new Models.Portfolio();
+			if (await getCurrentUser() == true)
+			{
+				p.Name = newPortfolioName;
+				p.FK_User = this.currentUser;
+				Context.Portfolios.Add(p);
+				Context.SaveChanges();
+				getUsersPortfolios();
+				this.newPortfolioName = "";
+				this.hidePortfolioInput = true;
+			}
+		}
+	}
+
+	public async void cancelNewPortfolio()
+	{
+		hidePortfolioInput = true;
+		newPortfolioName = "";
+	}
+}

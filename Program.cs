@@ -1,7 +1,9 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using StockResearchPlatform.Data;
+using StockResearchPlatform.Models;
 using StockResearchPlatform.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -16,10 +18,16 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
     options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
     options.EnableSensitiveDataLogging(true);
-});
+}, ServiceLifetime.Transient);
+
+builder.Services.AddDefaultIdentity<User>()
+    .AddEntityFrameworkStores<ApplicationDbContext>();
+
 builder.Services.AddScoped<LoadStockDataToDatabaseService>();
 builder.Services.AddSingleton<HttpService>();
 builder.Services.AddSingleton<StockSearchService>();
+builder.Services.AddTransient<PortfolioService>();
+builder.Services.AddTransient<StockService>();
 
 var app = builder.Build();
 
@@ -44,6 +52,9 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
+
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapBlazorHub();
 app.MapFallbackToPage("/_Host");

@@ -19,5 +19,7 @@ namespace StockResearchPlatform.Models
         [Required]
         public ulong CIK { get; set; }
         public virtual MutualFundClass MutualFund { get; set; }
+        public virtual ICollection<StockDividendLedger> StockDividendLedgers { get; set; }
+        public virtual ICollection<StockPortfolio> StockPortfolios { get; set; }
     }
 }
