@@ -17,7 +17,6 @@ var connectionString = builder.Configuration.GetConnectionString("ProductionConn
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
     options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
-    options.EnableSensitiveDataLogging(true);
 }, ServiceLifetime.Transient);
 
 builder.Services.AddDefaultIdentity<User>()

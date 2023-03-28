@@ -2,10 +2,12 @@
 @using Microsoft.AspNetCore.Identity;
 @using StockResearchPlatform.Models;
 @using StockResearchPlatform.Data;
+@using StockResearchPlatform.Services;
 @inject AuthenticationStateProvider AuthenticationStateProvide
 @inject ApplicationDbContext Context
 @inject UserManager<User> UserManager
 @inject NavigationManager UriHelper
+@inject PortfolioService _portfolioService;
 
 <h1>Portfolio</h1>
 <ul>
@@ -73,12 +75,12 @@
 		if (!String.IsNullOrEmpty(this.newPortfolioName))
 		{
 			Models.Portfolio p = new Models.Portfolio();
-			if (await getCurrentUser() == true)
+			if (currentUser != null)
 			{
 				p.Name = newPortfolioName;
-				p.FK_User = this.currentUser;
-				Context.Portfolios.Add(p);
-				Context.SaveChanges();
+				p.FK_UserId = this.currentUser.Id;
+				await _portfolioService.AddPortfolio(p);
+				_portfolioService.SaveChanges();
 				getUsersPortfolios();
 				this.newPortfolioName = "";
 				this.hidePortfolioInput = true;
