@@ -11,8 +11,8 @@ using StockResearchPlatform.Data;
 namespace StockResearchPlatform.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230328222255_FIx")]
-    partial class FIx
+    [Migration("20230328034436_NumberOfSharesFix")]
+    partial class NumberOfSharesFix
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

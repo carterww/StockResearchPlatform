@@ -27,6 +27,7 @@ namespace StockResearchPlatform.Data
         public DbSet<StockPortfolio> StockPortfolios { get; set; }
         public DbSet<Stock> Stocks { get; set; }
         public DbSet<User> ApplicationUsers { get; set; }
-        public DbSet<MutualFundClass> MutualFunds{ get; set;}
+        public DbSet<MutualFundClass> MutualFunds{ get; set; }
+        public DbSet<DividendInfo> DividendInfo { get; set; }
     }
 }

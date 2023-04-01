@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using StockResearchPlatform.Data;
 
@@ -10,9 +11,11 @@ using StockResearchPlatform.Data;
 namespace StockResearchPlatform.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230327013103_LOL")]
+    partial class LOL
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -196,10 +199,6 @@ namespace StockResearchPlatform.Migrations
                         .IsRequired()
                         .HasColumnType("varchar(255)");
 
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
                     b.HasKey("Id");
 
                     b.HasIndex("FK_UserId");
@@ -288,8 +287,8 @@ namespace StockResearchPlatform.Migrations
                     b.Property<double>("CostBasis")
                         .HasColumnType("double");
 
-                    b.Property<double>("NumberOfShares")
-                        .HasColumnType("double");
+                    b.Property<int>("NumberOfShares")
+                        .HasColumnType("int");
 
                     b.HasKey("FK_Stock", "FK_Portfolio");
 
@@ -301,6 +300,7 @@ namespace StockResearchPlatform.Migrations
             modelBuilder.Entity("StockResearchPlatform.Models.User", b =>
                 {
                     b.Property<string>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("varchar(255)");
 
                     b.Property<int>("AccessFailedCount")
@@ -311,6 +311,7 @@ namespace StockResearchPlatform.Migrations
                         .HasColumnType("longtext");
 
                     b.Property<string>("Email")
+                        .IsRequired()
                         .HasMaxLength(256)
                         .HasColumnType("varchar(256)");
 
@@ -330,6 +331,10 @@ namespace StockResearchPlatform.Migrations
                     b.Property<string>("NormalizedUserName")
                         .HasMaxLength(256)
                         .HasColumnType("varchar(256)");
+
+                    b.Property<string>("Password")
+                        .IsRequired()
+                        .HasColumnType("longtext");
 
                     b.Property<string>("PasswordHash")
                         .HasColumnType("longtext");

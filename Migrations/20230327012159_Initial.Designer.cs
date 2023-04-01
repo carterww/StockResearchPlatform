@@ -11,7 +11,7 @@ using StockResearchPlatform.Data;
 namespace StockResearchPlatform.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230328213129_Initial")]
+    [Migration("20230327012159_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -199,10 +199,6 @@ namespace StockResearchPlatform.Migrations
                         .IsRequired()
                         .HasColumnType("varchar(255)");
 
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
                     b.HasKey("Id");
 
                     b.HasIndex("FK_UserId");
@@ -291,8 +287,8 @@ namespace StockResearchPlatform.Migrations
                     b.Property<double>("CostBasis")
                         .HasColumnType("double");
 
-                    b.Property<double>("NumberOfShares")
-                        .HasColumnType("double");
+                    b.Property<int>("NumberOfShares")
+                        .HasColumnType("int");
 
                     b.HasKey("FK_Stock", "FK_Portfolio");
 
@@ -304,6 +300,7 @@ namespace StockResearchPlatform.Migrations
             modelBuilder.Entity("StockResearchPlatform.Models.User", b =>
                 {
                     b.Property<string>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("varchar(255)");
 
                     b.Property<int>("AccessFailedCount")
@@ -314,6 +311,7 @@ namespace StockResearchPlatform.Migrations
                         .HasColumnType("longtext");
 
                     b.Property<string>("Email")
+                        .IsRequired()
                         .HasMaxLength(256)
                         .HasColumnType("varchar(256)");
 
@@ -333,6 +331,10 @@ namespace StockResearchPlatform.Migrations
                     b.Property<string>("NormalizedUserName")
                         .HasMaxLength(256)
                         .HasColumnType("varchar(256)");
+
+                    b.Property<string>("Password")
+                        .IsRequired()
+                        .HasColumnType("longtext");
 
                     b.Property<string>("PasswordHash")
                         .HasColumnType("longtext");

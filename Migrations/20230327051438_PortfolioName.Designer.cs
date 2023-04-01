@@ -11,8 +11,8 @@ using StockResearchPlatform.Data;
 namespace StockResearchPlatform.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230328224524_Fixfk")]
-    partial class Fixfk
+    [Migration("20230327051438_PortfolioName")]
+    partial class PortfolioName
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -291,8 +291,8 @@ namespace StockResearchPlatform.Migrations
                     b.Property<double>("CostBasis")
                         .HasColumnType("double");
 
-                    b.Property<double>("NumberOfShares")
-                        .HasColumnType("double");
+                    b.Property<int>("NumberOfShares")
+                        .HasColumnType("int");
 
                     b.HasKey("FK_Stock", "FK_Portfolio");
 
