@@ -426,7 +426,7 @@
 		public int value { get; set; }
 	}
 
-	public class StockFinancialsVX
+	public class StockFinancialsVXJto
 	{
 		public int count { get; set; }
 		public string next_url { get; set; }

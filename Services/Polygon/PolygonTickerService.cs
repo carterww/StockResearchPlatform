@@ -8,8 +8,9 @@ namespace StockResearchPlatform.Services.Polygon
     public class PolygonTickerService
     {
         public const string TICKER_DETAILS_ENDPOINT = "v3/reference/tickers/{0}";
+        public const string STOCK_FINANCIALS_ENDPOINT = "/vX/reference/financials";
 
-        private readonly IConfiguration _configuration;
+		private readonly IConfiguration _configuration;
         private readonly PolygonBaseService _polygonBaseService;
         private readonly string? _apiKey;
         private readonly string? _baseUrl;
@@ -21,6 +22,7 @@ namespace StockResearchPlatform.Services.Polygon
             _apiKey = _configuration.GetSection("PolygonAPI")["Key"];
             _baseUrl = _configuration.GetSection("PolygonAPI")["BaseUrl"];
         }
+
 
         /// <summary>
         ///	Returns a TickerDetailsJto object that relates directly to the JSON returned by
@@ -37,14 +39,23 @@ namespace StockResearchPlatform.Services.Polygon
             {
                 tickerDetailsV3Url += $"&date={string.Format("{0:yyyy-MM-dd}", Date)}";
             }
-            tickerDetailsV3Url = string.Format(tickerDetailsV3Url, Ticker);
+            tickerDetailsV3Url = string.Format(tickerDetailsV3Url, Ticker.ToUpper());
 
             return await _polygonBaseService.GetJto<TickerDetailsV3Jto>(tickerDetailsV3Url);
         }
 
-        public async Task<StockFinancialsVX?> StockFinancialsVX(StockFinancialsReqCommand queryParams)
-        {
 
+		/// <summary>
+		/// Returns a StockFinancialsVXJto that relates directly to the JSON returned by
+		/// https://polygon.io/docs/stocks/get_vx_reference_financials
+		/// </summary>
+		/// <param name="queryParams">StockFinancialsReqCommand used to build to the query parameters used for requesting the data from Polygon</param>
+		/// <returns>An object containing all data from Polygon's API endpoint</returns>
+		public async Task<StockFinancialsVXJto?> StockFinancialsVX(StockFinancialsReqCommand queryParams)
+        {
+            var stockFinancialsVXUrl = queryParams.BuildQueryParams(_baseUrl, STOCK_FINANCIALS_ENDPOINT, _apiKey);
+
+            return await _polygonBaseService.GetJto<StockFinancialsVXJto>(stockFinancialsVXUrl);
         }
     }
 }
