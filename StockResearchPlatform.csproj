@@ -21,4 +21,12 @@
     <PackageReference Include="Hangfire.MySqlStorage" Version="2.0.3" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Remove="Services\DividendTracker\" />
+    <None Remove="Repositories\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Services\DividendTracker\" />
+    <Folder Include="Repositories\" />
+  </ItemGroup>
 </Project>
