@@ -1,3 +1,4 @@
+using System.Net.NetworkInformation;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Identity;
@@ -5,6 +6,10 @@ using Microsoft.EntityFrameworkCore;
 using StockResearchPlatform.Data;
 using StockResearchPlatform.Models;
 using StockResearchPlatform.Services;
+using Hangfire;
+using Hangfire.MySql;
+
+const string CURRENT_CON_STRING_NAME = "ProductionConnection";
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,7 +18,7 @@ builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddSingleton<WeatherForecastService>();
 
-var connectionString = builder.Configuration.GetConnectionString("ProductionConnection");
+var connectionString = builder.Configuration.GetConnectionString(CURRENT_CON_STRING_NAME);
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
     options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
@@ -27,6 +32,28 @@ builder.Services.AddSingleton<HttpService>();
 builder.Services.AddSingleton<StockSearchService>();
 builder.Services.AddTransient<PortfolioService>();
 builder.Services.AddTransient<StockService>();
+
+builder.Services.AddHangfire(configuration => configuration
+            .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
+            .UseSimpleAssemblyNameTypeSerializer()
+            .UseRecommendedSerializerSettings()
+            .UseStorage(
+                new MySqlStorage(
+                    CURRENT_CON_STRING_NAME,
+                    new MySqlStorageOptions
+                    {
+                        QueuePollInterval = TimeSpan.FromSeconds(10),
+                        JobExpirationCheckInterval = TimeSpan.FromHours(1),
+                        CountersAggregateInterval = TimeSpan.FromMinutes(5),
+                        PrepareSchemaIfNecessary = true,
+                        DashboardJobListLimit = 25000,
+                        TransactionTimeout = TimeSpan.FromMinutes(1),
+                        TablesPrefix = "Hangfire",
+                    }
+                )
+            ));
+
+builder.Services.AddHangfireServer(options => options.WorkerCount = 1);
 
 var app = builder.Build();
 
@@ -57,5 +84,7 @@ app.UseAuthorization();
 
 app.MapBlazorHub();
 app.MapFallbackToPage("/_Host");
+
+app.UseHangfireDashboard();
 
 app.Run();
