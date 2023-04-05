@@ -1,13 +1,12 @@
-using System.Net.NetworkInformation;
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using StockResearchPlatform.Data;
 using StockResearchPlatform.Models;
 using StockResearchPlatform.Services;
 using Hangfire;
 using Hangfire.MySql;
+using StockResearchPlatform.Services.DividendTracker;
+using StockResearchPlatform.Services.Polygon;
+using StockResearchPlatform.Repositories;
 
 const string CURRENT_CON_STRING_NAME = "ProductionConnection";
 
@@ -26,12 +25,21 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 builder.Services.AddDefaultIdentity<User>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
+#region Repositories
+builder.Services.AddTransient<DividendInfoRepository>();
+#endregion
 
 builder.Services.AddScoped<LoadStockDataToDatabaseService>();
 builder.Services.AddSingleton<HttpService>();
 builder.Services.AddSingleton<StockSearchService>();
 builder.Services.AddTransient<PortfolioService>();
 builder.Services.AddTransient<StockService>();
+#region PolygonServices
+builder.Services.AddTransient<PolygonBaseService>();
+builder.Services.AddTransient<PolygonTickerService>();
+builder.Services.AddTransient<PolygonDividendService>();
+#endregion
+builder.Services.AddTransient<IDividendTracker, DividendTracker>();
 
 builder.Services.AddHangfire(configuration => configuration
             .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
@@ -86,5 +94,9 @@ app.MapBlazorHub();
 app.MapFallbackToPage("/_Host");
 
 app.UseHangfireDashboard();
+
+var dividendTracker = app.Services.GetService<IDividendTracker>();
+
+RecurringJob.AddOrUpdate("DividendUpdate" ,() => dividendTracker.UpdateDividendInfoRecords(), "0 4 * * *");
 
 app.Run();

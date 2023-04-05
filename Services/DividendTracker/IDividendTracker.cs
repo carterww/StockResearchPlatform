@@ -7,7 +7,7 @@ namespace StockResearchPlatform.Services.DividendTracker
 		/// Goes through all stocks tracked by portfolios and adds/updates latest dividend
 		/// declaration to table.
 		/// </summary>
-		public void UpdateDividendInfoRecords();
+		public Task<bool> UpdateDividendInfoRecords();
 
 		/// <summary>
 		/// Adds dividends whose pay date <= today's date to all portfolio's

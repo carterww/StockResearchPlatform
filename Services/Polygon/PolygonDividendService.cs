@@ -26,5 +26,10 @@ namespace StockResearchPlatform.Services.Polygon
 
 			return await _polygonBaseService.GetJto<DividendsV3Jto>(dividendsV3Url);
 		}
+
+		public DateTime ParsePolygonDate(string polygonDate)
+		{
+			return _polygonBaseService.ParsePolygonDate(polygonDate);
+		}
 	}
 }

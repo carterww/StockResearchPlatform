@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using System.Globalization;
+using System.Text.Json;
 
 namespace StockResearchPlatform.Services.Polygon
 {
@@ -41,6 +42,11 @@ namespace StockResearchPlatform.Services.Polygon
 				Console.WriteLine(ex.ToString());
 			}
 			return default;
+		}
+
+		public DateTime ParsePolygonDate(string polygonDate)
+		{
+			return DateTime.ParseExact(polygonDate, "yyyy-MM-dd", CultureInfo.InvariantCulture);
 		}
 	}
 }
