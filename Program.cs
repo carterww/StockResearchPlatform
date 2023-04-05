@@ -8,7 +8,10 @@ using StockResearchPlatform.Services.DividendTracker;
 using StockResearchPlatform.Services.Polygon;
 using StockResearchPlatform.Repositories;
 
-const string CURRENT_CON_STRING_NAME = "ProductionConnection";
+/**********************************************************
+            CHANGE CONNECTION STRING HERE
+**********************************************************/
+const string CURRENT_CON_STRING_NAME = "CarterConnection";
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -47,7 +50,7 @@ builder.Services.AddHangfire(configuration => configuration
             .UseRecommendedSerializerSettings()
             .UseStorage(
                 new MySqlStorage(
-                    CURRENT_CON_STRING_NAME,
+					builder.Configuration.GetConnectionString(CURRENT_CON_STRING_NAME),
                     new MySqlStorageOptions
                     {
                         QueuePollInterval = TimeSpan.FromSeconds(10),
@@ -67,10 +70,12 @@ var app = builder.Build();
 
 if (app.Environment.IsStaging())
 {
-    var loadDataService = app.Services.GetService<LoadStockDataToDatabaseService>();
-    loadDataService?.LoadStocksToDatabase();
-    loadDataService?.LoadMutualFundsToDatabase();
-    return;
+	//var loadDataService = app.Services.GetService<LoadStockDataToDatabaseService>();
+	//loadDataService?.LoadStocksToDatabase();
+	//loadDataService?.LoadMutualFundsToDatabase();
+	var dividendTrackerLOL = app.Services.GetService<IDividendTracker>();
+    dividendTrackerLOL.UpdateDividendInfoRecords();
+	return;
 }
 
 // Configure the HTTP request pipeline.
@@ -95,8 +100,12 @@ app.MapFallbackToPage("/_Host");
 
 app.UseHangfireDashboard();
 
-var dividendTracker = app.Services.GetService<IDividendTracker>();
+var scope = app.Services.CreateScope();
+using (var serviceScope = app.Services.CreateScope())
+{
+	var dividendTracker = serviceScope.ServiceProvider.GetService<IDividendTracker>();
 
-RecurringJob.AddOrUpdate("DividendUpdate" ,() => dividendTracker.UpdateDividendInfoRecords(), "0 4 * * *");
+	RecurringJob.AddOrUpdate("DividendUpdate", () => dividendTracker.UpdateDividendInfoRecords(), "0 4 * * *");
+}
 
 app.Run();

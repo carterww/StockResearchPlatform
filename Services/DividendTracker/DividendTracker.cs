@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Globalization;
+using System.Runtime.InteropServices;
 using Hangfire;
 using StockResearchPlatform.Commands;
 using StockResearchPlatform.Models;
@@ -12,7 +13,6 @@ namespace StockResearchPlatform.Services.DividendTracker
 	public class DividendTracker : IDividendTracker
 	{
         private readonly PolygonDividendService _dividendService;
-        private readonly IRecurringJobManager _recurringJobManager;
         private readonly DividendInfoRepository _dividendInfoRepository;
         private readonly PortfolioService _portfolioService;
 
@@ -28,10 +28,31 @@ namespace StockResearchPlatform.Services.DividendTracker
             _portfolioService = portService;
 		}
 
-        public void AddDividendToLegder()
+        public async Task<bool> AddDividendToLegder(List<StockPortfolio> stockPortfolios)
         {
-            throw new NotImplementedException();
-        }
+			if (stockPortfolios.Count <= 0) return false;
+
+            Dictionary<string, DividendLedger> ledgers = new Dictionary<string, DividendLedger>();
+
+            // Check each stock in all user's portfolios to see if stock paid out dividend
+            for (int i = 0; i < stockPortfolios.Count; i++)
+            {
+                var currentStockPortfolio = stockPortfolios[i];
+
+                if (currentStockPortfolio == null) continue;
+
+                var userId = currentStockPortfolio.Portfolio.FK_UserId;
+                var currentLedger = ledgers[userId];
+                if (currentLedger == null)
+                {
+                    var user = _dividendInfoRepository.GetUser(userId);
+                    currentLedger = user.DividendLedgers.FirstOrDefault();
+                    // TODO Create dividend ledger for user if none there
+                }
+            }
+
+            return true;
+		}
 
         public async Task<bool> UpdateDividendInfoRecords()
         {
@@ -49,11 +70,15 @@ namespace StockResearchPlatform.Services.DividendTracker
             for (int i = 0; i < allStocksInUserPortfolios.Count; i++)
             {
                 var currentStock = allStocksInUserPortfolios[i].Stock;
+
                 if (currentStock == null) continue;
                 cmd.ticker = currentStock.Ticker.ToUpper();
-                if (previouslyRetrievedTickers.Contains(cmd.ticker)) continue;
+
+
+				if (previouslyRetrievedTickers.Contains(cmd.ticker)) continue;
 
                 var dividendJto = await _dividendService.DividendsV3(cmd);
+
                 if (dividendJto != null && MostCurrentDividendInfoExists(dividendJto) == false && dividendJto.status == "OK")
                 {
                     DividendInfo infoToAdd = new DividendInfo();
@@ -71,14 +96,24 @@ namespace StockResearchPlatform.Services.DividendTracker
                 previouslyRetrievedTickers.Add(cmd.ticker);
             }
 
-            throw new NotImplementedException();
+            bool addDividendLedger = await this.AddDividendToLegder(allStocksInUserPortfolios);
+
+            return true && addDividendLedger;
         }
 
         private bool MostCurrentDividendInfoExists(DividendsV3Jto dividendJto)
         {
-            var dividendJtoExDate = _dividendService.ParsePolygonDate(dividendJto.results[0].ex_dividend_date)
+            var dividendJtoExDate = _dividendService.ParsePolygonDate(dividendJto.results[0].ex_dividend_date);
 
 			var list = _dividendInfoRepository.Retrieve((d) => d.ExDividendDate.Year == dividendJtoExDate.Year && d.ExDividendDate.Month == dividendJtoExDate.Month && d.ExDividendDate.Day == dividendJtoExDate.Day);
+            return list.Count > 0;
+        }
+
+        private bool DividendLedgerContainsEntry(StockDividendLedger ledgerEntry)
+        {
+            var list = _dividendInfoRepository.Retrieve((d) => d.PayDate.Year == ledgerEntry.Date.Year &&
+                d.PayDate.Month == ledgerEntry.Date.Month && d.PayDate.Day == ledgerEntry.Date.Day);
+
             return list.Count > 0;
         }
     }

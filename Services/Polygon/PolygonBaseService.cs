@@ -26,9 +26,9 @@ namespace StockResearchPlatform.Services.Polygon
 				HttpResponseMessage? res = null;
 				using (var requestMessage = new HttpRequestMessage(HttpMethod.Get, endpointUrl))
 				{
-					res = await client.SendAsync(requestMessage);
+					res = client.SendAsync(requestMessage).Result;
 				}
-
+				Console.WriteLine($"Is res null");
 				if (res != null)
 				{
 					res.EnsureSuccessStatusCode();

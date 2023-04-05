@@ -13,7 +13,7 @@ namespace StockResearchPlatform.Services.DividendTracker
 		/// Adds dividends whose pay date <= today's date to all portfolio's
 		/// dividend ledgers that have that stock in their portfolio
 		/// </summary>
-		public void AddDividendToLegder();
+		public Task<bool> AddDividendToLegder();
 
 	}
 }

@@ -74,7 +74,10 @@ namespace StockResearchPlatform.Services
 
 		public List<StockPortfolio> GetStockPortfolios()
 		{
-			return _context.StockPortfolios.ToList();
+			return _context.StockPortfolios
+				.Include("Stock")
+				.Include("Portfolio")
+				.ToList();
 		}
 
 		public async Task<Portfolio?> AddStockToPortfolio(StockPortfolio stockPortfolio)
