@@ -16,5 +16,6 @@ namespace StockResearchPlatform.Models
 
         public double NumberOfShares { get; set; }
         public double CostBasis { get; set; }
+        public DateTime CreatedOn { get; set; }
     }
 }

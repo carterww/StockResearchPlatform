@@ -30,6 +30,7 @@ builder.Services.AddDefaultIdentity<User>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
 #region Repositories
 builder.Services.AddTransient<DividendInfoRepository>();
+builder.Services.AddTransient<DividendLedgerRepository>();
 #endregion
 
 builder.Services.AddScoped<LoadStockDataToDatabaseService>();

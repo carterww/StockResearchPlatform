@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Globalization;
+using System.Reflection.Metadata.Ecma335;
 using System.Runtime.InteropServices;
 using Hangfire;
 using StockResearchPlatform.Commands;
@@ -15,20 +16,23 @@ namespace StockResearchPlatform.Services.DividendTracker
         private readonly PolygonDividendService _dividendService;
         private readonly DividendInfoRepository _dividendInfoRepository;
         private readonly PortfolioService _portfolioService;
+        private readonly DividendLedgerRepository _dividendLedgerRepository;
 
 		public DividendTracker
             (
             PolygonDividendService dividendService,
             DividendInfoRepository dividendRepo,
-            PortfolioService portService
+            PortfolioService portService,
+            DividendLedgerRepository dividendLedgerRepository
             )
 		{
             _dividendService = dividendService;
             _dividendInfoRepository = dividendRepo;
             _portfolioService = portService;
+            _dividendLedgerRepository = dividendLedgerRepository;
 		}
 
-        public async Task<bool> AddDividendToLegder(List<StockPortfolio> stockPortfolios)
+        public async Task<bool> AddDividendToLedger(List<StockPortfolio> stockPortfolios)
         {
 			if (stockPortfolios.Count <= 0) return false;
 
@@ -47,7 +51,39 @@ namespace StockResearchPlatform.Services.DividendTracker
                 {
                     var user = _dividendInfoRepository.GetUser(userId);
                     currentLedger = user.DividendLedgers.FirstOrDefault();
-                    // TODO Create dividend ledger for user if none there
+                    // Make user a ledger
+                    if (currentLedger == null)
+                    {
+                        var newUserLedger = new DividendLedger();
+                        newUserLedger.FK_User = user;
+
+                        _dividendLedgerRepository.Create(newUserLedger);
+                        currentLedger = _dividendLedgerRepository.Retrieve(newUserLedger);
+                    }
+
+                    var latestDividend = _dividendInfoRepository.Retrieve(currentStockPortfolio.FK_Stock);
+                    if (latestDividend == null) continue;
+
+                    var latestLedgerEntry = currentLedger.StockDividendLedgers.Where(e => e.FK_Stock.Id == currentStockPortfolio.FK_Stock).ToList().MaxBy(e => e.Date);
+
+                    // Already added dividend
+                    if (latestLedgerEntry != null && latestDividend.PayDate.Day == latestLedgerEntry.Date.Day &&
+                        latestDividend.PayDate.Month == latestLedgerEntry.Date.Month &&
+                        latestDividend.PayDate.Year == latestLedgerEntry.Date.Year)
+                    {
+                        continue;
+                    }
+
+                    // If stock was added on or after ex dividend date, don't add it
+                    if (currentStockPortfolio.CreatedOn.Date >= latestDividend.ExDividendDate.Date) continue;
+                    var ledgerentry = new StockDividendLedger();
+                    ledgerentry.Date = latestDividend.PayDate;
+                    ledgerentry.FK_DividendLedger = currentLedger;
+                    ledgerentry.Amount = latestDividend.Cashamount * currentStockPortfolio.NumberOfShares;
+                    ledgerentry.FK_Stock = currentStockPortfolio.Stock;
+
+                    // Add entry
+                    _dividendLedgerRepository.CreateEntry(ledgerentry);
                 }
             }
 
@@ -96,7 +132,7 @@ namespace StockResearchPlatform.Services.DividendTracker
                 previouslyRetrievedTickers.Add(cmd.ticker);
             }
 
-            bool addDividendLedger = await this.AddDividendToLegder(allStocksInUserPortfolios);
+            bool addDividendLedger = await this.AddDividendToLedger(allStocksInUserPortfolios);
 
             return true && addDividendLedger;
         }

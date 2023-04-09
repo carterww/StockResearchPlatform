@@ -61,7 +61,8 @@ namespace StockResearchPlatform.Models.PageModels
                 tmpSPort.FK_Portfolio = this.Portfolio.Id;
                 tmpSPort.FK_Stock = tmpS.Id;
                 tmpSPort.NumberOfShares = this.AddStockNumOfShares.Value;
-                tmpSPort.CostBasis= this.AddStockCostBasis.Value;
+                tmpSPort.CostBasis = this.AddStockCostBasis.Value;
+                tmpSPort.CreatedOn = DateTime.UtcNow.AddHours(-4); // Eastern Time
 
                 var checkIfExistsList = this.Portfolio.StockPortfolios.Where(s => s.FK_Stock == tmpS.Id);
 
