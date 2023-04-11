@@ -17,7 +17,7 @@ builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddSingleton<WeatherForecastService>();
 
-var connectionString = builder.Configuration.GetConnectionString(CURRENT_CON_STRING_NAME);
+var connectionString = builder.Configuration.GetConnectionString("DavidConnection");
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
     options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
@@ -30,6 +30,7 @@ builder.Services.AddTransient<DividendInfoRepository>();
 #endregion
 
 builder.Services.AddScoped<LoadStockDataToDatabaseService>();
+builder.Services.AddScoped<AtomicBreakdownService>();
 builder.Services.AddSingleton<HttpService>();
 builder.Services.AddSingleton<StockSearchService>();
 builder.Services.AddTransient<PortfolioService>();
@@ -68,8 +69,10 @@ var app = builder.Build();
 if (app.Environment.IsStaging())
 {
     var loadDataService = app.Services.GetService<LoadStockDataToDatabaseService>();
-    loadDataService?.LoadStocksToDatabase();
-    loadDataService?.LoadMutualFundsToDatabase();
+    var breakdownService = app.Services.GetService<AtomicBreakdownService>();
+    await breakdownService?.BreakDownMutualFund("SPY");
+/*    loadDataService?.LoadStocksToDatabase();
+    loadDataService?.LoadMutualFundsToDatabase();*/
     return;
 }
 

@@ -76,7 +76,7 @@ namespace StockResearchPlatform.Services.DividendTracker
 
         private bool MostCurrentDividendInfoExists(DividendsV3Jto dividendJto)
         {
-            var dividendJtoExDate = _dividendService.ParsePolygonDate(dividendJto.results[0].ex_dividend_date)
+            var dividendJtoExDate = _dividendService.ParsePolygonDate(dividendJto.results[0].ex_dividend_date);
 
 			var list = _dividendInfoRepository.Retrieve((d) => d.ExDividendDate.Year == dividendJtoExDate.Year && d.ExDividendDate.Month == dividendJtoExDate.Month && d.ExDividendDate.Day == dividendJtoExDate.Day);
             return list.Count > 0;
