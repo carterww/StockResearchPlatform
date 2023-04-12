@@ -48,7 +48,7 @@ builder.Services.AddHangfire(configuration => configuration
             .UseRecommendedSerializerSettings()
             .UseStorage(
                 new MySqlStorage(
-                    CURRENT_CON_STRING_NAME,
+                    connectionString,
                     new MySqlStorageOptions
                     {
                         QueuePollInterval = TimeSpan.FromSeconds(10),
@@ -70,7 +70,7 @@ if (app.Environment.IsStaging())
 {
     var loadDataService = app.Services.GetService<LoadStockDataToDatabaseService>();
     var breakdownService = app.Services.GetService<AtomicBreakdownService>();
-    await breakdownService?.BreakDownMutualFund("SPY");
+    await breakdownService?.BreakDownInvestment("SPY");
 /*    loadDataService?.LoadStocksToDatabase();
     loadDataService?.LoadMutualFundsToDatabase();*/
     return;

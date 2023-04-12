@@ -40,11 +40,119 @@ namespace StockResearchPlatform.Services
             return null;
         }
 
+        public bool CheckedIfStockIsMutualFund(Stock stock)
+        {
+            if (stock.MutualFund == null)
+            {
+                return false;
+            } 
+            else
+            {
+                return true;
+            }
+        }
+
+        public bool StockHasMutualFund(string ticker)
+        {
+            {
+                return _context.Stocks.Any(s => s.Ticker == ticker && s.MutualFund != null);
+            }
+        }
+
+        public async Task<Dictionary<string, string>> BreakDownInvestment(string ticker)
+        {
+            if (StockHasMutualFund(ticker))
+            {
+                return await BreakDownMutualFund(ticker);
+            }
+            else
+            {
+                return await BreakDownStock(ticker);
+            }
+        }
+
+        public async Task<Dictionary<string, string>> BreakDownStock(string ticker)
+        {
+            using (HttpClient client = new HttpClient())
+            {
+                client.DefaultRequestHeaders.TryAddWithoutValidation("User-Agent", "DavidQiu david.qiu179@topper.wku.edu");
+                Stock stock = GetStock(ticker);
+                string cik = stock.CIK.ToString();
+                cik = cik.PadLeft(10, '0');
+                string json = await client.GetStringAsync($"https://data.sec.gov/submissions/CIK{cik}.json");
+                dynamic data = JsonConvert.DeserializeObject(json);
+
+                if (data.entityType == "operating")
+                {
+                    Console.WriteLine("test");
+                } 
+                else
+                {
+                    int index = 0;
+
+                    foreach (string filingForm in data.filings.recent.form)
+                    {
+                        if (filingForm == "NPORT-P")
+                        {
+                            string accNum = data.filings.recent.accessionNumber[index];
+                            accNum = accNum.Replace("-", "");
+
+                            string xmlString = await client.GetStringAsync($"https://www.sec.gov/Archives/edgar/data/{cik}/{accNum}/primary_doc.xml");
+
+                            XmlDocument doc = new XmlDocument();
+                            doc.LoadXml(xmlString);
+
+                            XmlNodeList investments = doc.GetElementsByTagName("invstOrSec");
+                            Dictionary<string, string> dict = new Dictionary<string, string>();
+
+                            foreach (XmlNode investment in investments)
+                            {
+                                string name = investment["name"].InnerText;
+                                string pctVal = investment["pctVal"].InnerText;
+                                try
+                                {
+                                    if (dict.ContainsKey(name))
+                                    {
+                                        double currentValue = double.Parse(dict[name]);
+                                        double newValue = currentValue + double.Parse(pctVal);
+                                        dict[name] = newValue.ToString();
+                                    }
+                                    else
+                                    {
+                                        dict.Add(name, pctVal);
+                                    }
+                                }
+                                catch { Console.WriteLine(name + ": " + pctVal); }
+                            }
+                            foreach (KeyValuePair<string, string> kvp in dict)
+                            {
+                                Console.WriteLine("{0}: {1}", kvp.Key, kvp.Value);
+                            }
+                            break;
+                        } 
+                        else
+                        {
+                            index++;
+                        }
+                    }
+                }
+                /*foreach (string formType in data.entityType)
+                {
+                    if (filingForm == "NPORT-P")
+                    {
+
+                    }
+                }*/
+            }
+            return null;
+        }
+
         public async Task<Dictionary<string, string>> BreakDownMutualFund(string ticker)
         {
             using (HttpClient client = new HttpClient())
             {
                 client.DefaultRequestHeaders.TryAddWithoutValidation("User-Agent", "DavidQiu david.qiu179@topper.wku.edu");
+
                 MutualFundClass mutualFund = GetMutualFund(ticker);
                 string cik = mutualFund.Stock.CIK.ToString();
                 cik = cik.PadLeft(10, '0');
@@ -74,6 +182,7 @@ namespace StockResearchPlatform.Services
 
                             XmlNodeList investments = doc.GetElementsByTagName("invstOrSec");
                             Dictionary<string, string> dict = new Dictionary<string, string>();
+
                             foreach (XmlNode investment in investments)
                             {
                                 string name = investment["name"].InnerText;
@@ -82,7 +191,7 @@ namespace StockResearchPlatform.Services
                                 {
                                     dict.Add(name, pctVal);
                                 }
-                                catch { }
+                                catch { Console.WriteLine(name + ": " + pctVal); }
                             }
                             Console.WriteLine(dict);
                             break;
