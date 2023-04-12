@@ -11,7 +11,7 @@ using StockResearchPlatform.Data;
 namespace StockResearchPlatform.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230327012159_Initial")]
+    [Migration("20230405161908_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -154,6 +154,40 @@ namespace StockResearchPlatform.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("StockResearchPlatform.Models.DividendInfo", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<double>("Cashamount")
+                        .HasColumnType("double");
+
+                    b.Property<DateTime>("DeclarationDate")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<DateTime>("ExDividendDate")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<Guid>("FK_Stock")
+                        .HasColumnType("char(36)");
+
+                    b.Property<DateTime>("PayDate")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<DateTime>("RecordDate")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<DateTime>("UpdatedOn")
+                        .HasColumnType("datetime(6)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FK_Stock");
+
+                    b.ToTable("DividendInfo");
+                });
+
             modelBuilder.Entity("StockResearchPlatform.Models.DividendLedger", b =>
                 {
                     b.Property<int>("Id")
@@ -198,6 +232,10 @@ namespace StockResearchPlatform.Migrations
                     b.Property<string>("FK_UserId")
                         .IsRequired()
                         .HasColumnType("varchar(255)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("longtext");
 
                     b.HasKey("Id");
 
@@ -287,8 +325,8 @@ namespace StockResearchPlatform.Migrations
                     b.Property<double>("CostBasis")
                         .HasColumnType("double");
 
-                    b.Property<int>("NumberOfShares")
-                        .HasColumnType("int");
+                    b.Property<double>("NumberOfShares")
+                        .HasColumnType("double");
 
                     b.HasKey("FK_Stock", "FK_Portfolio");
 
@@ -300,7 +338,6 @@ namespace StockResearchPlatform.Migrations
             modelBuilder.Entity("StockResearchPlatform.Models.User", b =>
                 {
                     b.Property<string>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("varchar(255)");
 
                     b.Property<int>("AccessFailedCount")
@@ -311,7 +348,6 @@ namespace StockResearchPlatform.Migrations
                         .HasColumnType("longtext");
 
                     b.Property<string>("Email")
-                        .IsRequired()
                         .HasMaxLength(256)
                         .HasColumnType("varchar(256)");
 
@@ -331,10 +367,6 @@ namespace StockResearchPlatform.Migrations
                     b.Property<string>("NormalizedUserName")
                         .HasMaxLength(256)
                         .HasColumnType("varchar(256)");
-
-                    b.Property<string>("Password")
-                        .IsRequired()
-                        .HasColumnType("longtext");
 
                     b.Property<string>("PasswordHash")
                         .HasColumnType("longtext");
@@ -416,6 +448,17 @@ namespace StockResearchPlatform.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("StockResearchPlatform.Models.DividendInfo", b =>
+                {
+                    b.HasOne("StockResearchPlatform.Models.Stock", "Stock")
+                        .WithMany()
+                        .HasForeignKey("FK_Stock")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Stock");
                 });
 
             modelBuilder.Entity("StockResearchPlatform.Models.DividendLedger", b =>

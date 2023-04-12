@@ -1,4 +1,5 @@
-﻿using System;
+﻿using StockResearchPlatform.Models;
+using System;
 namespace StockResearchPlatform.Services.DividendTracker
 {
 	public interface IDividendTracker
@@ -13,7 +14,7 @@ namespace StockResearchPlatform.Services.DividendTracker
 		/// Adds dividends whose pay date <= today's date to all portfolio's
 		/// dividend ledgers that have that stock in their portfolio
 		/// </summary>
-		public void AddDividendToLegder();
+		public Task<bool> AddDividendToLedger(List<StockPortfolio> stockPortfolios);
 
 	}
 }

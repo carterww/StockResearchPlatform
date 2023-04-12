@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Globalization;
+using System.Reflection.Metadata.Ecma335;
+using System.Runtime.InteropServices;
 using Hangfire;
 using StockResearchPlatform.Commands;
 using StockResearchPlatform.Models;
@@ -12,26 +14,81 @@ namespace StockResearchPlatform.Services.DividendTracker
 	public class DividendTracker : IDividendTracker
 	{
         private readonly PolygonDividendService _dividendService;
-        private readonly IRecurringJobManager _recurringJobManager;
         private readonly DividendInfoRepository _dividendInfoRepository;
         private readonly PortfolioService _portfolioService;
+        private readonly DividendLedgerRepository _dividendLedgerRepository;
 
 		public DividendTracker
             (
             PolygonDividendService dividendService,
             DividendInfoRepository dividendRepo,
-            PortfolioService portService
+            PortfolioService portService,
+            DividendLedgerRepository dividendLedgerRepository
             )
 		{
             _dividendService = dividendService;
             _dividendInfoRepository = dividendRepo;
             _portfolioService = portService;
+            _dividendLedgerRepository = dividendLedgerRepository;
 		}
 
-        public void AddDividendToLegder()
+        public async Task<bool> AddDividendToLedger(List<StockPortfolio> stockPortfolios)
         {
-            throw new NotImplementedException();
-        }
+			if (stockPortfolios.Count <= 0) return false;
+
+            Dictionary<string, DividendLedger> ledgers = new Dictionary<string, DividendLedger>();
+
+            // Check each stock in all user's portfolios to see if stock paid out dividend
+            for (int i = 0; i < stockPortfolios.Count; i++)
+            {
+                var currentStockPortfolio = stockPortfolios[i];
+
+                if (currentStockPortfolio == null) continue;
+
+                var userId = currentStockPortfolio.Portfolio.FK_UserId;
+                var currentLedger = ledgers[userId];
+                if (currentLedger == null)
+                {
+                    var user = _dividendInfoRepository.GetUser(userId);
+                    currentLedger = user.DividendLedgers.FirstOrDefault();
+                    // Make user a ledger
+                    if (currentLedger == null)
+                    {
+                        var newUserLedger = new DividendLedger();
+                        newUserLedger.FK_User = user;
+
+                        _dividendLedgerRepository.Create(newUserLedger);
+                        currentLedger = _dividendLedgerRepository.Retrieve(newUserLedger);
+                    }
+
+                    var latestDividend = _dividendInfoRepository.Retrieve(currentStockPortfolio.FK_Stock);
+                    if (latestDividend == null) continue;
+
+                    var latestLedgerEntry = currentLedger.StockDividendLedgers.Where(e => e.FK_Stock.Id == currentStockPortfolio.FK_Stock).ToList().MaxBy(e => e.Date);
+
+                    // Already added dividend
+                    if (latestLedgerEntry != null && latestDividend.PayDate.Day == latestLedgerEntry.Date.Day &&
+                        latestDividend.PayDate.Month == latestLedgerEntry.Date.Month &&
+                        latestDividend.PayDate.Year == latestLedgerEntry.Date.Year)
+                    {
+                        continue;
+                    }
+
+                    // If stock was added on or after ex dividend date, don't add it
+                    if (currentStockPortfolio.CreatedOn.Date >= latestDividend.ExDividendDate.Date) continue;
+                    var ledgerentry = new StockDividendLedger();
+                    ledgerentry.Date = latestDividend.PayDate;
+                    ledgerentry.FK_DividendLedger = currentLedger;
+                    ledgerentry.Amount = latestDividend.Cashamount * currentStockPortfolio.NumberOfShares;
+                    ledgerentry.FK_Stock = currentStockPortfolio.Stock;
+
+                    // Add entry
+                    _dividendLedgerRepository.CreateEntry(ledgerentry);
+                }
+            }
+
+            return true;
+		}
 
         public async Task<bool> UpdateDividendInfoRecords()
         {
@@ -49,11 +106,15 @@ namespace StockResearchPlatform.Services.DividendTracker
             for (int i = 0; i < allStocksInUserPortfolios.Count; i++)
             {
                 var currentStock = allStocksInUserPortfolios[i].Stock;
+
                 if (currentStock == null) continue;
                 cmd.ticker = currentStock.Ticker.ToUpper();
-                if (previouslyRetrievedTickers.Contains(cmd.ticker)) continue;
+
+
+				if (previouslyRetrievedTickers.Contains(cmd.ticker)) continue;
 
                 var dividendJto = await _dividendService.DividendsV3(cmd);
+
                 if (dividendJto != null && MostCurrentDividendInfoExists(dividendJto) == false && dividendJto.status == "OK")
                 {
                     DividendInfo infoToAdd = new DividendInfo();
@@ -71,7 +132,9 @@ namespace StockResearchPlatform.Services.DividendTracker
                 previouslyRetrievedTickers.Add(cmd.ticker);
             }
 
-            throw new NotImplementedException();
+            bool addDividendLedger = await this.AddDividendToLedger(allStocksInUserPortfolios);
+
+            return true && addDividendLedger;
         }
 
         private bool MostCurrentDividendInfoExists(DividendsV3Jto dividendJto)
@@ -79,6 +142,14 @@ namespace StockResearchPlatform.Services.DividendTracker
             var dividendJtoExDate = _dividendService.ParsePolygonDate(dividendJto.results[0].ex_dividend_date);
 
 			var list = _dividendInfoRepository.Retrieve((d) => d.ExDividendDate.Year == dividendJtoExDate.Year && d.ExDividendDate.Month == dividendJtoExDate.Month && d.ExDividendDate.Day == dividendJtoExDate.Day);
+            return list.Count > 0;
+        }
+
+        private bool DividendLedgerContainsEntry(StockDividendLedger ledgerEntry)
+        {
+            var list = _dividendInfoRepository.Retrieve((d) => d.PayDate.Year == ledgerEntry.Date.Year &&
+                d.PayDate.Month == ledgerEntry.Date.Month && d.PayDate.Day == ledgerEntry.Date.Day);
+
             return list.Count > 0;
         }
     }

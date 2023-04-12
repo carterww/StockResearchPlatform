@@ -25,6 +25,7 @@ namespace StockResearchPlatform.Repositories
 		public virtual void Create(T item)
 		{
 			_context.Set<T>().Add(item);
+
             this.Save();
         }
 
