@@ -59,7 +59,7 @@ builder.Services.AddHangfire(configuration => configuration
                         CountersAggregateInterval = TimeSpan.FromMinutes(5),
                         PrepareSchemaIfNecessary = true,
                         DashboardJobListLimit = 25000,
-                        TransactionTimeout = TimeSpan.FromMinutes(1),
+                        TransactionTimeout = TimeSpan.FromMinutes(5),
                         TablesPrefix = "Hangfire",
                     }
                 )
@@ -71,11 +71,9 @@ var app = builder.Build();
 
 if (app.Environment.IsStaging())
 {
-	//var loadDataService = app.Services.GetService<LoadStockDataToDatabaseService>();
-	//loadDataService?.LoadStocksToDatabase();
-	//loadDataService?.LoadMutualFundsToDatabase();
-	var dividendTrackerLOL = app.Services.GetService<IDividendTracker>();
-    dividendTrackerLOL.UpdateDividendInfoRecords();
+	var loadDataService = app.Services.GetService<LoadStockDataToDatabaseService>();
+	loadDataService?.LoadStocksToDatabase();
+	loadDataService?.LoadMutualFundsToDatabase();
 	return;
 }
 

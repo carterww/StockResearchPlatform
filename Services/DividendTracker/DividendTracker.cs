@@ -46,8 +46,8 @@ namespace StockResearchPlatform.Services.DividendTracker
                 if (currentStockPortfolio == null) continue;
 
                 var userId = currentStockPortfolio.Portfolio.FK_UserId;
-                var currentLedger = ledgers[userId];
-                if (currentLedger == null)
+                DividendLedger currentLedger;
+                if (ledgers.TryGetValue(userId, out currentLedger) == false)
                 {
                     var user = _dividendInfoRepository.GetUser(userId);
                     currentLedger = user.DividendLedgers.FirstOrDefault();
@@ -55,7 +55,7 @@ namespace StockResearchPlatform.Services.DividendTracker
                     if (currentLedger == null)
                     {
                         var newUserLedger = new DividendLedger();
-                        newUserLedger.FK_User = user;
+                        newUserLedger.FK_UserId = userId;
 
                         _dividendLedgerRepository.Create(newUserLedger);
                         currentLedger = _dividendLedgerRepository.Retrieve(newUserLedger);
@@ -63,9 +63,11 @@ namespace StockResearchPlatform.Services.DividendTracker
 
                     var latestDividend = _dividendInfoRepository.Retrieve(currentStockPortfolio.FK_Stock);
                     if (latestDividend == null) continue;
-
-                    var latestLedgerEntry = currentLedger.StockDividendLedgers.Where(e => e.FK_Stock.Id == currentStockPortfolio.FK_Stock).ToList().MaxBy(e => e.Date);
-
+                    if (currentLedger == null) continue;
+                    StockDividendLedger latestLedgerEntry = null;
+                    
+                    latestLedgerEntry = _dividendLedgerRepository.RetrieveEntries(currentLedger).MaxBy(e => e.Date);
+  
                     // Already added dividend
                     if (latestLedgerEntry != null && latestDividend.PayDate.Day == latestLedgerEntry.Date.Day &&
                         latestDividend.PayDate.Month == latestLedgerEntry.Date.Month &&
@@ -74,8 +76,12 @@ namespace StockResearchPlatform.Services.DividendTracker
                         continue;
                     }
 
-                    // If stock was added on or after ex dividend date, don't add it
-                    if (currentStockPortfolio.CreatedOn.Date >= latestDividend.ExDividendDate.Date) continue;
+                    if (currentStockPortfolio.CreatedOn == null)
+                    {
+                        currentStockPortfolio.CreatedOn = DateTime.UtcNow.AddHours(-4).AddDays(-5);
+                    }
+					// If stock was added on or after ex dividend date, don't add it
+					if (currentStockPortfolio.CreatedOn.Date >= latestDividend.ExDividendDate.Date) continue;
                     var ledgerentry = new StockDividendLedger();
                     ledgerentry.Date = latestDividend.PayDate;
                     ledgerentry.FK_DividendLedger = currentLedger;
@@ -83,7 +89,7 @@ namespace StockResearchPlatform.Services.DividendTracker
                     ledgerentry.FK_Stock = currentStockPortfolio.Stock;
 
                     // Add entry
-                    _dividendLedgerRepository.CreateEntry(ledgerentry);
+                    _dividendLedgerRepository.CreateEntry(ledgerentry, currentStockPortfolio);
                 }
             }
 

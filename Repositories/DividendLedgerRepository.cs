@@ -13,14 +13,25 @@ namespace StockResearchPlatform.Repositories
         public override DividendLedger? Retrieve(DividendLedger item)
         {
             return _context.DividendLedgers
-                .Where(d => d.Id == item.Id)
-                .Include("StockDividendLedgers")
+				.Include(d => d.StockDividendLedgers)
+				.Where(d => d.Id == item.Id)
                 .FirstOrDefault();
         }
 
-        public void CreateEntry(StockDividendLedger entry)
+        public ICollection<StockDividendLedger>? RetrieveEntries(DividendLedger item)
         {
+            return _context.StockDividendLedgers
+                .Where(s => s.FK_DividendLedger.Id == item.Id)
+                .ToList();
+        }
+
+        public void CreateEntry(StockDividendLedger entry, StockPortfolio s)
+        {
+            _context.Attach(entry.FK_DividendLedger.FK_User);
+            _context.Attach(s);
+            _context.Attach(s.Portfolio);
             _context.StockDividendLedgers.Add(entry);
+            this.Save();
         }
     }
 }
