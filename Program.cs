@@ -35,15 +35,17 @@ builder.Services.AddTransient<DividendLedgerRepository>();
 
 builder.Services.AddScoped<LoadStockDataToDatabaseService>();
 builder.Services.AddSingleton<HttpService>();
+builder.Services.AddHttpContextAccessor();
 builder.Services.AddSingleton<StockSearchService>();
 builder.Services.AddTransient<PortfolioService>();
 builder.Services.AddTransient<StockService>();
+
 #region PolygonServices
 builder.Services.AddTransient<PolygonBaseService>();
 builder.Services.AddTransient<PolygonTickerService>();
 builder.Services.AddTransient<PolygonDividendService>();
-#endregion
 builder.Services.AddTransient<IDividendTracker, DividendTracker>();
+#endregion
 
 builder.Services.AddHangfire(configuration => configuration
             .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)

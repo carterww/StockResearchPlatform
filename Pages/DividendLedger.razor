@@ -1,0 +1,57 @@
+﻿@page "/dividendledger"
+@attribute [Authorize]
+
+<PageTitle>Dividend Ledger</PageTitle>
+
+@using Microsoft.AspNetCore.Http
+@using System.Security.Claims;
+@using StockResearchPlatform.Repositories;
+@using StockResearchPlatform.Services;
+@inject IHttpContextAccessor httpContextAccessor
+@inject DividendLedgerRepository _dividendLedgerRepository
+@inject DividendInfoRepository _dividendInfoRepository
+@inject PortfolioService _portfolioService
+
+<h3>Dividend Ledger</h3>
+@foreach (var item in (LedgerEntries ?? new List<Models.StockDividendLedger>()))
+{
+	<p>@item.FK_Stock.Ticker</p>
+	<p>@item.Amount</p>
+}
+
+@code {
+	public Guid Uid;
+	public DividendDisplayEnum CurrentDisplay = DividendDisplayEnum.ledger;
+	public Models.DividendLedger? Ledger = null;
+	public List<Models.StockDividendLedger> LedgerEntries;
+
+	public enum DividendDisplayEnum
+	{
+		ledger,
+		upcoming
+	}
+
+	protected override async Task OnInitializedAsync()
+	{
+		var userId = httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+		Uid = new Guid(userId);
+		GetDividendLedger();
+	}
+
+	private void GetDividendLedger()
+	{
+
+		Ledger = _dividendLedgerRepository.Retrieve(w => w.FK_UserId == Uid.ToString()).FirstOrDefault();
+		if (Ledger != null)
+		{
+			var entryICol = _dividendLedgerRepository.RetrieveEntries(Ledger);
+			if (entryICol != null) LedgerEntries = entryICol.ToList();
+			Console.WriteLine($"{LedgerEntries.Count}");
+		}
+	}
+
+	private void GetUpcomingDividends()
+	{
+		
+	}
+}
