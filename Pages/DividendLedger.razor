@@ -13,17 +13,78 @@
 @inject PortfolioService _portfolioService
 
 <h3>Dividend Ledger</h3>
-@foreach (var item in (LedgerEntries ?? new List<Models.StockDividendLedger>()))
+<ul id="table-section-selector">
+	<li>
+		<a @onclick="() => ChangeSection(DividendDisplayEnum.ledger)">Dividend Ledger</a>
+	</li>
+	<li>
+		<a @onclick="() => ChangeSection(DividendDisplayEnum.upcoming)">Upcoming Dividends</a>
+	</li>
+</ul>
+
+@if (this.CurrentDisplay == DividendDisplayEnum.ledger)
 {
-	<p>@item.FK_Stock.Ticker</p>
-	<p>@item.Amount</p>
+	<tr>
+		<th>Ticker</th>
+		<th>Pay Date</th>
+		<th>Amount</th>
+		<th></th>
+		<th></th>
+	</tr>
+	double totalDividendsPaid = 0.0;
+	@foreach (var item in (LedgerEntries ?? new List<Models.StockDividendLedger>()))
+	{
+			totalDividendsPaid += item.Amount;
+			<tr>
+				<td>@item.FK_Stock.Ticker.ToUpper()</td>
+				<td>@item.Date.ToString("dd MMMM yyyy")</td>
+				<td>@String.Format("{0:C}" ,item.Amount)</td>
+				<td><a role="button">Edit</a></td>
+				<td><a role="button" @onclick="() => this.RemoveLedgerEntry(item)">Remove</a></td>
+			</tr>
+	}
+
+	<tr>
+		<td></td>
+		<td></td>
+		<td>@String.Format("{0:C}", totalDividendsPaid)</td>
+		<td></td>
+		<td></td>
+	</tr>
 }
+else
+{
+	<tr>
+		<th>Ticker</th>
+		<th>Declaration Date</th>
+		<th>Ex Dividend Date</th>
+		<th>Pay Date</th>
+		<th>Amount Per Share</th>
+	</tr>
+
+	@foreach (var item in (UpcomingDividends ?? new List<Models.DividendInfo>()))
+	{
+		<tr>
+			<td>@item.Stock.Ticker.ToUpper()</td>
+			<td>@item.DeclarationDate.ToString("dd MMMM yyyy")</td>
+			<td>@item.ExDividendDate.ToString("dd MMMM yyyy")</td>
+			<td>@item.PayDate.ToString("dd MMMM yyyy")</td>
+			<td>@String.Format("{0:C}" ,item.Cashamount)</td>
+		</tr>
+	}
+}
+
+<link rel="stylesheet" href="css/portfolio-display.css" />
+<link rel="stylesheet" href="css/quote.css" />
 
 @code {
 	public Guid Uid;
 	public DividendDisplayEnum CurrentDisplay = DividendDisplayEnum.ledger;
 	public Models.DividendLedger? Ledger = null;
+
+	// Lists to display
 	public List<Models.StockDividendLedger> LedgerEntries;
+	public List<Models.DividendInfo> UpcomingDividends;
 
 	public enum DividendDisplayEnum
 	{
@@ -31,11 +92,22 @@
 		upcoming
 	}
 
+	public void ChangeSection(DividendDisplayEnum newDisplay)
+	{
+		this.CurrentDisplay = newDisplay;
+	}
+
+	public void RemoveLedgerEntry(Models.StockDividendLedger entry)
+	{
+
+	}
+
 	protected override async Task OnInitializedAsync()
 	{
 		var userId = httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
 		Uid = new Guid(userId);
 		GetDividendLedger();
+		GetUpcomingDividends(userId);
 	}
 
 	private void GetDividendLedger()
@@ -50,8 +122,19 @@
 		}
 	}
 
-	private void GetUpcomingDividends()
+	private async void GetUpcomingDividends(string userId)
 	{
-		
+		// Dictionary where each stock the user owns only appears once
+		var stockPortfolios = await _portfolioService.GetStockPortfolios(userId);
+
+		this.UpcomingDividends = new List<Models.DividendInfo>(stockPortfolios.Count);
+		foreach (var item in stockPortfolios)
+		{
+			Models.DividendInfo info = _dividendInfoRepository.Retrieve(item.Key);
+			if (info != null)
+			{
+				this.UpcomingDividends.Add(info);
+			}
+		}
 	}
 }

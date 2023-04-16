@@ -80,6 +80,30 @@ namespace StockResearchPlatform.Services
 				.ToList();
 		}
 
+		public async Task<Dictionary<Guid, StockPortfolio>> GetStockPortfolios(string userId)
+		{
+			var usersPortfolios = _context.Portfolios
+				.Where(p => p.FK_UserId == userId)
+				.Include("StockPortfolios")
+				.ToList();
+
+			Dictionary<Guid, StockPortfolio> stocks = new Dictionary<Guid, StockPortfolio>();
+			foreach (var portfolio in usersPortfolios)
+			{
+				if (portfolio != null)
+				{
+					var dic = await this.GetStocksFromPortfolio(portfolio);
+					foreach(var item in dic)
+					{
+						stocks.TryAdd(item.Key.Id, item.Value);
+					}
+				}
+			}
+
+			return stocks;
+
+		}
+
 		public async Task<Portfolio?> AddStockToPortfolio(StockPortfolio stockPortfolio)
 		{
 			await _context.StockPortfolios.AddAsync(stockPortfolio);

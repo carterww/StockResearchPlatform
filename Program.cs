@@ -24,7 +24,7 @@ var connectionString = builder.Configuration.GetConnectionString(CURRENT_CON_STR
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
     options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
-}, ServiceLifetime.Transient);
+}, ServiceLifetime.Scoped);
 
 builder.Services.AddDefaultIdentity<User>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
@@ -76,6 +76,11 @@ if (app.Environment.IsStaging())
 	var loadDataService = app.Services.GetService<LoadStockDataToDatabaseService>();
 	loadDataService?.LoadStocksToDatabase();
 	loadDataService?.LoadMutualFundsToDatabase();
+	//using (var serviceScope = app.Services.CreateScope())
+	//{
+	//	var dividendTracker = serviceScope.ServiceProvider.GetService<IDividendTracker>();
+	//	dividendTracker.UpdateDividendInfoRecords();
+	//}
 	return;
 }
 
