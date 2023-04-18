@@ -34,6 +34,7 @@ builder.Services.AddTransient<DividendLedgerRepository>();
 #endregion
 
 builder.Services.AddScoped<LoadStockDataToDatabaseService>();
+
 builder.Services.AddScoped<AtomicBreakdownService>();
 builder.Services.AddSingleton<HttpService>();
 builder.Services.AddSingleton<StockSearchService>();
@@ -73,9 +74,9 @@ var app = builder.Build();
 if (app.Environment.IsStaging())
 {
 	var loadDataService = app.Services.GetService<LoadStockDataToDatabaseService>();
-	loadDataService?.LoadStocksToDatabase();
-	loadDataService?.LoadMutualFundsToDatabase();
-	return;
+    var breakdownService = app.Services.GetService<AtomicBreakdownService>();
+    await breakdownService?.BreakDownInvestment("SPY");
+    return;
 }
 
 // Configure the HTTP request pipeline.
