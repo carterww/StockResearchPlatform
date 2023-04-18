@@ -10,6 +10,8 @@ namespace StockResearchPlatform.Services.Polygon
         public const string TICKER_DETAILS_ENDPOINT = "v3/reference/tickers/{0}";
         public const string STOCK_FINANCIALS_ENDPOINT = "vX/reference/financials";
         public const string TICKERS_ENDPOINT = "v3/reference/tickers";
+        public const string PREVIOUS_CLOSE_ENDPOINT = "v2/aggs/ticker/{0}/prev";
+        public const string DAILY_OPEN_CLSE_ENDPOINT = "v1/open-close/{0}/{1}";
 
 		private readonly IConfiguration _configuration;
         private readonly PolygonBaseService _polygonBaseService;
@@ -71,5 +73,31 @@ namespace StockResearchPlatform.Services.Polygon
 
             return await _polygonBaseService.GetJto<TickerV3Jto>(tickersV3Url);
         }
+
+		/// <summary>
+		/// Returns a PreviousCloseJto that relates directly to the JSON returned by
+		/// https://polygon.io/docs/stocks/get_v2_aggs_ticker__stocksticker__prev
+		/// </summary>
+		/// <param name="queryParams">PreviousCloseReqCommand used to build the query parameters used for requesting</param>
+		/// <returns>An object containing all data from Polygon's API endpoint</returns>
+		public async Task<PreviousCloseJto?> PreviousCloseV2(PreviousCloseReqCommand queryParams)
+        {
+            var previousCloseV2Url = queryParams.BuildQueryParams(_baseUrl, PREVIOUS_CLOSE_ENDPOINT, _apiKey);
+
+            return await _polygonBaseService.GetJto<PreviousCloseJto>(previousCloseV2Url);
+        }
+
+		/// <summary>
+		/// Returns a DailyOpenCloseJto that relates diretly to the JSON returned by
+		/// https://polygon.io/docs/stocks/get_v1_open-close__stocksticker___date
+		/// </summary>
+		/// <param name="queryParams">DailyOpenCloseReqCommand used to build the query parameters used for requesting</param>
+		/// <returns>An object containing all data from Polygon's API endpoint</returns>
+		public async Task<DailyOpenCloseJto?> DailyOpenCloseV1(DailyOpenCloseReqCommand queryParams)
+        {
+            var dailyOpenCloseV1Url = queryParams.BuildQueryParams(_baseUrl, DAILY_OPEN_CLSE_ENDPOINT, _apiKey);
+
+			return await _polygonBaseService.GetJto<DailyOpenCloseJto>(dailyOpenCloseV1Url);
+		}
     }
 }
