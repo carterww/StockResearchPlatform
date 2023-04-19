@@ -51,8 +51,8 @@
 <button type="button" hidden="@this.PortfolioDisplayModel.HideNewStock" @onclick=submitNewStock>Add</button>
 <button type="button" hidden="@this.PortfolioDisplayModel.HideNewStock" @onclick=cancelNewStock>Cancel</button>
 <button @onclick=createNewStock hidden="@(this.PortfolioDisplayModel.HideNewStock == false)">Add Stock</button>
-<button @onclick=atomicBreakDown hidden="@(this.PortfolioDisplayModel.HideNewStock == false)">Atomic Breakdown</button>
-@if (IsAtomicBreakdownCalled)
+<button @onclick="async () => await atomicBreakDown()" hidden="@(this.PortfolioDisplayModel.HideNewStock == false)">Atomic Breakdown</button>
+@if (IsAtomicBreakdownCalled == true)
 {
     <h2>Atomic Breakdown</h2>
     <table>
@@ -63,23 +63,20 @@
             </tr>
         </thead>
         <tbody>
-            @{
-                int counter = 0;
-                foreach (var entry in BreakdownData)
-                {
-                    if (counter >= 20)
-                    {
-                        break;
-                    }
-                    <tr>
-                        <td>@entry.Key</td>
-                        <td>@String.Format("{0:C}", entry.Value)</td>
-                    </tr>
-                    counter++;
-                }
+            @foreach (var entry in BreakdownData)
+            {
+                <tr>
+                    <td>@entry.Key</td>
+                    <td>@String.Format("{0:C}", entry.Value)</td>
+                </tr>
             }
         </tbody>
     </table>
+}
+
+else
+{
+    <h2>Atomic breakdown has not been called yet.</h2>
 }
 
 
@@ -117,18 +114,21 @@
         this.PortfolioDisplayModel.ShowNewStock();
     }
 
-    public async void atomicBreakDown()
-    {   
-        BreakdownData.Clear();
-        BreakdownDataByPercent.Clear();
-        BreakdownData = await atomicBreakdownService.AtomicBreakdown(this.PortfolioDisplayModel.Stocks);
-        BreakdownDataByPercent = AtomicBreakdownService.ConvertBreakDownToPercentage(BreakdownData);
-        foreach (var entry in BreakdownDataByPercent)
-        {
-            Console.WriteLine($"{entry.Key}: {entry.Value}");
-        }
-        IsAtomicBreakdownCalled = true;
+    public async Task atomicBreakDown()
+{
+    var breakdown = await atomicBreakdownService.AtomicBreakdown(this.PortfolioDisplayModel.Stocks);
+    BreakdownData.Clear();
+    foreach (var entry in breakdown)
+    {
+        BreakdownData[entry.Key] = entry.Value;
     }
+    
+    // Set the boolean variable to true
+    IsAtomicBreakdownCalled = true;
+
+    // Force a re-render of the component
+    StateHasChanged();
+}
 
     public async void submitNewStock()
     {

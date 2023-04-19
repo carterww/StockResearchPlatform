@@ -133,7 +133,7 @@ namespace StockResearchPlatform.Services
 
                             XmlNodeList investments = doc.GetElementsByTagName("invstOrSec");
 
-                            int maxConcurrency = 6;
+                            int maxConcurrency = 8;
                             SemaphoreSlim semaphore = new SemaphoreSlim(maxConcurrency);
 
                             List<Task> tasks = new List<Task>();
@@ -193,6 +193,7 @@ namespace StockResearchPlatform.Services
             ConcurrentDictionary<string, string> dict = new ConcurrentDictionary<string, string>();
             using (HttpClient client = new HttpClient())
             {
+                client.Timeout = TimeSpan.FromSeconds(300);
                 client.DefaultRequestHeaders.TryAddWithoutValidation("User-Agent", "DavidQiu david.qiu179@topper.wku.edu");
 
                 MutualFundClass mutualFund = GetMutualFund(ticker);
@@ -215,7 +216,6 @@ namespace StockResearchPlatform.Services
 
                         if (GetSeriesId(cik, accNum, client).Result == seriesId)
                         {
-                            Console.WriteLine(accNum);
                             string xmlString = await client.GetStringAsync($"https://www.sec.gov/Archives/edgar/data/{cik}/{accNum}/primary_doc.xml");
                             
 
@@ -224,7 +224,7 @@ namespace StockResearchPlatform.Services
 
                             XmlNodeList investments = doc.GetElementsByTagName("invstOrSec");
 
-                            int maxConcurrency = 6;
+                            int maxConcurrency = 8;
                             SemaphoreSlim semaphore = new SemaphoreSlim(maxConcurrency, maxConcurrency);
 
                             List<Task> tasks = new List<Task>();
