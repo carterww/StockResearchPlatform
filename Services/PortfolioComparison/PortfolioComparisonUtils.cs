@@ -24,5 +24,10 @@
 			return ysum / xsum;
 		}
 
+		public static double CalculateAplha(double portfolioReturn, double riskFreeReturn, double beta, double marketReturn)
+		{
+			return portfolioReturn - riskFreeReturn - (beta * (marketReturn - riskFreeReturn));
+		}
+
 	}
 }

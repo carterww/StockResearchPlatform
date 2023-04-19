@@ -1,4 +1,5 @@
 ﻿using StockResearchPlatform.Commands;
+using StockResearchPlatform.Models;
 using StockResearchPlatform.Models.PolygonModels;
 using StockResearchPlatform.Models.PortfolioDtos;
 using StockResearchPlatform.Services.Polygon;
@@ -9,12 +10,14 @@ namespace StockResearchPlatform.Services.PortfolioComparison
 	using Utils = PortfolioComparisonUtils;
 	public class PortfolioComparisonService
 	{
+		public const double RISK_FREE_RATE_OF_RETURN = 0.036;
+
 		private readonly PolygonTickerService _polygonTickerService;
 		private readonly PortfolioService _portfolioService;
 
 		public double[]? BasePriceHistory { get; set; } = null;
 		public double[]? BasePriceHistoryDailyChanges { get; set; } = null;
-		public double? BaseAverageDailyChange { get; set; } = null;
+		public double BaseAverageDailyChange { get; set; } = 0;
 
 		public PortfolioComparisonService (
 			PolygonTickerService polygonTickerService,
@@ -33,7 +36,7 @@ namespace StockResearchPlatform.Services.PortfolioComparison
 		/// <param name="numberOfMonths"></param>
 		/// <returns></returns>
 		/// <exception cref="Exception"></exception>
-		public async Task<PortfolioComparisonDto> ComparePortfoliosV2(Models.Portfolio firstPortfolio, Models.Portfolio secondPortfolio, int numberOfMonths, string baseTicker = "SPY")
+		public async Task<PortfolioComparisonDto> ComparePortfoliosV2(Models.Portfolio firstPortfolio, Models.Portfolio secondPortfolio, int numberOfMonths = 60, string baseTicker = "SPY")
 		{
 			#region Validation
 			var isValidTuple = VerifyParametersForComparison(firstPortfolio, secondPortfolio, numberOfMonths);
@@ -42,10 +45,12 @@ namespace StockResearchPlatform.Services.PortfolioComparison
 				throw new Exception(isValidTuple.Item2);
 			}
 			#endregion
+
 			var aggregatesReqCommand = new AggregateBarsReqCommand();
 			aggregatesReqCommand.stocksTicker = baseTicker;
 			aggregatesReqCommand.from = DateTime.UtcNow.AddMonths(-1 * numberOfMonths);
 			aggregatesReqCommand.to = DateTime.UtcNow;
+
 			var spyPriceHistoryJto = await _polygonTickerService.AggregatesBarsV2(aggregatesReqCommand);
 
 			if (spyPriceHistoryJto == null)
@@ -56,6 +61,48 @@ namespace StockResearchPlatform.Services.PortfolioComparison
 			this.BasePriceHistoryDailyChanges = this.GetPriceHistoryChanges(this.BasePriceHistory);
 			this.BaseAverageDailyChange = this.AverageDailyChange(this.BasePriceHistoryDailyChanges);
 
+			Task<PortfolioComparisonHelperDto>[] work = new Task<PortfolioComparisonHelperDto>[2];
+			work[0] = this.GetPortfolioInfo(firstPortfolio, numberOfMonths, aggregatesReqCommand);
+			work[1] = this.GetPortfolioInfo(secondPortfolio, numberOfMonths, aggregatesReqCommand);
+			PortfolioComparisonHelperDto[] results = await Task.WhenAll(work);
+
+			var firstPortfolioComparisonHelper = results[0];
+			var secondPortfolioComparisonHelper = results[1];
+
+			PortfolioComparisonDto result = new PortfolioComparisonDto();
+			result.NumberOfMonths = numberOfMonths;
+			result.Values.Add(firstPortfolio.Id, firstPortfolioComparisonHelper);
+			result.Values.Add(secondPortfolio.Id, secondPortfolioComparisonHelper);
+
+			return result;
+		}
+
+		private async Task<PortfolioComparisonHelperDto> GetPortfolioInfo(Models.Portfolio portfolio, int numberOfMonths, AggregateBarsReqCommand cmd)
+		{
+			var stockStockPortfolios = await _portfolioService.GetStocksFromPortfolio(portfolio);
+
+			var data = new PortfolioComparisonHelperDto();
+			data.PortfolioId = portfolio.Id;
+			data.PortfolioPriceHistory = new double[this.BasePriceHistory.Length];
+
+			var i = 0;
+			foreach (var stockStockPortfolio in stockStockPortfolios)
+			{
+				// Get total portfolio price in array
+				cmd.stocksTicker = stockStockPortfolio.Key.Ticker.ToUpper();
+				var stockJto = await _polygonTickerService.AggregatesBarsV2(cmd);
+				if (stockJto != null && stockJto.resultsCount == this.BasePriceHistory.Length)
+				{
+					data.PortfolioPriceHistory[i] += (stockJto.results[i].c * stockStockPortfolio.Value.NumberOfShares);
+				}
+			}
+
+			data.PortfolioPriceHistoryChange = this.GetPriceHistoryChanges(data.PortfolioPriceHistory);
+			data.PortfolioAverageChange = this.AverageDailyChange(data.PortfolioPriceHistoryChange);
+			data.Beta = Utils.CalculateBeta(this.BasePriceHistoryDailyChanges, data.PortfolioPriceHistoryChange, this.BaseAverageDailyChange, data.PortfolioAverageChange);
+			data.TotalReturn = Utils.CalculateReturn(data.PortfolioPriceHistory[0], data.PortfolioPriceHistory[data.PortfolioPriceHistory.Length - 1], 1);
+			data.Alpha = Utils.CalculateAplha(data.TotalReturn, RISK_FREE_RATE_OF_RETURN, data.Beta, Utils.CalculateReturn(this.BasePriceHistory[0], this.BasePriceHistory[this.BasePriceHistory.Length - 1], 1));
+			return data;
 		}
 
 		/// <summary>
@@ -147,6 +194,7 @@ namespace StockResearchPlatform.Services.PortfolioComparison
 
 			return total;
 		}
+
 		/// <summary>
 		/// Helper function to ComparePortfolios that calculates a portfolio's return over the given time period
 		/// </summary>
