@@ -391,7 +391,7 @@ namespace StockResearchPlatform.Services
 
             foreach (var entry in dict)
             {
-                double percentage = (entry.Value / sum) * 100;
+                double percentage = (entry.Value / sum);
                 percentages.Add(entry.Key, percentage);
             }
 

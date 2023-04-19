@@ -60,14 +60,20 @@
             <tr>
                 <th>Category</th>
                 <th>Value</th>
+                <th>Percent</th>
             </tr>
         </thead>
         <tbody>
-            @foreach (var entry in BreakdownData)
+            @for (int i = 0; i < BreakdownData.Count; i++)
             {
+                var key = BreakdownData.ElementAt(i).Key;
+                var value = BreakdownData.ElementAt(i).Value;
+                var percent = BreakdownDataByPercent.ContainsKey(key) ? BreakdownDataByPercent[key] : 0.0;
+
                 <tr>
-                    <td>@entry.Key</td>
-                    <td>@String.Format("{0:C}", entry.Value)</td>
+                    <td>@key</td>
+                    <td>@String.Format("{0:C}", value)</td>
+                    <td>@String.Format("{0:P}", percent)</td>
                 </tr>
             }
         </tbody>
@@ -115,20 +121,18 @@ else
     }
 
     public async Task atomicBreakDown()
-{
-    var breakdown = await atomicBreakdownService.AtomicBreakdown(this.PortfolioDisplayModel.Stocks);
-    BreakdownData.Clear();
-    foreach (var entry in breakdown)
     {
-        BreakdownData[entry.Key] = entry.Value;
-    }
-    
-    // Set the boolean variable to true
-    IsAtomicBreakdownCalled = true;
+        BreakdownData.Clear();
+        BreakdownDataByPercent.Clear();
+        BreakdownData = await atomicBreakdownService.AtomicBreakdown(this.PortfolioDisplayModel.Stocks);
+        BreakdownDataByPercent = AtomicBreakdownService.ConvertBreakDownToPercentage(BreakdownData);
 
-    // Force a re-render of the component
-    StateHasChanged();
-}
+        // Set the boolean variable to true
+        IsAtomicBreakdownCalled = true;
+
+        // Force a re-render of the component
+        StateHasChanged();
+    }
 
     public async void submitNewStock()
     {
