@@ -11,7 +11,8 @@ namespace StockResearchPlatform.Services.Polygon
         public const string STOCK_FINANCIALS_ENDPOINT = "vX/reference/financials";
         public const string TICKERS_ENDPOINT = "v3/reference/tickers";
         public const string PREVIOUS_CLOSE_ENDPOINT = "v2/aggs/ticker/{0}/prev";
-        public const string DAILY_OPEN_CLSE_ENDPOINT = "v1/open-close/{0}/{1}";
+        public const string DAILY_OPEN_CLOSE_ENDPOINT = "v1/open-close/{0}/{1}";
+        public const string AGGREGATES_BARS_ENDPOINT = "v2/aggs/ticker/{0}/range/{1}/{2}/{3}/{4}";
 
 		private readonly IConfiguration _configuration;
         private readonly PolygonBaseService _polygonBaseService;
@@ -95,9 +96,21 @@ namespace StockResearchPlatform.Services.Polygon
 		/// <returns>An object containing all data from Polygon's API endpoint</returns>
 		public async Task<DailyOpenCloseJto?> DailyOpenCloseV1(DailyOpenCloseReqCommand queryParams)
         {
-            var dailyOpenCloseV1Url = queryParams.BuildQueryParams(_baseUrl, DAILY_OPEN_CLSE_ENDPOINT, _apiKey);
+            var dailyOpenCloseV1Url = queryParams.BuildQueryParams(_baseUrl, DAILY_OPEN_CLOSE_ENDPOINT, _apiKey);
 
 			return await _polygonBaseService.GetJto<DailyOpenCloseJto>(dailyOpenCloseV1Url);
 		}
+		/// <summary>
+		/// Returns a AggregatesBarsV2Jto that relates diretly to the JSON returned by
+		/// https://polygon.io/docs/stocks/get_v2_aggs_ticker__stocksticker__range__multiplier___timespan___from___to
+		/// </summary>
+		/// <param name="queryParams">AggregateBarsReqCommand used to build the query parameters used for requesting</param>
+		/// <returns>An object containing all data from Polygon's API endpoint</returns>
+		public async Task<AggregatesBarsV2Jto?> AggregatesBarsV2(AggregateBarsReqCommand queryParams)
+        {
+            var aggregatesBarsV2Url = queryParams.BuildQueryParams(_baseUrl, AGGREGATES_BARS_ENDPOINT, _apiKey);
+
+            return await _polygonBaseService.GetJto<AggregatesBarsV2Jto>(aggregatesBarsV2Url);
+        }
     }
 }
