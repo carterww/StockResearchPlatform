@@ -75,7 +75,7 @@ if (app.Environment.IsStaging())
 {
 	var loadDataService = app.Services.GetService<LoadStockDataToDatabaseService>();
     var breakdownService = app.Services.GetService<AtomicBreakdownService>();
-    await breakdownService?.BreakDownInvestment("SPY");
+    await breakdownService?.BreakDownInvestment("AMZN");
     return;
 }
 

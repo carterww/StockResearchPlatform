@@ -6,7 +6,10 @@ using StockResearchPlatform.Data;
 using StockResearchPlatform.Models;
 using StockResearchPlatform.Models.PolygonModels;
 using StockResearchPlatform.Services.Polygon;
+using System.Collections.Concurrent;
+using System.Globalization;
 using System.Xml;
+using System.Xml.Linq;
 
 namespace StockResearchPlatform.Services
 {
@@ -97,8 +100,7 @@ namespace StockResearchPlatform.Services
         }
         public async Task<Dictionary<string, string>> BreakDownStock(string ticker)
         {
-            Console.WriteLine(await convertName("Boeing Co/The"));
-            Dictionary<string, string> dict = new Dictionary<string, string>();
+            ConcurrentDictionary<string, string> dict = new ConcurrentDictionary<string, string>();
             using (HttpClient client = new HttpClient())
             {
                 client.Timeout = TimeSpan.FromSeconds(300);
@@ -111,7 +113,7 @@ namespace StockResearchPlatform.Services
 
                 if (data.entityType == "operating")
                 {
-                    Console.WriteLine("test");
+                    dict.TryAdd(FormatString(data.name.ToString()), "100");
                 } 
                 else
                 {
@@ -130,7 +132,8 @@ namespace StockResearchPlatform.Services
                             doc.LoadXml(xmlString);
 
                             XmlNodeList investments = doc.GetElementsByTagName("invstOrSec");
-                            int maxConcurrency = 7; // Set the maximum number of concurrent operations
+
+                            int maxConcurrency = 6;
                             SemaphoreSlim semaphore = new SemaphoreSlim(maxConcurrency);
 
                             List<Task> tasks = new List<Task>();
@@ -141,23 +144,23 @@ namespace StockResearchPlatform.Services
                                     await semaphore.WaitAsync(); // Wait for an available slot
                                     try
                                     {
-                                        string name = investment["name"].InnerText;
-                                        name = await convertName(name);
+                                        string name = FormatString(investment["name"].InnerText);
+
                                         string pctVal = investment["pctVal"].InnerText;
-                                        try
-                                        {
-                                            if (dict.ContainsKey(name))
+
+                                        dict.AddOrUpdate(
+                                            name,
+                                            pctVal,
+                                            (key, oldValue) =>
                                             {
-                                                double currentValue = double.Parse(dict[name]);
+                                                double currentValue = double.Parse(oldValue);
                                                 double newValue = currentValue + double.Parse(pctVal);
-                                                dict[name] = newValue.ToString();
-                                            }
-                                            else
-                                            {
-                                                dict.Add(name, pctVal);
-                                            }
-                                        }
-                                        catch { Console.WriteLine(name + ": " + pctVal); }
+                                                return newValue.ToString();
+                                            });
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        Console.WriteLine(ex);
                                     }
                                     finally
                                     {
@@ -165,12 +168,9 @@ namespace StockResearchPlatform.Services
                                     }
                                 }));
                             }
+
                             await Task.WhenAll(tasks);
 
-                            foreach (KeyValuePair<string, string> kvp in dict)
-                            {
-                                Console.WriteLine("{0}: {1}", kvp.Key, kvp.Value);
-                            }
                             break;
                         } 
                         else
@@ -179,21 +179,18 @@ namespace StockResearchPlatform.Services
                         }
                     }
                 }
-                /*foreach (string formType in data.entityType)
-                {
-                    if (filingForm == "NPORT-P")
-                    {
-
-                    }
-                }*/
             }
-            return dict;
+            foreach (var item in dict)
+            {
+
+            }
+            return new Dictionary<string, string>(dict);
         }
 
         public async Task<Dictionary<string, string>> BreakDownMutualFund(string ticker)
         {
 
-            Dictionary<string, string> dict = new Dictionary<string, string>();
+            ConcurrentDictionary<string, string> dict = new ConcurrentDictionary<string, string>();
             using (HttpClient client = new HttpClient())
             {
                 client.DefaultRequestHeaders.TryAddWithoutValidation("User-Agent", "DavidQiu david.qiu179@topper.wku.edu");
@@ -227,17 +224,40 @@ namespace StockResearchPlatform.Services
 
                             XmlNodeList investments = doc.GetElementsByTagName("invstOrSec");
 
+                            int maxConcurrency = 6;
+                            SemaphoreSlim semaphore = new SemaphoreSlim(maxConcurrency, maxConcurrency);
+
+                            List<Task> tasks = new List<Task>();
+
                             foreach (XmlNode investment in investments)
                             {
-                                string name = investment["name"].InnerText;
-                                string pctVal = investment["pctVal"].InnerText;
-                                try
+                                await semaphore.WaitAsync();
+
+                                tasks.Add(Task.Run(async () =>
                                 {
-                                    dict.Add(name, pctVal);
-                                }
-                                catch { Console.WriteLine(name + ": " + pctVal); }
+                                    string name = FormatString(investment["name"].InnerText);
+                                    string pctVal = investment["pctVal"].InnerText;
+
+                                    try
+                                    {
+                                        dict.TryAdd(name, pctVal);
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        Console.WriteLine($"{name}: {pctVal} - {ex.Message}");
+                                    }
+                                    finally
+                                    {
+                                        semaphore.Release();
+                                    }
+                                }));
                             }
-                            Console.WriteLine(dict);
+
+                            await Task.WhenAll(tasks);
+                            foreach (var item in dict)
+                            {
+                                Console.WriteLine($"{item.Key}: {item.Value}");
+                            }
                             break;
                         }
                         else
@@ -252,7 +272,7 @@ namespace StockResearchPlatform.Services
                     }
 
                 }
-                return dict;
+                return new Dictionary<string, string>(dict);
             }
         }
 
@@ -275,8 +295,107 @@ namespace StockResearchPlatform.Services
 
             return seriesId;
         }
+        public static Dictionary<string, string> MultiplyValues(Dictionary<string, string> input, double multiplier)
+        {
+            Dictionary<string, string> output = new();
+
+            foreach (KeyValuePair<string, string> entry in input)
+            {
+                double value = double.Parse(entry.Value);
+                double result = value * multiplier;
+                result /= 100;
+                output.Add(entry.Key, result.ToString("F12"));
+            }
+
+            return output;
+        }
+
+        public static string FormatString(string input)
+        {
+            // Check if the string ends with "/The" and move it to the start
+            if (input.EndsWith("/The", StringComparison.OrdinalIgnoreCase))
+            {
+                input = "The " + input.Substring(0, input.Length - 4);
+            }
+
+            // Replace all '.' with ' '
+            input = input.Replace('.', ' ');
+
+            // Split the string into words
+            string[] words = input.Split(' ');
+
+            // Capitalize the first letter of each word, except for 'of'
+            for (int i = 0; i < words.Length; i++)
+            {
+                if (words[i].ToLower() == "of")
+                {
+                    words[i] = words[i].ToLower();
+                }
+                else
+                {
+                    words[i] = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(words[i].ToLower());
+                }
+            }
+
+            // Join the words back together
+            string formattedString = string.Join(" ", words).Trim();
+
+            return formattedString;
+        }
+
+        public static Dictionary<string, double> SortByValueDescending(Dictionary<string, double> dict)
+        {
+            return dict.OrderByDescending(x => x.Value)
+                       .ToDictionary(x => x.Key, x => x.Value);
+        }
 
 
+        public async Task<Dictionary<string, double>> AtomicBreakdown(Dictionary<Stock, StockPortfolio>stocks)
+        {
+            List<Dictionary<string, string>> listOfDictionaries = new List<Dictionary<string, string>>();
+            foreach (var stock in stocks)
+            {
+                var breakdown = await BreakDownInvestment(stock.Key.Ticker);
 
+                Dictionary<string, string> output = AtomicBreakdownService.MultiplyValues(breakdown, stock.Value.NumberOfShares * stock.Value.CostBasis);
+                listOfDictionaries.Add(output);
+            }
+
+            Dictionary<string, double> result = new Dictionary<string, double>();
+
+            foreach (var dict in listOfDictionaries)
+            {
+                foreach (var entry in dict)
+                {
+                    double value = double.Parse(entry.Value);
+
+                    if (result.ContainsKey(entry.Key))
+                    {
+                        result[entry.Key] += value;
+                    }
+                    else
+                    {
+                        result[entry.Key] = value;
+                    }
+                }
+            }
+            result = SortByValueDescending(result);
+            
+            return result;
+        }
+
+        public static Dictionary<string, double> ConvertBreakDownToPercentage(Dictionary<string, double> dict)
+        {
+            double sum = dict.Values.Sum();
+            Dictionary<string, double> percentages = new();
+
+            foreach (var entry in dict)
+            {
+                double percentage = (entry.Value / sum) * 100;
+                percentages.Add(entry.Key, percentage);
+            }
+
+            return percentages;
+        }
     }
 }

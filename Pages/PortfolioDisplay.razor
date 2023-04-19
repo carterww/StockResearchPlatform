@@ -4,6 +4,7 @@
 @using StockResearchPlatform.Services;
 @inject StockService stockService
 @inject PortfolioService portfolioService
+@inject AtomicBreakdownService atomicBreakdownService
 
 <h1>@this.PortfolioDisplayModel.Portfolio?.Name</h1>
 
@@ -50,6 +51,37 @@
 <button type="button" hidden="@this.PortfolioDisplayModel.HideNewStock" @onclick=submitNewStock>Add</button>
 <button type="button" hidden="@this.PortfolioDisplayModel.HideNewStock" @onclick=cancelNewStock>Cancel</button>
 <button @onclick=createNewStock hidden="@(this.PortfolioDisplayModel.HideNewStock == false)">Add Stock</button>
+<button @onclick=atomicBreakDown hidden="@(this.PortfolioDisplayModel.HideNewStock == false)">Atomic Breakdown</button>
+@if (IsAtomicBreakdownCalled)
+{
+    <h2>Atomic Breakdown</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Category</th>
+                <th>Value</th>
+            </tr>
+        </thead>
+        <tbody>
+            @{
+                int counter = 0;
+                foreach (var entry in BreakdownData)
+                {
+                    if (counter >= 20)
+                    {
+                        break;
+                    }
+                    <tr>
+                        <td>@entry.Key</td>
+                        <td>@String.Format("{0:C}", entry.Value)</td>
+                    </tr>
+                    counter++;
+                }
+            }
+        </tbody>
+    </table>
+}
+
 
 <link rel="stylesheet" href="css/portfolio-display.css" />
 
@@ -57,6 +89,9 @@
     [Parameter]
     public string? Id { get; set; }
     public int id { get; set; }
+    private Dictionary<string, double> BreakdownData { get; set; } = new Dictionary<string, double>();
+    private Dictionary<string, double> BreakdownDataByPercent { get; set; } = new Dictionary<string, double>();
+    private bool IsAtomicBreakdownCalled { get; set; } = false;
 
     PortfolioDisplayModel PortfolioDisplayModel;
 
@@ -80,6 +115,19 @@
     public async void createNewStock()
     {
         this.PortfolioDisplayModel.ShowNewStock();
+    }
+
+    public async void atomicBreakDown()
+    {   
+        BreakdownData.Clear();
+        BreakdownDataByPercent.Clear();
+        BreakdownData = await atomicBreakdownService.AtomicBreakdown(this.PortfolioDisplayModel.Stocks);
+        BreakdownDataByPercent = AtomicBreakdownService.ConvertBreakDownToPercentage(BreakdownData);
+        foreach (var entry in BreakdownDataByPercent)
+        {
+            Console.WriteLine($"{entry.Key}: {entry.Value}");
+        }
+        IsAtomicBreakdownCalled = true;
     }
 
     public async void submitNewStock()
