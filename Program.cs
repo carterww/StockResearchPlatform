@@ -7,6 +7,7 @@ using Hangfire.MySql;
 using StockResearchPlatform.Services.DividendTracker;
 using StockResearchPlatform.Services.Polygon;
 using StockResearchPlatform.Repositories;
+using StockResearchPlatform.Services.PortfolioComparison;
 
 /**********************************************************
             CHANGE CONNECTION STRING HERE
@@ -45,6 +46,7 @@ builder.Services.AddTransient<PolygonBaseService>();
 builder.Services.AddTransient<PolygonTickerService>();
 builder.Services.AddTransient<PolygonDividendService>();
 builder.Services.AddTransient<IDividendTracker, DividendTracker>();
+builder.Services.AddScoped<PortfolioComparisonService>();
 #endregion
 
 builder.Services.AddHangfire(configuration => configuration

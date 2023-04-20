@@ -17,7 +17,6 @@ namespace StockResearchPlatform.Services.PortfolioComparison
 
 		public double[]? BasePriceHistory { get; set; } = null;
 		public double[]? BasePriceHistoryDailyChanges { get; set; } = null;
-		public double BaseAverageDailyChange { get; set; } = 0;
 
 		public PortfolioComparisonService (
 			PolygonTickerService polygonTickerService,
@@ -59,11 +58,17 @@ namespace StockResearchPlatform.Services.PortfolioComparison
 			// Put prices in array for faster access
 			this.BasePriceHistory = this.CovertAggregateJtoToArrayOfPrices(spyPriceHistoryJto);
 			this.BasePriceHistoryDailyChanges = this.GetPriceHistoryChanges(this.BasePriceHistory);
-			this.BaseAverageDailyChange = this.AverageDailyChange(this.BasePriceHistoryDailyChanges);
 
 			Task<PortfolioComparisonHelperDto>[] work = new Task<PortfolioComparisonHelperDto>[2];
 			work[0] = this.GetPortfolioInfo(firstPortfolio, numberOfMonths, aggregatesReqCommand);
-			work[1] = this.GetPortfolioInfo(secondPortfolio, numberOfMonths, aggregatesReqCommand);
+
+			// Create deep copy so concurrency does not cause issues by sharing same object
+			var aggregatesReqCommand2 = new AggregateBarsReqCommand();
+			aggregatesReqCommand2.stocksTicker = "";
+			aggregatesReqCommand2.from = DateTime.UtcNow.AddMonths(-1 * numberOfMonths);
+			aggregatesReqCommand2.to = DateTime.UtcNow;
+			work[1] = this.GetPortfolioInfo(secondPortfolio, numberOfMonths, aggregatesReqCommand2);
+
 			PortfolioComparisonHelperDto[] results = await Task.WhenAll(work);
 
 			var firstPortfolioComparisonHelper = results[0];
@@ -85,7 +90,6 @@ namespace StockResearchPlatform.Services.PortfolioComparison
 			data.PortfolioId = portfolio.Id;
 			data.PortfolioPriceHistory = new double[this.BasePriceHistory.Length];
 
-			var i = 0;
 			foreach (var stockStockPortfolio in stockStockPortfolios)
 			{
 				// Get total portfolio price in array
@@ -93,15 +97,24 @@ namespace StockResearchPlatform.Services.PortfolioComparison
 				var stockJto = await _polygonTickerService.AggregatesBarsV2(cmd);
 				if (stockJto != null && stockJto.resultsCount == this.BasePriceHistory.Length)
 				{
-					data.PortfolioPriceHistory[i] += (stockJto.results[i].c * stockStockPortfolio.Value.NumberOfShares);
+					var numOfSharesTmp = stockStockPortfolio.Value.NumberOfShares;
+					for (int i = 0; i < this.BasePriceHistory.Length; i++)
+					{
+						data.PortfolioPriceHistory[i] += (stockJto.results[i].c * numOfSharesTmp);
+					}
 				}
 			}
 
 			data.PortfolioPriceHistoryChange = this.GetPriceHistoryChanges(data.PortfolioPriceHistory);
-			data.PortfolioAverageChange = this.AverageDailyChange(data.PortfolioPriceHistoryChange);
-			data.Beta = Utils.CalculateBeta(this.BasePriceHistoryDailyChanges, data.PortfolioPriceHistoryChange, this.BaseAverageDailyChange, data.PortfolioAverageChange);
+
+			data.Beta = Utils.CalculateBeta(this.BasePriceHistoryDailyChanges, data.PortfolioPriceHistoryChange);
 			data.TotalReturn = Utils.CalculateReturn(data.PortfolioPriceHistory[0], data.PortfolioPriceHistory[data.PortfolioPriceHistory.Length - 1], 1);
-			data.Alpha = Utils.CalculateAplha(data.TotalReturn, RISK_FREE_RATE_OF_RETURN, data.Beta, Utils.CalculateReturn(this.BasePriceHistory[0], this.BasePriceHistory[this.BasePriceHistory.Length - 1], 1));
+
+			var marketReturn = Utils.CalculateReturn(this.BasePriceHistory[0], this.BasePriceHistory[this.BasePriceHistory.Length - 1], 1);
+			data.JensensAlpha = Utils.CalculateJensensAplha(data.TotalReturn, RISK_FREE_RATE_OF_RETURN, data.Beta, marketReturn);
+			data.Alpha = Utils.CalculateAlpha(data.TotalReturn, marketReturn);
+			data.PortfolioName = portfolio.Name;
+
 			return data;
 		}
 
@@ -183,7 +196,7 @@ namespace StockResearchPlatform.Services.PortfolioComparison
 			return response;
 		}
 
-		private double AverageDailyChange(double[] changes)
+		private double AverageDailyChange(double[] changes, int numOfDataPoints)
 		{
 			double total = 0;
 
@@ -192,7 +205,7 @@ namespace StockResearchPlatform.Services.PortfolioComparison
 				total += changes[i];
 			}
 
-			return total;
+			return total / numOfDataPoints;
 		}
 
 		/// <summary>

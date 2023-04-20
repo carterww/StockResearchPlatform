@@ -13,10 +13,12 @@
 	public class PortfolioComparisonHelperDto
 	{
 		public int PortfolioId { get; set; }
+		public string? PortfolioName { get; set; }
 		public double[] PortfolioPriceHistory { get; set; }
 		public double[] PortfolioPriceHistoryChange { get; set; }
 		public double PortfolioAverageChange { get; set; }
 		public double Beta { get; set; }
+		public double JensensAlpha { get; set; }
 		public double Alpha { get; set; }
 		public double TotalReturn { get; set; }
 	}

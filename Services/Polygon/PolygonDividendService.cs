@@ -5,7 +5,7 @@ namespace StockResearchPlatform.Services.Polygon
 {
 	public class PolygonDividendService
 	{
-		public const string DIVIDENDS_ENDPOINT = "/v3/reference/dividends";
+		public const string DIVIDENDS_ENDPOINT = "v3/reference/dividends";
 
 		private readonly IConfiguration _configuration;
 		private readonly PolygonBaseService _polygonBaseService;

@@ -4,29 +4,31 @@
 	{
 		public static double CalculateReturn(double oldPrice, double newPrice, double numOfShares)
 		{
-			return (newPrice - oldPrice) * numOfShares;
+			return (newPrice - oldPrice) / oldPrice;
 		}
 
-		public static double CalculateBeta(double[] baseValues, double[] toCompareValues, double baseAvgDailyChange, double toComapreAvgDailyChange)
+		public static double CalculateBeta(double[] xArray, double[] yArray)
 		{
-			var xys = Enumerable.Zip(baseValues, toCompareValues, (x, y) => new { x = x, y = y });
-
-			double ysum = 0, xsum = 0;
-			int i = 0;
-			foreach (var xy in xys)
+			double n = xArray.Length;
+			double sumxy = 0, sumx = 0, sumy = 0, sumx2 = 0;
+			for (int i = 1; i < xArray.Length; i++)
 			{
-				if (i == 0) continue;
-				ysum += (xy.x - baseAvgDailyChange) * (xy.y - toComapreAvgDailyChange);
-				xsum += (baseValues[i] - baseAvgDailyChange) * (baseValues[i] - baseAvgDailyChange);
-				i++;
+				sumxy += xArray[i] * yArray[i];
+				sumx += xArray[i];
+				sumy += yArray[i];
+				sumx2 += xArray[i] * xArray[i];
 			}
-
-			return ysum / xsum;
+			return ((sumxy - sumx * sumy / n) / (sumx2 - sumx * sumx / n));
 		}
 
-		public static double CalculateAplha(double portfolioReturn, double riskFreeReturn, double beta, double marketReturn)
+		public static double CalculateJensensAplha(double portfolioReturn, double riskFreeReturn, double beta, double marketReturn)
 		{
-			return portfolioReturn - riskFreeReturn - (beta * (marketReturn - riskFreeReturn));
+			return portfolioReturn - (riskFreeReturn + (beta * (marketReturn - riskFreeReturn)));
+		}
+
+		public static double CalculateAlpha(double portfolioReturn, double marketReturn)
+		{
+			return portfolioReturn - marketReturn;
 		}
 
 	}

@@ -29,7 +29,6 @@ namespace StockResearchPlatform.Services.Polygon
 					{
 						res = client.SendAsync(requestMessage).Result;
 					}
-					Console.WriteLine($"Is res null");
 					if (res != null)
 					{
 						res.EnsureSuccessStatusCode();

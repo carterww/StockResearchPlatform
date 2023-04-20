@@ -18,10 +18,10 @@
 		public double c { get; set; }
 		public double h { get; set; }
 		public double l { get; set; }
-		public int n { get; set; }
+		public double n { get; set; }
 		public double o { get; set; }
 		public object t { get; set; }
-		public int v { get; set; }
+		public double v { get; set; }
 		public double vw { get; set; }
 	}
 

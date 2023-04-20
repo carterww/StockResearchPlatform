@@ -54,6 +54,12 @@ namespace StockResearchPlatform.Services
 		public async Task<Dictionary<Stock, StockPortfolio>> GetStocksFromPortfolio(Portfolio p)
 		{
 			Dictionary<Stock, StockPortfolio> result = new Dictionary<Stock, StockPortfolio>(10);
+			if (p.StockPortfolios == null)
+			{
+				p.StockPortfolios = _context.StockPortfolios
+					.Where(sp => sp.FK_Portfolio == p.Id)
+					.ToList();
+			}
 			foreach(var stockPort in p.StockPortfolios)
 			{
 				Stock tmp = await _stockService.GetStock(null, stockPort.FK_Stock);
