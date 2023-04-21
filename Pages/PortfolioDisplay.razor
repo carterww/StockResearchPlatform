@@ -64,7 +64,7 @@
             </tr>
         </thead>
         <tbody>
-            @for (int i = 0; i < BreakdownData.Count; i++)
+            @for (int i = 0; i < BreakdownData.Count && i < itemsToShow; i++)
             {
                 var key = BreakdownData.ElementAt(i).Key;
                 var value = BreakdownData.ElementAt(i).Value;
@@ -78,6 +78,10 @@
             }
         </tbody>
     </table>
+    @if (itemsToShow < BreakdownData.Count)
+    {
+        <button @onclick="() => LoadMoreItems()">More</button>
+    }
 }
 
 else
@@ -97,6 +101,14 @@ else
     private bool IsAtomicBreakdownCalled { get; set; } = false;
 
     PortfolioDisplayModel PortfolioDisplayModel;
+
+    private int itemsToShow = 20;
+
+    private void LoadMoreItems()
+    {
+        itemsToShow += 20;
+        StateHasChanged();
+    }
 
     protected override async Task OnInitializedAsync()
     {
