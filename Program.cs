@@ -12,7 +12,7 @@ using StockResearchPlatform.Services.PortfolioComparison;
 /**********************************************************
             CHANGE CONNECTION STRING HERE
 **********************************************************/
-const string CURRENT_CON_STRING_NAME = "CarterConnection";
+const string CURRENT_CON_STRING_NAME = "DavidConnection";
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,7 +21,7 @@ builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddSingleton<WeatherForecastService>();
 
-var connectionString = builder.Configuration.GetConnectionString(CURRENT_CON_STRING_NAME);
+var connectionString = builder.Configuration.GetConnectionString("DavidConnection");
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
     options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
@@ -35,6 +35,8 @@ builder.Services.AddTransient<DividendLedgerRepository>();
 #endregion
 
 builder.Services.AddScoped<LoadStockDataToDatabaseService>();
+
+builder.Services.AddScoped<AtomicBreakdownService>();
 builder.Services.AddSingleton<HttpService>();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddSingleton<StockSearchService>();
@@ -84,6 +86,9 @@ if (app.Environment.IsStaging())
 	//	dividendTracker.UpdateDividendInfoRecords();
 	//}
 	return;
+    //var breakdownService = app.Services.GetService<AtomicBreakdownService>();
+    //await breakdownService?.BreakDownInvestment("VOO");
+    return;
 }
 
 // Configure the HTTP request pipeline.

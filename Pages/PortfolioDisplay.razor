@@ -4,6 +4,7 @@
 @using StockResearchPlatform.Services;
 @inject StockService stockService
 @inject PortfolioService portfolioService
+@inject AtomicBreakdownService atomicBreakdownService
 
 <h1>@this.PortfolioDisplayModel.Portfolio?.Name</h1>
 
@@ -50,6 +51,54 @@
 <button type="button" hidden="@this.PortfolioDisplayModel.HideNewStock" @onclick=submitNewStock>Add</button>
 <button type="button" hidden="@this.PortfolioDisplayModel.HideNewStock" @onclick=cancelNewStock>Cancel</button>
 <button @onclick=createNewStock hidden="@(this.PortfolioDisplayModel.HideNewStock == false)">Add Stock</button>
+<button @onclick="async () => await atomicBreakDown()" hidden="@(this.PortfolioDisplayModel.HideNewStock == false)">Atomic Breakdown</button>
+@if (IsAtomicBreakdownCalled == true)
+{
+    @if (BreakdownData.Count == 0)
+    {
+        <h2>Loading Data. May take a few minutes.</h2>
+    }
+    else
+    {
+        <h2>Atomic Breakdown</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Category</th>
+                    <th>Value</th>
+                    <th>Percent</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (int i = 0; i < BreakdownData.Count && i < itemsToShow; i++)
+                {
+                    var key = BreakdownData.ElementAt(i).Key;
+                    var value = BreakdownData.ElementAt(i).Value;
+                    var percent = BreakdownDataByPercent.ContainsKey(key) ? BreakdownDataByPercent[key] : 0.0;
+
+                    <tr>
+                        <td>@key</td>
+                        <td>@String.Format("{0:C}", value)</td>
+                        <td>@String.Format("{0:0.000%}", percent)</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <br />
+        @if (itemsToShow < BreakdownData.Count)
+        {
+            <button @onclick="() => LoadMoreItems()">Show More</button>
+        }
+        @if (itemsToShow != BreakdownData.Count)
+        {
+            <button @onclick="() => ShowAll()">Show All</button>
+        }
+    }
+}
+else
+{
+}
+
 
 <link rel="stylesheet" href="css/portfolio-display.css" />
 
@@ -57,8 +106,26 @@
     [Parameter]
     public string? Id { get; set; }
     public int id { get; set; }
+    private Dictionary<string, double> BreakdownData { get; set; } = new Dictionary<string, double>();
+    private Dictionary<string, double> BreakdownDataByPercent { get; set; } = new Dictionary<string, double>();
+    private bool IsAtomicBreakdownCalled { get; set; } = false;
+    bool showAll = false;
 
     PortfolioDisplayModel PortfolioDisplayModel;
+
+    public int itemsToShow = 20;
+
+    private void LoadMoreItems()
+    {
+        itemsToShow += 20;
+        StateHasChanged();
+    }
+
+    void ShowAll()
+    {
+        itemsToShow = BreakdownData.Count;
+        showAll = true;
+    }
 
     protected override async Task OnInitializedAsync()
     {
@@ -80,6 +147,23 @@
     public async void createNewStock()
     {
         this.PortfolioDisplayModel.ShowNewStock();
+    }
+
+    public async Task atomicBreakDown()
+    {
+        itemsToShow = 20;
+        showAll = false;
+        IsAtomicBreakdownCalled = true;
+        BreakdownData.Clear();
+        BreakdownDataByPercent.Clear();
+        BreakdownData = await atomicBreakdownService.AtomicBreakdown(this.PortfolioDisplayModel.Stocks);
+        BreakdownDataByPercent = AtomicBreakdownService.ConvertBreakDownToPercentage(BreakdownData);
+
+        // Set the boolean variable to true
+        IsAtomicBreakdownCalled = true;
+
+        // Force a re-render of the component
+        StateHasChanged();
     }
 
     public async void submitNewStock()
