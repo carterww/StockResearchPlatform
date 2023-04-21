@@ -5,7 +5,7 @@
 namespace StockResearchPlatform.Migrations
 {
     /// <inheritdoc />
-    public partial class Fixfk : Migration
+    public partial class PullFromMaster : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

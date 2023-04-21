@@ -11,8 +11,8 @@ using StockResearchPlatform.Data;
 namespace StockResearchPlatform.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230328222255_FIx")]
-    partial class FIx
+    [Migration("20230421053949_PullFromMaster")]
+    partial class PullFromMaster
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -154,6 +154,40 @@ namespace StockResearchPlatform.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("StockResearchPlatform.Models.DividendInfo", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<double>("Cashamount")
+                        .HasColumnType("double");
+
+                    b.Property<DateTime>("DeclarationDate")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<DateTime>("ExDividendDate")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<Guid>("FK_Stock")
+                        .HasColumnType("char(36)");
+
+                    b.Property<DateTime>("PayDate")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<DateTime>("RecordDate")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<DateTime>("UpdatedOn")
+                        .HasColumnType("datetime(6)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FK_Stock");
+
+                    b.ToTable("DividendInfo");
+                });
+
             modelBuilder.Entity("StockResearchPlatform.Models.DividendLedger", b =>
                 {
                     b.Property<int>("Id")
@@ -291,6 +325,9 @@ namespace StockResearchPlatform.Migrations
                     b.Property<double>("CostBasis")
                         .HasColumnType("double");
 
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime(6)");
+
                     b.Property<double>("NumberOfShares")
                         .HasColumnType("double");
 
@@ -414,6 +451,17 @@ namespace StockResearchPlatform.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("StockResearchPlatform.Models.DividendInfo", b =>
+                {
+                    b.HasOne("StockResearchPlatform.Models.Stock", "Stock")
+                        .WithMany()
+                        .HasForeignKey("FK_Stock")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Stock");
                 });
 
             modelBuilder.Entity("StockResearchPlatform.Models.DividendLedger", b =>
