@@ -12,7 +12,7 @@ using StockResearchPlatform.Services.PortfolioComparison;
 /**********************************************************
             CHANGE CONNECTION STRING HERE
 **********************************************************/
-const string CURRENT_CON_STRING_NAME = "DavidConnection";
+const string CURRENT_CON_STRING_NAME = "ProductionConnection";
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,7 +21,7 @@ builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddSingleton<WeatherForecastService>();
 
-var connectionString = builder.Configuration.GetConnectionString("DavidConnection");
+var connectionString = builder.Configuration.GetConnectionString(CURRENT_CON_STRING_NAME);
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
     options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
