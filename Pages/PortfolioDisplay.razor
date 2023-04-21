@@ -78,9 +78,10 @@
             }
         </tbody>
     </table>
+    <br />
     @if (itemsToShow < BreakdownData.Count)
     {
-        <button @onclick="() => LoadMoreItems()">More</button>
+        <button @onclick="() => LoadMoreItems()">Show More</button>
     }
 }
 

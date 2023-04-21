@@ -10,6 +10,7 @@ using System.Collections.Concurrent;
 using System.Globalization;
 using System.Xml;
 using System.Xml.Linq;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace StockResearchPlatform.Services
 {
@@ -200,7 +201,6 @@ namespace StockResearchPlatform.Services
                 string cik = mutualFund.Stock.CIK.ToString();
                 cik = cik.PadLeft(10, '0');
                 string seriesId = mutualFund.SeriesID;
-                Console.WriteLine(client);
                 string json = await client.GetStringAsync($"https://data.sec.gov/submissions/CIK{cik}.json");
                 dynamic data = JsonConvert.DeserializeObject(json);
 
@@ -214,7 +214,7 @@ namespace StockResearchPlatform.Services
                         string accNum = data.filings.recent.accessionNumber[index];
                         accNum = accNum.Replace("-", "");
 
-                        if (GetSeriesId(cik, accNum, client).Result == seriesId)
+                        if (GetSeriesId(cik, accNum).Result == seriesId)
                         {
                             string xmlString = await client.GetStringAsync($"https://www.sec.gov/Archives/edgar/data/{cik}/{accNum}/primary_doc.xml");
                             
@@ -254,10 +254,6 @@ namespace StockResearchPlatform.Services
                             }
 
                             await Task.WhenAll(tasks);
-                            foreach (var item in dict)
-                            {
-                                Console.WriteLine($"{item.Key}: {item.Value}");
-                            }
                             break;
                         }
                         else
@@ -276,24 +272,28 @@ namespace StockResearchPlatform.Services
             }
         }
 
-        private static async Task<string> GetSeriesId(string cik, string accNum, HttpClient client)
+        private static async Task<string> GetSeriesId(string cik, string accNum)
         {
-            /*client.DefaultRequestHeaders.TryAddWithoutValidation("User-Agent", "DavidQiu david.qiu179@topper.wku.edu");*/
-            string xmlString = await client.GetStringAsync($"https://www.sec.gov/Archives/edgar/data/{cik}/{accNum}/primary_doc.xml");
-            string seriesId = "";
-            XmlDocument doc = new XmlDocument();
-            doc.LoadXml(xmlString);
-
-            XmlNodeList seriesClass = doc.GetElementsByTagName("seriesClassInfo");
-
-            foreach (XmlNode classInfo in seriesClass)
+            using (HttpClient client = new HttpClient())
             {
-                seriesId = classInfo.InnerText.Substring(0, classInfo.InnerText.IndexOf('C'));
+                client.DefaultRequestHeaders.TryAddWithoutValidation("User-Agent", "DavidQiu david.qiu179@topper.wku.edu");
+                string xmlString = await client.GetStringAsync($"https://www.sec.gov/Archives/edgar/data/{cik}/{accNum}/primary_doc.xml").ConfigureAwait(false);
+                string seriesId = "";
+                XmlDocument doc = new XmlDocument();
+                doc.LoadXml(xmlString);
 
-                Console.WriteLine(seriesId);
+                XmlNodeList seriesClass = doc.GetElementsByTagName("seriesClassInfo");
+
+                foreach (XmlNode classInfo in seriesClass)
+                {
+                    seriesId = classInfo.InnerText.Substring(0, classInfo.InnerText.IndexOf('C'));
+
+                    Console.WriteLine(seriesId);
+                }
+
+                return seriesId;
             }
-
-            return seriesId;
+                
         }
         public static Dictionary<string, string> MultiplyValues(Dictionary<string, string> input, double multiplier)
         {
