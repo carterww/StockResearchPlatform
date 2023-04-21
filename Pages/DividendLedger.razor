@@ -5,12 +5,16 @@
 
 @using Microsoft.AspNetCore.Http
 @using System.Security.Claims;
+@using Microsoft.AspNetCore.Identity;
+@using StockResearchPlatform.Models;
 @using StockResearchPlatform.Repositories;
 @using StockResearchPlatform.Services;
 @inject IHttpContextAccessor httpContextAccessor
 @inject DividendLedgerRepository _dividendLedgerRepository
 @inject DividendInfoRepository _dividendInfoRepository
 @inject PortfolioService _portfolioService
+@inject AuthenticationStateProvider AuthenticationStateProvide
+@inject UserManager<User> UserManager
 
 <h3>Dividend Ledger</h3>
 <ul id="table-section-selector">
@@ -104,7 +108,12 @@ else
 
 	protected override async Task OnInitializedAsync()
 	{
-		var userId = httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+		var authState = await AuthenticationStateProvide.GetAuthenticationStateAsync();
+		var userId = "";
+		if (authState.User.Identity != null && authState.User.Identity.IsAuthenticated)
+		{
+			userId = (await UserManager.GetUserAsync(authState.User)).Id;
+		}
 		Uid = new Guid(userId);
 		GetDividendLedger();
 		GetUpcomingDividends(userId);
