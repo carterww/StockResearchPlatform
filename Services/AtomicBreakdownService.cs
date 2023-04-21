@@ -216,6 +216,7 @@ namespace StockResearchPlatform.Services
 
                         if (GetSeriesId(cik, accNum).Result == seriesId)
                         {
+                            Console.WriteLine("Found it!");
                             string xmlString = await client.GetStringAsync($"https://www.sec.gov/Archives/edgar/data/{cik}/{accNum}/primary_doc.xml");
                             
 
