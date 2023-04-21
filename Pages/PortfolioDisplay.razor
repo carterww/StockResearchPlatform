@@ -113,7 +113,7 @@ else
 
     PortfolioDisplayModel PortfolioDisplayModel;
 
-    private int itemsToShow = 20;
+    public int itemsToShow = 20;
 
     private void LoadMoreItems()
     {
@@ -151,6 +151,8 @@ else
 
     public async Task atomicBreakDown()
     {
+        itemsToShow = 20;
+        showAll = false;
         IsAtomicBreakdownCalled = true;
         BreakdownData.Clear();
         BreakdownDataByPercent.Clear();
