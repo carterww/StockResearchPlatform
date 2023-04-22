@@ -1,4 +1,6 @@
-﻿using StockResearchPlatform.Services;
+﻿using StockResearchPlatform.Models.PolygonModels;
+using StockResearchPlatform.Services;
+using StockResearchPlatform.Services.Polygon;
 
 namespace StockResearchPlatform.Models.PageModels
 {
@@ -7,21 +9,25 @@ namespace StockResearchPlatform.Models.PageModels
         #region Services
         private StockService _stockService;
         private PortfolioService _portfolioService;
+        private PolygonTickerService _polygonTickerService;
         #endregion
 
         #region Props
         public Portfolio Portfolio { get; set; }
         public Dictionary<Stock, StockPortfolio> Stocks { get; set; }
+        public Dictionary<Stock, SnapshotsTickerV2Jto> CurrentPricingData { get; set; }
+        public Dictionary<Stock, SimpleMovingAverageV1Jto> StockToSimpleMovingAverage { get; set; }
         public bool HideNewStock { get; set; }
         public string AddStockTicker { get; set; }
         public double? AddStockCostBasis { get; set; }
         public double? AddStockNumOfShares { get; set; }
         #endregion
 
-        public PortfolioDisplayModel(StockService stockService, PortfolioService portfolioService)
+        public PortfolioDisplayModel(StockService stockService, PortfolioService portfolioService, PolygonTickerService polygonTickerService)
         {
             _stockService = stockService;
             _portfolioService = portfolioService;
+            _polygonTickerService = polygonTickerService;
         }
 
         public async Task BuildPortfolioDisplayModel(int id)
@@ -38,6 +44,16 @@ namespace StockResearchPlatform.Models.PageModels
             }
 
             this.Stocks = await _portfolioService.GetStocksFromPortfolio(this.Portfolio);
+            this.CurrentPricingData = new Dictionary<Stock, SnapshotsTickerV2Jto>(Stocks.Count);
+            this.StockToSimpleMovingAverage = new Dictionary<Stock, SimpleMovingAverageV1Jto>(Stocks.Count);
+            foreach (var kv in this.Stocks)
+            {
+                var pricingtask = _polygonTickerService.SnapshotsTicker(kv.Key.Ticker);
+                var smaTask = _polygonTickerService.SimpleMovingAverage(kv.Key.Ticker);
+                await Task.WhenAll(pricingtask, smaTask);
+                this.CurrentPricingData[kv.Key] = pricingtask.Result;
+                this.StockToSimpleMovingAverage[kv.Key] = smaTask.Result;
+            }
             this.ClearNewStock();
         }
 
@@ -88,7 +104,7 @@ namespace StockResearchPlatform.Models.PageModels
                     this.Portfolio = await this._portfolioService.AddStockToPortfolio(tmpSPort);
                 }
                 this._portfolioService.SaveChanges();
-                this.Stocks = await this._portfolioService.GetStocksFromPortfolio(this.Portfolio);
+                await this.BuildPortfolioDisplayModel(this.Portfolio.Id);
 
                 this.ClearNewStock();
             }
@@ -107,13 +123,13 @@ namespace StockResearchPlatform.Models.PageModels
             this._portfolioService.RemoveStockPortfolio(stockPortfolio);
             this._portfolioService.SaveChanges();
             this.Portfolio = _portfolioService.GetPortfolio(stockPortfolio.FK_Portfolio);
-            this.Stocks = await _portfolioService.GetStocksFromPortfolio(this.Portfolio);
+            await this.BuildPortfolioDisplayModel(this.Portfolio.Id);
         }
 
         public async void EditStock(StockPortfolio stockPortfolio)
         {
             this.Portfolio = this._portfolioService.UpdateStockPortfolio(stockPortfolio);
-            this.Stocks = await _portfolioService.GetStocksFromPortfolio(this.Portfolio);
+            await this.BuildPortfolioDisplayModel(this.Portfolio.Id);
         }
     }
 }

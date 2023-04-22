@@ -7,11 +7,12 @@ using Hangfire.MySql;
 using StockResearchPlatform.Services.DividendTracker;
 using StockResearchPlatform.Services.Polygon;
 using StockResearchPlatform.Repositories;
+using StockResearchPlatform.Services.PortfolioComparison;
 
 /**********************************************************
             CHANGE CONNECTION STRING HERE
 **********************************************************/
-const string CURRENT_CON_STRING_NAME = "DavidConnection";
+const string CURRENT_CON_STRING_NAME = "ProductionConnection";
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,11 +21,11 @@ builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddSingleton<WeatherForecastService>();
 
-var connectionString = builder.Configuration.GetConnectionString("DavidConnection");
+var connectionString = builder.Configuration.GetConnectionString(CURRENT_CON_STRING_NAME);
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
     options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
-}, ServiceLifetime.Transient);
+}, ServiceLifetime.Scoped);
 
 builder.Services.AddDefaultIdentity<User>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
@@ -38,15 +39,18 @@ builder.Services.AddScoped<LoadStockDataToDatabaseService>();
 builder.Services.AddScoped<AtomicBreakdownService>();
 builder.Services.AddScoped<PortfolioExposureService>();
 builder.Services.AddSingleton<HttpService>();
+builder.Services.AddHttpContextAccessor();
 builder.Services.AddSingleton<StockSearchService>();
 builder.Services.AddTransient<PortfolioService>();
 builder.Services.AddTransient<StockService>();
+
 #region PolygonServices
 builder.Services.AddTransient<PolygonBaseService>();
 builder.Services.AddTransient<PolygonTickerService>();
 builder.Services.AddTransient<PolygonDividendService>();
-#endregion
 builder.Services.AddTransient<IDividendTracker, DividendTracker>();
+builder.Services.AddScoped<PortfolioComparisonService>();
+#endregion
 
 builder.Services.AddHangfire(configuration => configuration
             .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
@@ -74,9 +78,19 @@ var app = builder.Build();
 
 if (app.Environment.IsStaging())
 {
-	var loadDataService = app.Services.GetService<LoadStockDataToDatabaseService>();
-    var breakdownService = app.Services.GetService<AtomicBreakdownService>();
-    await breakdownService?.BreakDownInvestment("VOO");
+	//var loadDataService = app.Services.GetService<LoadStockDataToDatabaseService>();
+	//loadDataService?.LoadStocksToDatabase();
+	//loadDataService?.LoadMutualFundsToDatabase();
+	//using (var serviceScope = app.Services.CreateScope())
+	//{
+	//	var dividendTracker = serviceScope.ServiceProvider.GetService<IDividendTracker>();
+	//	dividendTracker.UpdateDividendInfoRecords();
+	//}
+	//return;
+    //var breakdownService = app.Services.GetService<AtomicBreakdownService>();
+    //await breakdownService?.BreakDownInvestment("VOO");
+    var s = app.Services.GetService<PolygonTickerService>();
+    var p = s.TickerDetailsV3("AAPL");
     return;
 }
 

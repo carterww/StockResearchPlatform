@@ -1,7 +1,9 @@
 ﻿@page "/portfolios/{id}"
 @using StockResearchPlatform.Models;
 @using StockResearchPlatform.Models.PageModels;
+@using StockResearchPlatform.Models.PolygonModels;
 @using StockResearchPlatform.Services;
+@using StockResearchPlatform.Services.Polygon;
 @inject StockService stockService
 @inject PortfolioService portfolioService
 @inject AtomicBreakdownService atomicBreakdownService
@@ -18,18 +20,30 @@
             <th>Quantity</th>
             <th>Cost Per Share</th>
             <th>Cost Basis</th>
+            <th>Cost Basis Total</th>
+            <th>Current Share Price</th>
             <th>Current Value</th>
+            <th>200-Day SMA</th>
+            <th>Distance From 200-Day SMA</th>
         </tr>
         double totalCostBasis = 0.0;
+        double totalCurrentValue = 0.0;
         @foreach (var stock in this.PortfolioDisplayModel.Stocks)
         {
-            totalCostBasis += stock.Value.NumberOfShares * stock.Value.CostBasis;
+            var currentStockCostBasis = stock.Value.NumberOfShares * stock.Value.CostBasis;
+            var currentStockValue = PortfolioDisplayModel.CurrentPricingData[stock.Key].ticker.day.c * stock.Value.NumberOfShares;
+            var currentStockSma = PortfolioDisplayModel.StockToSimpleMovingAverage[stock.Key].results.values[0].value;
+            totalCostBasis += currentStockCostBasis;
+            totalCurrentValue += currentStockValue;
             <tr>
                 <td>@stock.Key.Ticker.ToUpper()</td>
                 <td>@String.Format("{0:0.00}" ,stock.Value.NumberOfShares)</td>
                 <td>@String.Format("{0:C}" ,stock.Value.CostBasis)</td>
-                <td>@String.Format("{0:C}" ,stock.Value.NumberOfShares * stock.Value.CostBasis)</td>
-                <td>TODO</td>
+                <td>@String.Format("{0:C}" ,currentStockCostBasis)</td>
+                <td>@String.Format("{0:C}" ,PortfolioDisplayModel.CurrentPricingData[stock.Key].ticker.day.c)</td>
+                <td>@String.Format("{0:C}" ,currentStockValue)</td>
+                <td>@String.Format("{0:C}" ,currentStockSma)</td>
+                <td>@String.Format("{0:0.00}", ((PortfolioDisplayModel.CurrentPricingData[stock.Key].ticker.day.c - currentStockSma) / currentStockSma) * 100 )%</td>
                 <td><a role="button">Edit</a></td>
                 <td><a role="button" @onclick="() => this.removeStock(stock.Value)">Remove</a></td>
             </tr>
@@ -39,7 +53,10 @@
             <td></td>
             <td></td>
             <td>@String.Format("{0:C}", totalCostBasis)</td>
-            <td>TODO</td>
+            <td></td>
+            <td>@String.Format("{0:C}", totalCurrentValue)</td>
+            <td></td>
+            <td></td>
         </tr>
     }
 </table>
@@ -145,7 +162,7 @@ else
             try
             {
                 this.id = int.Parse(Id);
-                this.PortfolioDisplayModel = new PortfolioDisplayModel(stockService, portfolioService);
+                this.PortfolioDisplayModel = new PortfolioDisplayModel(stockService, portfolioService, polygonTickerService);
                 await this.PortfolioDisplayModel.BuildPortfolioDisplayModel(this.id);
             }
             catch (Exception e)
@@ -189,7 +206,6 @@ else
 
     public void removeStock(Models.StockPortfolio s)
     {
-        Console.WriteLine("We clicked it");
         this.PortfolioDisplayModel.RemoveStock(s);
     }
 

@@ -20,28 +20,29 @@ namespace StockResearchPlatform.Services.Polygon
 		/// <returns>A Jto(JSON to object) object</returns>
 		public async Task<Jto> GetJto<Jto>(string endpointUrl)
 		{
-			using var client = _httpService.Client;
-			try
-			{
-				HttpResponseMessage? res = null;
-				using (var requestMessage = new HttpRequestMessage(HttpMethod.Get, endpointUrl))
+			using (var client = new HttpClient(_httpService.Handler, false))
+			{ 
+				try
 				{
-					res = client.SendAsync(requestMessage).Result;
-				}
-				Console.WriteLine($"Is res null");
-				if (res != null)
-				{
-					res.EnsureSuccessStatusCode();
-					string resBody = await res.Content.ReadAsStringAsync();
+					HttpResponseMessage? res = null;
+					using (var requestMessage = new HttpRequestMessage(HttpMethod.Get, endpointUrl))
+					{
+						res = client.SendAsync(requestMessage).Result;
+					}
+					if (res != null)
+					{
+						res.EnsureSuccessStatusCode();
+						string resBody = await res.Content.ReadAsStringAsync();
 
-					return JsonSerializer.Deserialize<Jto>(resBody);
+						return JsonSerializer.Deserialize<Jto>(resBody);
+					}
 				}
-			}
-			catch (Exception ex)
-			{
-				Console.WriteLine(ex.ToString());
-			}
+				catch (Exception ex)
+				{
+					Console.WriteLine(ex.ToString());
+				}
 			return default;
+			}
 		}
 
 		public DateTime ParsePolygonDate(string polygonDate)

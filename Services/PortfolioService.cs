@@ -54,6 +54,12 @@ namespace StockResearchPlatform.Services
 		public async Task<Dictionary<Stock, StockPortfolio>> GetStocksFromPortfolio(Portfolio p)
 		{
 			Dictionary<Stock, StockPortfolio> result = new Dictionary<Stock, StockPortfolio>(10);
+			if (p.StockPortfolios == null)
+			{
+				p.StockPortfolios = _context.StockPortfolios
+					.Where(sp => sp.FK_Portfolio == p.Id)
+					.ToList();
+			}
 			foreach(var stockPort in p.StockPortfolios)
 			{
 				Stock tmp = await _stockService.GetStock(null, stockPort.FK_Stock);
@@ -78,6 +84,30 @@ namespace StockResearchPlatform.Services
 				.Include("Stock")
 				.Include("Portfolio")
 				.ToList();
+		}
+
+		public async Task<Dictionary<Guid, StockPortfolio>> GetStockPortfolios(string userId)
+		{
+			var usersPortfolios = _context.Portfolios
+				.Where(p => p.FK_UserId == userId)
+				.Include("StockPortfolios")
+				.ToList();
+
+			Dictionary<Guid, StockPortfolio> stocks = new Dictionary<Guid, StockPortfolio>();
+			foreach (var portfolio in usersPortfolios)
+			{
+				if (portfolio != null)
+				{
+					var dic = await this.GetStocksFromPortfolio(portfolio);
+					foreach(var item in dic)
+					{
+						stocks.TryAdd(item.Key.Id, item.Value);
+					}
+				}
+			}
+
+			return stocks;
+
 		}
 
 		public async Task<Portfolio?> AddStockToPortfolio(StockPortfolio stockPortfolio)

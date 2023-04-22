@@ -62,6 +62,7 @@ namespace StockResearchPlatform.Services.DividendTracker
                     }
 
                     var latestDividend = _dividendInfoRepository.Retrieve(currentStockPortfolio.FK_Stock);
+                    if (latestDividend.PayDate > DateTime.UtcNow.AddHours(8)) continue;
                     if (latestDividend == null) continue;
                     if (currentLedger == null) continue;
                     StockDividendLedger latestLedgerEntry = null;

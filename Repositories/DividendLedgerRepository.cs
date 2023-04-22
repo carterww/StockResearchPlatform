@@ -21,6 +21,7 @@ namespace StockResearchPlatform.Repositories
         public ICollection<StockDividendLedger>? RetrieveEntries(DividendLedger item)
         {
             return _context.StockDividendLedgers
+                .Include("FK_Stock")
                 .Where(s => s.FK_DividendLedger.Id == item.Id)
                 .ToList();
         }
