@@ -7,8 +7,8 @@
 		public double h { get; set; }
 		public double l { get; set; }
 		public double o { get; set; }
-		public long t { get; set; }
-		public int v { get; set; }
+		public double t { get; set; }
+		public double v { get; set; }
 		public double vw { get; set; }
 	}
 

@@ -11,6 +11,6 @@
 		public double preMarket { get; set; }
 		public string status { get; set; }
 		public string symbol { get; set; }
-		public int volume { get; set; }
+		public double volume { get; set; }
 	}
 }

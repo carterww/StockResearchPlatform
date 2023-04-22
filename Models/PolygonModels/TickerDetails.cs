@@ -31,20 +31,20 @@ namespace StockResearchPlatform.Models.PolygonModels
 		public string list_date { get; set; }
 		public string locale { get; set; }
 		public string market { get; set; }
-		public long market_cap { get; set; }
+		public double market_cap { get; set; }
 		public string name { get; set; }
 		public string phone_number { get; set; }
 		public string primary_exchange { get; set; }
-		public int round_lot { get; set; }
+		public double round_lot { get; set; }
 		public string share_class_figi { get; set; }
-		public long share_class_shares_outstanding { get; set; }
+		public double share_class_shares_outstanding { get; set; }
 		public string sic_code { get; set; }
 		public string sic_description { get; set; }
 		public string ticker { get; set; }
 		public string ticker_root { get; set; }
-		public int total_employees { get; set; }
+		public double total_employees { get; set; }
 		public string type { get; set; }
-		public long weighted_shares_outstanding { get; set; }
+		public double weighted_shares_outstanding { get; set; }
 	}
 
 	public class TickerDetailsV3Jto
