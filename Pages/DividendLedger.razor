@@ -123,12 +123,21 @@ else
 	{
 
 		Ledger = _dividendLedgerRepository.Retrieve(w => w.FK_UserId == Uid.ToString()).FirstOrDefault();
+		if (Ledger == null)
+		{
+			Ledger = new Models.DividendLedger();
+			Ledger.FK_UserId = Uid.ToString();
+			_dividendLedgerRepository.Create(Ledger);
+		}
 		if (Ledger != null)
 		{
 			var entryICol = _dividendLedgerRepository.RetrieveEntries(Ledger);
 			if (entryICol != null) LedgerEntries = entryICol.ToList();
 		}
-		this.LedgerEntries = this.LedgerEntries.OrderByDescending(le => le.Date).ToList();
+		if (this.LedgerEntries != null)
+		{
+			this.LedgerEntries = this.LedgerEntries.OrderByDescending(le => le.Date).ToList();
+		}
 	}
 
 	private async void GetUpcomingDividends(string userId)
