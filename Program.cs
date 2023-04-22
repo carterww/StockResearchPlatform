@@ -36,6 +36,7 @@ builder.Services.AddTransient<DividendLedgerRepository>();
 builder.Services.AddScoped<LoadStockDataToDatabaseService>();
 
 builder.Services.AddScoped<AtomicBreakdownService>();
+builder.Services.AddScoped<PortfolioExposureService>();
 builder.Services.AddSingleton<HttpService>();
 builder.Services.AddSingleton<StockSearchService>();
 builder.Services.AddTransient<PortfolioService>();

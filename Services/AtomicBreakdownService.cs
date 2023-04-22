@@ -17,20 +17,10 @@ namespace StockResearchPlatform.Services
     public class AtomicBreakdownService
     {
         ApplicationDbContext _context;
-        private readonly PolygonTickerService _polygonTickerService;
         public AtomicBreakdownService(ApplicationDbContext context, PolygonTickerService polygonTickerService)
         {
             _context = context;
-            _polygonTickerService = polygonTickerService;
         }
-        // use polygon service to get the data
-        public async Task<TickerV3Jto?> GetTickersV3Async(TickersReqCommand queryParams)
-        {
-            var tickerV3Jto = await _polygonTickerService.TickersV3(queryParams);
-            return tickerV3Jto;
-        }
-
-
 
         public MutualFundClass GetMutualFund(string ticker)
         {

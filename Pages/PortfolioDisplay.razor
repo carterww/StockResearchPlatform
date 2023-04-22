@@ -5,6 +5,8 @@
 @inject StockService stockService
 @inject PortfolioService portfolioService
 @inject AtomicBreakdownService atomicBreakdownService
+@inject PortfolioExposureService portfolioExposureService
+@inject IJSRuntime JSRuntime
 
 <h1>@this.PortfolioDisplayModel.Portfolio?.Name</h1>
 
@@ -52,6 +54,10 @@
 <button type="button" hidden="@this.PortfolioDisplayModel.HideNewStock" @onclick=cancelNewStock>Cancel</button>
 <button @onclick=createNewStock hidden="@(this.PortfolioDisplayModel.HideNewStock == false)">Add Stock</button>
 <button @onclick="async () => await atomicBreakDown()" hidden="@(this.PortfolioDisplayModel.HideNewStock == false)">Atomic Breakdown</button>
+<button @onclick="async () => await createPieChart()" hidden="@(this.PortfolioDisplayModel.HideNewStock == false)">Pie Chart</button>
+
+<canvas id="@CanvasId" width="400" height="400"></canvas>
+
 @if (IsAtomicBreakdownCalled == true)
 {
     @if (BreakdownData.Count == 0)
@@ -104,10 +110,15 @@ else
 
 @code {
     [Parameter]
+    public string CanvasId { get; set; } = $"pie-chart-{Guid.NewGuid()}";
+
+    [Parameter]
     public string? Id { get; set; }
     public int id { get; set; }
     private Dictionary<string, double> BreakdownData { get; set; } = new Dictionary<string, double>();
     private Dictionary<string, double> BreakdownDataByPercent { get; set; } = new Dictionary<string, double>();
+    private Dictionary<string, double> PortfolioExposureData { get; set; } = new Dictionary<string, double>();
+
     private bool IsAtomicBreakdownCalled { get; set; } = false;
     bool showAll = false;
 
@@ -180,6 +191,32 @@ else
     {
         Console.WriteLine("We clicked it");
         this.PortfolioDisplayModel.RemoveStock(s);
+    }
+
+    private async Task createPieChart()
+    {
+        var dataDictionary = await portfolioExposureService.ConvertToPortfolioExposure(this.PortfolioDisplayModel.Stocks);
+        var chartConfig = new
+        {
+            Type = "pie",
+            Data = new
+            {
+                Labels = dataDictionary.Keys.ToArray(),
+                Datasets = new[]
+                {
+                    new
+                    {
+                        Data = dataDictionary.Values.ToArray(),
+                        BackgroundColor = new[] { "red", "orange", "yellow", "green", "blue",
+                        "indigo", "violet", "pink", "cyan", "lime",
+                        "lightcoral", "lightsalmon", "lightgreen", "lightblue", "lightsteelblue",
+                        "darkred", "darkorange", "darkgoldenrod", "darkgreen", "darkblue" } // Add more colors if necessary
+                    }
+            }
+            }
+        };
+
+        await JSRuntime.InvokeVoidAsync("createPieChart", CanvasId, chartConfig);
     }
 
 }
