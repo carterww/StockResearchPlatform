@@ -77,14 +77,14 @@ var app = builder.Build();
 
 if (app.Environment.IsStaging())
 {
-	var loadDataService = app.Services.GetService<LoadStockDataToDatabaseService>();
-	loadDataService?.LoadStocksToDatabase();
-	loadDataService?.LoadMutualFundsToDatabase();
-	//using (var serviceScope = app.Services.CreateScope())
-	//{
-	//	var dividendTracker = serviceScope.ServiceProvider.GetService<IDividendTracker>();
-	//	dividendTracker.UpdateDividendInfoRecords();
-	//}
+	//var loadDataService = app.Services.GetService<LoadStockDataToDatabaseService>();
+	//loadDataService?.LoadStocksToDatabase();
+	//loadDataService?.LoadMutualFundsToDatabase();
+	using (var serviceScope = app.Services.CreateScope())
+	{
+		var dividendTracker = serviceScope.ServiceProvider.GetService<IDividendTracker>();
+		dividendTracker.UpdateDividendInfoRecords();
+	}
 	return;
     //var breakdownService = app.Services.GetService<AtomicBreakdownService>();
     //await breakdownService?.BreakDownInvestment("VOO");

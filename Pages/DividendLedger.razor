@@ -127,8 +127,8 @@ else
 		{
 			var entryICol = _dividendLedgerRepository.RetrieveEntries(Ledger);
 			if (entryICol != null) LedgerEntries = entryICol.ToList();
-			Console.WriteLine($"{LedgerEntries.Count}");
 		}
+		this.LedgerEntries = this.LedgerEntries.OrderByDescending(le => le.Date).ToList();
 	}
 
 	private async void GetUpcomingDividends(string userId)
@@ -145,5 +145,6 @@ else
 				this.UpcomingDividends.Add(info);
 			}
 		}
+		this.UpcomingDividends = this.UpcomingDividends.OrderByDescending(ud => ud.PayDate).ToList();
 	}
 }
