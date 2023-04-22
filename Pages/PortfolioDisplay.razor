@@ -8,6 +8,7 @@
 @inject PortfolioService portfolioService
 @inject AtomicBreakdownService atomicBreakdownService
 @inject PortfolioExposureService portfolioExposureService
+@inject PolygonTickerService polygonTickerService
 @inject IJSRuntime JSRuntime
 
 <h1>@this.PortfolioDisplayModel.Portfolio?.Name</h1>
@@ -71,9 +72,12 @@
 <button type="button" hidden="@this.PortfolioDisplayModel.HideNewStock" @onclick=cancelNewStock>Cancel</button>
 <button @onclick=createNewStock hidden="@(this.PortfolioDisplayModel.HideNewStock == false)">Add Stock</button>
 <button @onclick="async () => await atomicBreakDown()" hidden="@(this.PortfolioDisplayModel.HideNewStock == false)">Atomic Breakdown</button>
-<button @onclick="async () => await createPieChart()" hidden="@(this.PortfolioDisplayModel.HideNewStock == false)">Pie Chart</button>
+<button @onclick="async () => await createPieChart()" hidden="@(this.PortfolioDisplayModel.HideNewStock == false)">Portfolio Exposure Pie Chart</button>
 
-<canvas id="@CanvasId" width="400" height="400"></canvas>
+<br />
+<div class="pie-chart-wrapper">
+    <canvas id="@CanvasId" height="10" class="responsive-pie-chart"></canvas>
+</div>
 
 @if (IsAtomicBreakdownCalled == true)
 {

@@ -17,9 +17,11 @@ namespace StockResearchPlatform.Services
     public class AtomicBreakdownService
     {
         ApplicationDbContext _context;
+        PolygonTickerService _polygonTickerService;
         public AtomicBreakdownService(ApplicationDbContext context, PolygonTickerService polygonTickerService)
         {
             _context = context;
+            _polygonTickerService = polygonTickerService;
         }
 
         public MutualFundClass GetMutualFund(string ticker)
@@ -348,7 +350,11 @@ namespace StockResearchPlatform.Services
             {
                 var breakdown = await BreakDownInvestment(stock.Key.Ticker);
 
-                Dictionary<string, string> output = AtomicBreakdownService.MultiplyValues(breakdown, stock.Value.NumberOfShares * stock.Value.CostBasis);
+                var queryParams = new PreviousCloseReqCommand { stocksTicker = stock.Key.Ticker, adjusted = true };
+                PreviousCloseJto? previousClose = await _polygonTickerService.PreviousCloseV2(queryParams);
+
+                var currentValue = previousClose.results[0].c;
+                Dictionary<string, string> output = AtomicBreakdownService.MultiplyValues(breakdown, stock.Value.NumberOfShares * currentValue);
                 listOfDictionaries.Add(output);
             }
 
