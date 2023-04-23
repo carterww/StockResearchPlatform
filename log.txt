@@ -1,0 +1,453 @@
+commit c9bfec41adfc3c46acadd28fb3ed077da182bc5d
+Author: carterww <carterww@hotmail.com>
+Date:   Sat Apr 22 20:53:49 2023 -0500
+
+    Update README.md
+
+commit 922f90478759a0eb322224bd2d9e1a20b9e8f43e
+Author: carterww <carterww@hotmail.com>
+Date:   Sat Apr 22 20:53:04 2023 -0500
+
+    Readme
+
+commit 3c980663c8b013289c1ed98daa0072b59633f929
+Author: carterww <carterww@hotmail.com>
+Date:   Sat Apr 22 20:15:35 2023 -0500
+
+    Final touches
+
+commit aa91bda5efc06bfaa8de6d2f4a78e1bca35bd090
+Author: Ali Al-Raisi <ali.alraisi285@topper.wku.edu>
+Date:   Sat Apr 22 17:51:55 2023 -0500
+
+    search bar and button added
+
+commit 6c3e7b1597e46fe3724f90c6951352f800441ac2
+Author: D4vid134 <davidqiu29@icloud.com>
+Date:   Sat Apr 22 04:59:03 2023 -0500
+
+    portfolio exposure pie chart. and use of current value
+
+commit feba192f253f7340630314a154d2d551ac05a073
+Merge: d19e3a4 0e06b70
+Author: D4vid134 <davidqiu29@icloud.com>
+Date:   Sat Apr 22 02:21:20 2023 -0500
+
+    Merge branch 'master' into david
+
+commit 0e06b7023464538cab65a33c1be1e3ecb8711ad0
+Author: carterww <carterww@hotmail.com>
+Date:   Sat Apr 22 02:15:42 2023 -0500
+
+    Int and long overflow fixes
+
+commit d19e3a40519e34689ff105c49f266b3eaa0209e0
+Author: D4vid134 <davidqiu29@icloud.com>
+Date:   Sat Apr 22 02:12:59 2023 -0500
+
+    unfinished port exposure
+
+commit dcd5c654d32b0c24200958aef501108c57e27b4b
+Author: carterww <carterww@hotmail.com>
+Date:   Sat Apr 22 02:05:55 2023 -0500
+
+    Null Object fix
+
+commit ed87fb7061fd7ae32f0e2e4148acdd16d48c3637
+Author: carterww <carterww@hotmail.com>
+Date:   Fri Apr 21 21:37:12 2023 -0500
+
+    Migrations
+
+commit 1593dc7b40596f7057e3d82c0356abe8b807379f
+Merge: 881d824 9633fd2
+Author: carterww <carterww@hotmail.com>
+Date:   Fri Apr 21 21:35:39 2023 -0500
+
+    Merge remote-tracking branch 'origin/carter'
+
+commit 9633fd21029e7b4953b7c4b848e355d68e522f0f
+Author: carterww <carterww@hotmail.com>
+Date:   Fri Apr 21 21:35:10 2023 -0500
+
+    Carter's Finishing Touches
+
+commit be662f98ee0aae996d94b5780f5abdc69ac2b02e
+Merge: bfa32f9 881d824
+Author: Ali Al-Raisi <ali.alraisi285@topper.wku.edu>
+Date:   Fri Apr 21 21:24:19 2023 -0500
+
+    Merge remote-tracking branch 'origin/master' into alireal
+
+commit 881d824d844edb48a6244914acd9f98432326d36
+Author: carterww <carterww@hotmail.com>
+Date:   Fri Apr 21 01:44:51 2023 -0500
+
+    Dividend Ledger Fix
+
+commit 8054bc4ce83f5097f00f4b400be866f9f0ef5f57
+Author: carterww <carterww@hotmail.com>
+Date:   Fri Apr 21 00:40:02 2023 -0500
+
+    Db Migrations (local)
+
+commit 58b15a1ddf9a611d700ca0943ab3a4849065b5b6
+Author: carterww <carterww@hotmail.com>
+Date:   Fri Apr 21 00:33:26 2023 -0500
+
+    Db Migrations
+
+commit 9b5465ccd80ab859ce043bfb151d8dc5089a1826
+Author: carterww <carterww@hotmail.com>
+Date:   Fri Apr 21 00:24:45 2023 -0500
+
+    Small touches
+
+commit 23c85ac7d9b4ccdc4829ecd832c8468d801f91dc
+Merge: b19aa57 b4b6835
+Author: carterww <carterww@hotmail.com>
+Date:   Fri Apr 21 00:18:56 2023 -0500
+
+    Merge remote-tracking branch 'origin/david' into mergedavid
+
+commit b19aa57da5532475163683746cb6ff5d05ffe37c
+Author: carterww <carterww@hotmail.com>
+Date:   Fri Apr 21 00:17:54 2023 -0500
+
+    publish
+
+commit b4b6835cd45441d94a4bdce456690dcc6d4e8bd5
+Author: D4vid134 <davidqiu29@icloud.com>
+Date:   Thu Apr 20 23:01:46 2023 -0500
+
+    Update PortfolioDisplay.razor
+
+commit 6a0a2bc39c4d43c2465f4a58b50ea764f686ceec
+Author: D4vid134 <davidqiu29@icloud.com>
+Date:   Thu Apr 20 22:55:51 2023 -0500
+
+    minor bug fix
+
+commit 2b2d5ed171e0a08561e79ea94eaa9cbddb331430
+Author: D4vid134 <davidqiu29@icloud.com>
+Date:   Thu Apr 20 22:53:43 2023 -0500
+
+    minor ui update
+
+commit 3b3b309affe354dc7c0abd9d1997f2fa31ceab1a
+Author: D4vid134 <davidqiu29@icloud.com>
+Date:   Thu Apr 20 22:28:18 2023 -0500
+
+    fixed mutual fund not working
+
+commit 031396f823177123f3eacf1f4b9954b813e8ec07
+Author: D4vid134 <davidqiu29@icloud.com>
+Date:   Thu Apr 20 21:19:57 2023 -0500
+
+    update
+
+commit 261b700c525cccd3c4c31c4fd1ae60eeea0497b7
+Author: carterww <carterww@hotmail.com>
+Date:   Wed Apr 19 19:05:00 2023 -0500
+
+    Portfolio Comparison done
+
+commit 6ac7a4dcc4f5fabba86047e1d06db98b91f832f9
+Author: carterww <carterww@hotmail.com>
+Date:   Wed Apr 19 12:01:41 2023 -0500
+
+    PortComparison Backend done Testing needed
+
+commit bfa32f9ae30375570d8c9500ae8726fe5f711c45
+Author: Ali Al-Raisi <ali.alraisi285@topper.wku.edu>
+Date:   Wed Apr 19 11:13:48 2023 -0500
+
+    Access Stock Comparison Page
+
+commit 86079b2ff324a3d06fc823083b83a629fcce6f23
+Author: D4vid134 <davidqiu29@icloud.com>
+Date:   Wed Apr 19 04:56:57 2023 -0500
+
+    minor commit that i wasted an hour thinking this code doesnt work because my internet was borderline down
+
+commit b7403e711368e5c2c0a213604ef2723a2d5b7bb3
+Author: D4vid134 <davidqiu29@icloud.com>
+Date:   Wed Apr 19 04:16:01 2023 -0500
+
+    update
+
+commit 46d7acc8b5d8881b2655d32dd99b15b343cb60f6
+Author: D4vid134 <davidqiu29@icloud.com>
+Date:   Wed Apr 19 03:40:34 2023 -0500
+
+    Atomic BreakDown
+
+commit 3b9a40d7dbf4376d4420b078f2e9aee1a0ead0d5
+Author: carterww <carterww@hotmail.com>
+Date:   Wed Apr 19 02:30:29 2023 -0500
+
+    Halfway done with portfolio comparison
+
+commit 157da8dfad0990886d527be351fad634003f25ed
+Author: D4vid134 <davidqiu29@icloud.com>
+Date:   Tue Apr 18 02:09:15 2023 -0500
+
+    atomic breakdown name convert
+
+commit 799fd91e6b91c833b0e417ffca939bc3c48a5058
+Author: carterww <carterww@hotmail.com>
+Date:   Mon Apr 17 20:16:06 2023 -0500
+
+    Begin Portfolio Comparison feature
+
+commit cb1fb34f67107196216f4ad57bf6f6eaf354e341
+Author: carterww <carterww@hotmail.com>
+Date:   Sun Apr 16 15:38:45 2023 -0500
+
+    Dividend Ledger Done end to end
+
+commit 49a51c95343f252f666ea7d2fe05154ee4b0c9c0
+Author: carterww <carterww@hotmail.com>
+Date:   Thu Apr 13 00:31:58 2023 -0500
+
+    IDK WHAT I DID
+
+commit e6d4c610e9c35c694d7f2309ef6ca23212f86c80
+Merge: 63c7479 e306d60
+Author: D4vid134 <davidqiu29@icloud.com>
+Date:   Wed Apr 12 17:14:54 2023 -0500
+
+    Merge branch 'carter' into david
+
+commit e306d60af396ae9ed3e4ae4a1e310566ce472cf1
+Author: carterww <carterww@hotmail.com>
+Date:   Wed Apr 12 14:55:03 2023 -0500
+
+    Dividend Tracker done & new polygon endpoint
+
+commit 63c74795b35f38b0603e561d9b61c80a14c5c28e
+Merge: 3637502 d75ebbf
+Author: D4vid134 <davidqiu29@icloud.com>
+Date:   Wed Apr 12 03:20:00 2023 -0500
+
+    update
+
+commit 3637502972c3e2c027bdbd50c1ee67f4f4d2431e
+Author: D4vid134 <davidqiu29@icloud.com>
+Date:   Wed Apr 12 02:58:22 2023 -0500
+
+    updates
+
+commit 6924ede13a0d43ff98bbc196ceaa1d122ec7e5e0
+Author: Ali Al-Raisi <ali.alraisi285@topper.wku.edu>
+Date:   Tue Apr 11 14:14:14 2023 -0500
+
+    New Page for Comparison
+    
+    ITS NOT COMPLETE, I created a new site to compare three stock
+
+commit 44429c3645abb0e33c7b3ba9f9c1dc7cfa15ba8e
+Author: D4vid134 <davidqiu29@icloud.com>
+Date:   Tue Apr 11 01:34:13 2023 -0500
+
+    updates
+
+commit d75ebbf7a52cd3e1febee6847babb51fefde9d6d
+Author: carterww <carterww@hotmail.com>
+Date:   Sat Apr 8 21:43:40 2023 -0500
+
+    Read Desc
+    
+    Finished dividend ledger in theory. Need to test it now.
+
+commit 8c224d782af5ff29761ee9acd3dd15792e01e6e4
+Author: carterww <carterww@hotmail.com>
+Date:   Wed Apr 5 14:36:44 2023 -0500
+
+    Dividend Tracker stuff
+
+commit cba36b9b5463eb2ec841cbcd0e46671d2cff3935
+Author: Ali Al-Raisi <ali.alraisi285@topper.wku.edu>
+Date:   Wed Apr 5 13:19:20 2023 -0500
+
+    working server
+
+commit 06e178fbb8759147d88fcfa6b059955b76d85169
+Author: D4vid134 <davidqiu29@icloud.com>
+Date:   Wed Apr 5 07:07:59 2023 -0500
+
+    Create AtomicBreakdownService.cs
+
+commit 5d27966ed9c24a7c8c0f44dc827e2d99579aef1e
+Author: carterww <carterww@hotmail.com>
+Date:   Tue Apr 4 23:55:35 2023 -0500
+
+    DividendTracker Checkpoint
+
+commit 1c239af1a9e1894d9b7b193baf3ed63b56ada529
+Author: carterww <carterww@hotmail.com>
+Date:   Tue Apr 4 13:11:46 2023 -0500
+
+    Repository work
+
+commit 736fc4b1df7e5eca33f44ed609aab38d56d63cae
+Author: carterww <carterww@hotmail.com>
+Date:   Tue Apr 4 10:41:15 2023 -0500
+
+    Add Hangfire
+
+commit 81c8929168b94d5ea9678ca7266c93f095ec5e28
+Author: carterww <carterww@hotmail.com>
+Date:   Mon Apr 3 23:44:02 2023 -0500
+
+    Stock Info & Dividend Polygon Services Written
+
+commit a0e195b41f30fb5dcb50a6449b63d5d4dd037127
+Author: carterww <carterww@hotmail.com>
+Date:   Sat Apr 1 00:54:19 2023 -0500
+
+    Migrating to Polygon & start dividend tracking
+
+commit 1a18a24db3e1a62dcd6463ca50da8a3f71f3b566
+Author: carterww <carterww@hotmail.com>
+Date:   Tue Mar 28 17:48:27 2023 -0500
+
+    Deployed
+
+commit 7631f36c572bed8ddcc8d84cc5bd67809458c894
+Author: carterww <carterww@hotmail.com>
+Date:   Tue Mar 28 16:39:21 2023 -0500
+
+    Set for prod
+
+commit d5a19aadd5535257b31a4ad7fc0a8e2a9eebc6ee
+Merge: b04a959 9e162ac
+Author: Carter Williams <82002721+carterww@users.noreply.github.com>
+Date:   Tue Mar 28 15:33:47 2023 -0500
+
+    Merge pull request #3 from carterww/carter
+    
+    For Presentation
+
+commit 9e162ac95f661e607cdc002520a067adc9682dec
+Author: carterww <carterww@hotmail.com>
+Date:   Tue Mar 28 15:32:29 2023 -0500
+
+    Ignore Migrations
+
+commit a1f35b41c9ae9c353ecc15b32e11f441859a76f9
+Author: carterww <carterww@hotmail.com>
+Date:   Tue Mar 28 15:31:49 2023 -0500
+
+    Checkpoint
+
+commit 1f959d9b71d6103f7ca2a319d9c19094d5e66a9c
+Author: carterww <carterww@hotmail.com>
+Date:   Mon Mar 27 22:53:06 2023 -0500
+
+    Portfolio Skeleton
+
+commit 6d252460811c359853940abef29bece9e0f7fc7d
+Author: carterww <carterww@hotmail.com>
+Date:   Mon Mar 27 20:51:18 2023 -0500
+
+    Stuff
+
+commit d5de11e38b45081be072a776cbe9c3a5e0ed10c0
+Author: carterww <carterww@hotmail.com>
+Date:   Mon Mar 27 13:32:00 2023 -0500
+
+    Portfolio Checkpoint
+
+commit d78e20089521da578e21db177da69549d1a87ce0
+Author: carterww <carterww@hotmail.com>
+Date:   Mon Mar 27 11:54:41 2023 -0500
+
+    Update .gitignore
+
+commit 4268aa2c2966846305856f6553510d202b049560
+Author: carterww <carterww@hotmail.com>
+Date:   Mon Mar 27 01:06:25 2023 -0500
+
+    Start Portfolio stuff
+
+commit 281103432ecef197054a19abea992a34fbc31d59
+Author: carterww <carterww@hotmail.com>
+Date:   Sun Mar 26 20:50:24 2023 -0500
+
+    Fix user
+
+commit 79e2b1a5aff6d7053d24af0b768cf96c40b83d1b
+Merge: fefe538 a73af91
+Author: carterww <carterww@hotmail.com>
+Date:   Sun Mar 26 19:22:44 2023 -0500
+
+    Merge remote-tracking branch 'origin/david' into carter
+
+commit fefe538189674c1ef517570a905a7b2743083ed2
+Author: carterww <carterww@hotmail.com>
+Date:   Thu Mar 23 21:26:34 2023 -0500
+
+    Database models
+
+commit a73af915acb41a9fc5597bf49040697d88147df6
+Author: D4vid134 <davidqiu29@icloud.com>
+Date:   Wed Mar 22 21:15:59 2023 -0500
+
+    Authentication
+
+commit b04a9594552c3c0674ec3f45672d970dd1c6a632
+Merge: db70127 518b64d
+Author: Carter Williams <82002721+carterww@users.noreply.github.com>
+Date:   Wed Mar 22 11:55:20 2023 -0500
+
+    Merge pull request #2 from carterww/carter
+    
+    Functional Requirement G.3
+
+commit 518b64d2804a6054236ba19cffcca90cb978018f
+Merge: 7dc8d7a db70127
+Author: carterww <carterww@hotmail.com>
+Date:   Wed Mar 22 11:54:08 2023 -0500
+
+    Merge remote-tracking branch 'origin/master' into carter
+
+commit 7dc8d7a90ee918e22550a9fc70a2080b116306ac
+Author: carterww <carterww@hotmail.com>
+Date:   Tue Mar 21 23:09:50 2023 -0500
+
+    Fetch Stock Info
+
+commit db70127990056a3c859009b43d87b3cf6f8b9f11
+Merge: 4d01617 1333202
+Author: Carter Williams <82002721+carterww@users.noreply.github.com>
+Date:   Tue Feb 21 16:30:50 2023 -0600
+
+    Merge pull request #1 from carterww/carter
+    
+    Load Data Service
+
+commit 1333202683fe9aea6039d48154296a9a66a2f434
+Author: carterww <carterww@hotmail.com>
+Date:   Tue Feb 21 16:29:18 2023 -0600
+
+    LoadData scripts
+    
+    Finished scripts to load tickers, CIK, S#, and C# to database.
+
+commit ed1a5cfeef3a983087573f3507b7b0f2178da360
+Author: carterww <carterww@hotmail.com>
+Date:   Tue Feb 21 15:21:34 2023 -0600
+
+    Start Mutual Fund
+
+commit 4d0161780580b9a195bff3842f16931fed0d8df5
+Author: carterww <carterww@hotmail.com>
+Date:   Mon Feb 20 23:01:30 2023 -0600
+
+    Initial
+    
+    ASP.NET code along with:
+    1. MySQL connection
+    2. Entity Framework
+    3. A script to load stocks into db
