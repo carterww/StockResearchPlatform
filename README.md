@@ -40,7 +40,7 @@ The Program.cs file contains all the information necesary to start the server. I
 ---
 
 ## Miscellaneous
-A live version of the website can be found here: [title](https://stockresearchplatform20230328164526.azurewebsites.net/). The MySQL database and Blazor server code are hosted on Microsoft Azure.
+A live version of the website can be found [here](https://stockresearchplatform20230328164526.azurewebsites.net/). The MySQL database and Blazor server code are hosted on Microsoft Azure.
 
 ---
 
