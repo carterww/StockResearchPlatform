@@ -333,6 +333,12 @@ namespace StockResearchPlatform.Services
             // Replace all '.' with ' '
             input = input.Replace('.', ' ');
 
+            // Remove the word "The" from the string
+            input = Regex.Replace(input, @"\bThe\b", "", RegexOptions.IgnoreCase);
+
+            // Remove extra spaces after removing "The"
+            input = input.TrimStart();
+
             // Split the string into words
             string[] words = input.Split(' ');
 
@@ -349,12 +355,15 @@ namespace StockResearchPlatform.Services
                 }
             }
 
-            // Join the words back together
-            string formattedString = string.Join(" ", words);
+            // Join the words back together and remove any trailing spaces
+            string formattedString = string.Join(" ", words).Trim();
+
+            // Remove all commas
+            formattedString = formattedString.Replace(',', ' ');
 
             formattedString = formattedString.Replace('-', ' ');
-            formattedString = formattedString.Replace(',', ' ').Trim();
 
+            // Replace consecutive spaces with single spaces using Regex
             formattedString = Regex.Replace(formattedString, @"\s{2,}", " ");
 
             return formattedString;
