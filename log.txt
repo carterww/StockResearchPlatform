@@ -1,3 +1,45 @@
+commit 3407db368666d198279660c734b5dd9da1fbf7f1
+Author: D4vid134 <davidqiu29@icloud.com>
+Date:   Sun Apr 23 19:32:29 2023 -0500
+
+    More edge case bug fix
+
+commit dc240035060639e32d82fdb02f6219b609087caf
+Author: D4vid134 <davidqiu29@icloud.com>
+Date:   Sun Apr 23 19:20:18 2023 -0500
+
+    bug
+
+commit 258a594c3b305bbc9ae693bf12514da19d3bfdaa
+Author: D4vid134 <davidqiu29@icloud.com>
+Date:   Sun Apr 23 19:12:37 2023 -0500
+
+    Bug fix
+
+commit 096f953701f476504c7b814738ccebc640e3f6e4
+Author: Ali Al-Raisi <ali.alraisi285@topper.wku.edu>
+Date:   Sun Apr 23 17:47:47 2023 -0500
+
+    Update log.txt
+
+commit ece20d53e42a45fede2f5fef0374024123eb4f02
+Author: Ali Al-Raisi <ali.alraisi285@topper.wku.edu>
+Date:   Sun Apr 23 17:47:14 2023 -0500
+
+    Update log.txt
+
+commit 66789694481817636c2024bef1a3196986f4571d
+Author: Ali Al-Raisi <ali.alraisi285@topper.wku.edu>
+Date:   Sun Apr 23 16:30:46 2023 -0500
+
+    search bar updated
+
+commit 0ba1eac109d8f62493af9f3205f8cb7d94cf3d68
+Author: Ali Al-Raisi <ali.alraisi285@topper.wku.edu>
+Date:   Sun Apr 23 12:19:10 2023 -0500
+
+    Merge remote-tracking branch into alireal
+
 commit c9bfec41adfc3c46acadd28fb3ed077da182bc5d
 Author: carterww <carterww@hotmail.com>
 Date:   Sat Apr 22 20:53:49 2023 -0500
