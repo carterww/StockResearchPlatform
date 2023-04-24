@@ -33,6 +33,15 @@
 		public double vw { get; set; }
 	}
 
+	public class LastQuote
+	{
+		public double P { get; set; }
+		public double S { get; set; }
+		public double p { get; set; }
+		public double s { get; set; }
+		public double t { get; set; }
+ 	}
+
 	public class SnapshotsTickerV2Jto
 	{
 		public NestedTicker ticker { get; set; }
@@ -49,6 +58,7 @@
 		public Day day { get; set; }
 		public Min min { get; set; }
 		public PrevDay prevDay { get; set; }
+		public LastQuote lastQuote { get; set;}
 	}
 
 }

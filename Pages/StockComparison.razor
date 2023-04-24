@@ -1,0 +1,415 @@
+﻿@page "/stockcomparison"
+@using Microsoft.AspNetCore.WebUtilities;
+@using StockResearchPlatform.Commands;
+@using StockResearchPlatform.Models.PolygonModels;
+@using StockResearchPlatform.Services.Polygon;
+@inject PolygonTickerService _tickerService
+@inject PolygonDividendService _dividendService;
+@inject NavigationManager UriHelper
+
+<h1>Stock Comparison</h1>
+
+<input type="text" @bind=CurrentTicker placeholder="Ticker" />
+<button @onclick=AddStock type="button" disabled="@(stocks.Count >= 3)">Add Stock</button>
+<br />
+<table>
+	<tr>
+		<th></th>
+		@if (stocks.Count >= 1)
+		{
+			<th>
+				@stocks.First().Item1.results.name
+			</th>
+		}
+		@if (stocks.Count >= 2)
+		{
+			<th>
+				@stocks[1].Item1.results.name
+			</th>
+		}
+		@if (stocks.Count >= 3)
+		{
+			<th>
+				@stocks[2].Item1.results.name
+			</th>
+		}
+	</tr>
+	<tr>
+		<td>Current Price</td>
+		@if (stocks.Count >= 1)
+		{
+			<td>
+				@(String.Format("{0:C}", stocks[0].Item3.ticker.lastQuote == null ? stocks[0].Item3.ticker.day.c : stocks[0].Item3.ticker.lastQuote.P))
+			</td>
+		}
+		@if (stocks.Count >= 2)
+		{
+			<td>
+				@(String.Format("{0:C}", stocks[1].Item3.ticker.lastQuote == null ? stocks[1].Item3.ticker.day.c : stocks[1].Item3.ticker.lastQuote.P))
+			</td>
+		}
+		@if (stocks.Count >= 3)
+		{
+			<td>
+				@(String.Format("{0:C}", stocks[2].Item3.ticker.lastQuote == null ? stocks[2].Item3.ticker.day.c : stocks[2].Item3.ticker.lastQuote.P))
+			</td>
+		}
+	</tr>
+	<tr>
+		<td>Today's Change</td>
+		@if (stocks.Count >= 1)
+		{
+			<td>
+				@(String.Format("{0:0.00}%", stocks[0].Item3.ticker.todaysChangePerc))
+			</td>
+		}
+		@if (stocks.Count >= 2)
+		{
+			<td>
+				@(String.Format("{0:0.00}%", stocks[1].Item3.ticker.todaysChangePerc))
+			</td>
+		}
+		@if (stocks.Count >= 3)
+		{
+			<td>
+				@(String.Format("{0:0.00}%", stocks[2].Item3.ticker.todaysChangePerc))
+			</td>
+		}
+	</tr>
+	<tr>
+		<td>Market Cap</td>
+		@if (stocks.Count >= 1)
+		{
+			<td>
+				@(String.Format("{0:C}", stocks[0].Item1.results.market_cap))
+			</td>
+		}
+		@if (stocks.Count >= 2)
+		{
+			<td>
+				@(String.Format("{0:C}", stocks[1].Item1.results.market_cap))
+			</td>
+		}
+		@if (stocks.Count >= 3)
+		{
+			<td>
+				@(String.Format("{0:C}", stocks[2].Item1.results.market_cap))
+			</td>
+		}
+	</tr>
+	<tr>
+		<td>Sector</td>
+		@if (stocks.Count >= 1)
+		{
+			<td>
+				@stocks[0].Item1.results.sic_description
+			</td>
+		}
+		@if (stocks.Count >= 2)
+		{
+			<td>
+				@stocks[1].Item1.results.sic_description
+			</td>
+		}
+		@if (stocks.Count >= 3)
+		{
+			<td>
+				@stocks[2].Item1.results.sic_description
+			</td>
+		}
+	</tr>
+	<tr>
+		<td>Assets</td>
+		@if (stocks.Count >= 1)
+		{
+			<td>
+				@(String.Format("{0:C}", stocks[0].Item2.results.Count != 0 ? stocks[0].Item2.results[0].financials.balance_sheet.assets.value : 0))
+			</td>
+		}
+		@if (stocks.Count >= 2)
+		{
+			<td>
+				@(String.Format("{0:C}", stocks[1].Item2.results.Count != 0 ? stocks[1].Item2.results[0].financials.balance_sheet.assets.value : 0))
+			</td>
+		}
+		@if (stocks.Count >= 3)
+		{
+			<td>
+				@(String.Format("{0:C}", stocks[2].Item2.results.Count != 0 ? stocks[2].Item2.results[0].financials.balance_sheet.assets.value : 0))
+			</td>
+		}
+	</tr>
+	<tr>
+		<td>Liabilties</td>
+		@if (stocks.Count >= 1)
+		{
+			<td>
+				@(String.Format("{0:C}", stocks[0].Item2.results.Count != 0 ? stocks[0].Item2.results[0].financials.balance_sheet.liabilities.value : 0))
+			</td>
+		}
+		@if (stocks.Count >= 2)
+		{
+			<td>
+				@(String.Format("{0:C}", stocks[1].Item2.results.Count != 0 ? stocks[1].Item2.results[0].financials.balance_sheet.liabilities.value : 0))
+			</td>
+		}
+		@if (stocks.Count >= 3)
+		{
+			<td>
+				@(String.Format("{0:C}", stocks[2].Item2.results.Count != 0 ? stocks[2].Item2.results[0].financials.balance_sheet.liabilities.value : 0))
+			</td>
+		}
+	</tr>
+	<tr>
+		<td>Net Cash Flow</td>
+		@if (stocks.Count >= 1)
+		{
+			<td>
+				@(String.Format("{0:C}", stocks[0].Item2.results.Count != 0 ? stocks[0].Item2.results[0].financials.cash_flow_statement.net_cash_flow.value : 0))
+			</td>
+		}
+		@if (stocks.Count >= 2)
+		{
+			<td>
+				@(String.Format("{0:C}", stocks[1].Item2.results.Count != 0 ? stocks[1].Item2.results[0].financials.cash_flow_statement.net_cash_flow.value : 0))
+			</td>
+		}
+		@if (stocks.Count >= 3)
+		{
+			<td>
+				@(String.Format("{0:C}", stocks[2].Item2.results.Count != 0 ? stocks[1].Item2.results[0].financials.cash_flow_statement.net_cash_flow.value : 0))
+			</td>
+		}
+	</tr>
+	<tr>
+		<td>Revenue</td>
+		@if (stocks.Count >= 1)
+		{
+			<td>
+				@(String.Format("{0:C}", stocks[0].Item2.results.Count != 0 ? stocks[0].Item2.results[0].financials.income_statement.revenues.value : 0))
+			</td>
+		}
+		@if (stocks.Count >= 2)
+		{
+			<td>
+				@(String.Format("{0:C}", stocks[1].Item2.results.Count != 0 ? stocks[1].Item2.results[0].financials.income_statement.revenues.value : 0))
+			</td>
+		}
+		@if (stocks.Count >= 3)
+		{
+			<td>
+				@(String.Format("{0:C}", stocks[2].Item2.results.Count != 0 ? stocks[2].Item2.results[0].financials.income_statement.revenues.value : 0))
+			</td>
+		}
+	</tr>
+	<tr>
+		<td>Expenses</td>
+		@if (stocks.Count >= 1)
+		{
+			<td>
+				@(String.Format("{0:C}", stocks[0].Item2.results.Count != 0 ? stocks[0].Item2.results[0].financials.income_statement.costs_and_expenses.value : 0))
+			</td>
+		}
+		@if (stocks.Count >= 2)
+		{
+			<td>
+				@(String.Format("{0:C}", stocks[1].Item2.results.Count != 0 ? stocks[1].Item2.results[0].financials.income_statement.costs_and_expenses.value : 0))
+			</td>
+		}
+		@if (stocks.Count >= 3)
+		{
+			<td>
+				@(String.Format("{0:C}", stocks[2].Item2.results.Count != 0 ? stocks[2].Item2.results[0].financials.income_statement.costs_and_expenses.value : 0))
+			</td>
+		}
+	</tr>
+	<tr>
+		<td>EPS</td>
+		@if (stocks.Count >= 1)
+		{
+			<td>
+				@(String.Format("{0:C}", stocks[0].Item2.results.Count != 0 ? stocks[0].Item2.results[0].financials.income_statement.basic_earnings_per_share.value : 0))
+			</td>
+		}
+		@if (stocks.Count >= 2)
+		{
+			<td>
+				@(String.Format("{0:C}", stocks[1].Item2.results.Count != 0 ? stocks[1].Item2.results[0].financials.income_statement.basic_earnings_per_share.value : 0))
+			</td>
+		}
+		@if (stocks.Count >= 3)
+		{
+			<td>
+				@(String.Format("{0:C}", stocks[2].Item2.results.Count != 0 ? stocks[2].Item2.results[0].financials.income_statement.basic_earnings_per_share.value : 0))
+			</td>
+		}
+	</tr>
+	<tr>
+		<td>Dividend Amount</td>
+		@if (stocks.Count >= 1)
+		{
+			<td>
+				@(String.Format("{0:C}", stocks[0].Item4.results.Count != 0 ? stocks[0].Item4.results[0].cash_amount : 0))
+			</td>
+		}
+		@if (stocks.Count >= 2)
+		{
+			<td>
+				@(String.Format("{0:C}", stocks[1].Item4.results.Count != 0 ? stocks[1].Item4.results[0].cash_amount : 0))
+			</td>
+		}
+		@if (stocks.Count >= 3)
+		{
+			<td>
+				@(String.Format("{0:C}", stocks[2].Item4.results.Count != 0 ? stocks[2].Item4.results[0].cash_amount : 0))
+			</td>
+		}
+	</tr>
+	<tr>
+		<td>Forward Dividend Yield</td>
+		@if (stocks.Count >= 1)
+		{
+				<td>
+				@(String.Format("{0:P2}", (((stocks[0].Item4.results.Count != 0 ? stocks[0].Item4.results[0].cash_amount : 0) * (stocks[0].Item4.results.Count != 0 ? stocks[0].Item4.results[0].frequency : 0)) / (stocks[0].Item3.ticker.lastQuote == null ? stocks[0].Item3.ticker.day.c : stocks[0].Item3.ticker.lastQuote.P))))
+				</td>
+		}
+		@if (stocks.Count >= 2)
+		{
+			<td>
+				@(String.Format("{0:P2}", (((stocks[1].Item4.results.Count != 0 ? stocks[1].Item4.results[0].cash_amount : 0) * (stocks[1].Item4.results.Count != 0 ? stocks[1].Item4.results[0].frequency : 0)) / (stocks[1].Item3.ticker.lastQuote == null ? stocks[1].Item3.ticker.day.c : stocks[0].Item3.ticker.lastQuote.P))))
+			</td>
+		}
+		@if (stocks.Count >= 3)
+		{
+			<td>
+				@(String.Format("{0:P2}", (((stocks[2].Item4.results.Count != 0 ? stocks[2].Item4.results[0].cash_amount : 0) * (stocks[2].Item4.results.Count != 0 ? stocks[2].Item4.results[0].frequency : 0)) / (stocks[2].Item3.ticker.lastQuote == null ? stocks[2].Item3.ticker.day.c : stocks[0].Item3.ticker.lastQuote.P))))
+			</td>
+		}
+	</tr>
+	<tr>
+		<td>Next Pay Date</td>
+		@if (stocks.Count >= 1)
+		{
+			<td>
+				@(stocks[0].Item4.results.Count != 0 ? stocks[0].Item4.results[0].pay_date : "N/A")
+			</td>
+		}
+		@if (stocks.Count >= 2)
+		{
+			<td>
+				@(stocks[1].Item4.results.Count != 0 ? stocks[1].Item4.results[0].pay_date : "N/A")
+			</td>
+		}
+		@if (stocks.Count >= 3)
+		{
+			<td>
+				@(stocks[2].Item4.results.Count != 0 ? stocks[2].Item4.results[0].pay_date : "N/A")
+			</td>
+		}
+	</tr>
+	<tr>
+		<td>Dividend Frequency</td>
+		@if (stocks.Count >= 1)
+		{
+			<td>
+				@(InterpretFrequency(stocks[0].Item4.results.Count != 0 ? stocks[0].Item4.results[0].frequency : 0))
+			</td>
+		}
+		@if (stocks.Count >= 2)
+		{
+			<td>
+				@(InterpretFrequency(stocks[1].Item4.results.Count != 0 ? stocks[1].Item4.results[0].frequency : 0))
+			</td>
+		}
+		@if (stocks.Count >= 3)
+		{
+			<td>
+				@(InterpretFrequency(stocks[1].Item4.results.Count != 0 ? stocks[1].Item4.results[0].frequency : 0))
+			</td>
+		}
+	</tr>
+
+
+</table>
+
+<link rel="stylesheet" href="css/portfolio-display.css" />
+
+@code {
+	Dictionary<string, string> queryParams = new Dictionary<string, string>();
+	string CurrentTicker = "";
+
+	bool alreadyRetrievedQueryparam = false;
+
+	// Holds details about company, the financials of it, and the pricing data
+	List<Tuple<TickerDetailsV3Jto, StockFinancialsVXJto, SnapshotsTickerV2Jto, DividendsV3Jto>> stocks = new List<Tuple<TickerDetailsV3Jto, StockFinancialsVXJto, SnapshotsTickerV2Jto, DividendsV3Jto>>(3);
+
+	async Task getQueryParams()
+	{
+		var uri = UriHelper.ToAbsoluteUri(UriHelper.Uri);
+		if (QueryHelpers.ParseQuery(uri.Query).TryGetValue("ticker", out var _ticker))
+		{
+			queryParams["ticker"] = _ticker;
+		}
+	}
+
+	protected override async Task OnInitializedAsync()
+	{
+		if (alreadyRetrievedQueryparam == true) return;
+		await this.getQueryParams();
+		if (queryParams.ContainsKey("ticker"))
+		{
+			GetStockInfo(queryParams["ticker"]);
+			alreadyRetrievedQueryparam = true;
+		}
+	}
+
+	public string InterpretFrequency(int freq)
+	{
+		switch(freq)
+		{
+			case 0: return "N/A";
+			case 1: return "Yearly";
+			case 2: return "Biannual";
+			case 4: return "Quarterly";
+			case 12: return "Monthly";
+			default: return $"{freq} times a year";
+		}
+	}
+
+	public async void AddStock()
+	{
+		this.GetStockInfo(this.CurrentTicker);
+		this.CurrentTicker = "";
+	}
+
+	private async void GetStockInfo(string ticker)
+	{
+		if (stocks.Count >= 3)
+		{
+			return;
+		}
+
+		ticker = ticker.ToUpper();
+		var detailsTask = _tickerService.TickerDetailsV3(ticker);
+		var financialsCmd = new StockFinancialsReqCommand();
+		financialsCmd.ticker = ticker;
+		var financialsTask = _tickerService.StockFinancialsVX(financialsCmd);
+		var snapshottask = _tickerService.SnapshotsTicker(ticker);
+		var dividendsCmd = new DividendsReqCommand();
+		dividendsCmd.ticker = ticker;
+		var dividendTask = _dividendService.DividendsV3(dividendsCmd);
+		Task.WaitAll(detailsTask, financialsTask, snapshottask, dividendTask);
+
+		if (detailsTask.Result == null ||
+			financialsTask.Result == null ||
+			snapshottask.Result == null ||
+			dividendTask.Result == null)
+		{
+			return;
+		}
+
+		var tuple = new Tuple<TickerDetailsV3Jto, StockFinancialsVXJto, SnapshotsTickerV2Jto, DividendsV3Jto>(detailsTask.Result, financialsTask.Result, snapshottask.Result, dividendTask.Result);
+		stocks.Add(tuple);
+		Console.WriteLine(stocks.Count);
+	}
+}

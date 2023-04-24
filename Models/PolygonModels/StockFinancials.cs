@@ -6,7 +6,7 @@
 		public string label { get; set; }
 		public double order { get; set; }
 		public string unit { get; set; }
-		public long value { get; set; }
+		public double value { get; set; }
 	}
 
 	public class BalanceSheet
@@ -241,7 +241,7 @@
 		public string label { get; set; }
 		public double order { get; set; }
 		public string unit { get; set; }
-		public long value { get; set; }
+		public double value { get; set; }
 	}
 
 	public class NetCashFlow

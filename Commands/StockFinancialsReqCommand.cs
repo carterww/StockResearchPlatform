@@ -31,7 +31,7 @@ namespace StockResearchPlatform.Commands
 		public string? company_name { get; set; } = "";
 		public PolygonParamInequality? filing_date { get; set; }
 		public PolygonParamInequality? period_of_report_date { get; set; }
-		private string? _timeframe = "";
+		private string? _timeframe = "annual";
 		public string? timeframe { get => _timeframe;
 			set
 			{
