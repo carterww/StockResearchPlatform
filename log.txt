@@ -1,3 +1,15 @@
+commit f7bc368732d23d00df2138a8e1ffbb7cb9b52279
+Author: carterww <carterww@hotmail.com>
+Date:   Mon Apr 24 15:58:06 2023 -0500
+
+    Stock Comparison
+
+commit 8d27fea40028b38bef0ab51ab0c5332dd2efbc99
+Author: carterww <carterww@hotmail.com>
+Date:   Sun Apr 23 21:20:41 2023 -0500
+
+    Add david commit to log
+
 commit 6c96c92a7393542b9fc7ef76ec2fcbcc0e5577f6
 Merge: 18f4b68 3407db3
 Author: carterww <carterww@hotmail.com>
@@ -40,12 +52,6 @@ Author: Ali Al-Raisi <ali.alraisi285@topper.wku.edu>
 Date:   Sun Apr 23 17:47:14 2023 -0500
 
     Update log.txt
-
-commit 66789694481817636c2024bef1a3196986f4571d
-Author: Ali Al-Raisi <ali.alraisi285@topper.wku.edu>
-Date:   Sun Apr 23 16:30:46 2023 -0500
-
-    search bar updated
 
 commit 0ba1eac109d8f62493af9f3205f8cb7d94cf3d68
 Merge: aa91bda 5ba1c94
