@@ -8,6 +8,7 @@ using StockResearchPlatform.Models.PolygonModels;
 using StockResearchPlatform.Services.Polygon;
 using System.Collections.Concurrent;
 using System.Globalization;
+using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.Linq;
 using static System.Net.Mime.MediaTypeNames;
@@ -106,7 +107,20 @@ namespace StockResearchPlatform.Services
 
                 if (data.entityType == "operating")
                 {
-                    dict.TryAdd(FormatString(data.name.ToString()), "100");
+                    string key = FormatString(data.name.ToString());
+
+                    string newValue = "100";
+
+                    dict.AddOrUpdate(key,
+                        addValue: newValue,
+                        updateValueFactory: (k, oldValue) =>
+                        {
+                            double oldValueAsDouble = double.Parse(oldValue);
+                            double newValueAsDouble = double.Parse(newValue);
+                            double updatedValueAsDouble = oldValueAsDouble + newValueAsDouble;
+                            return updatedValueAsDouble.ToString();
+                        }
+                    );
                 } 
                 else
                 {
@@ -138,6 +152,8 @@ namespace StockResearchPlatform.Services
                                     try
                                     {
                                         string name = FormatString(investment["name"].InnerText);
+                                        Console.WriteLine(name);
+                                        Console.WriteLine(name.Length);
 
                                         string pctVal = investment["pctVal"].InnerText;
 
@@ -229,6 +245,9 @@ namespace StockResearchPlatform.Services
                                 tasks.Add(Task.Run(async () =>
                                 {
                                     string name = FormatString(investment["name"].InnerText);
+                          
+
+
                                     string pctVal = investment["pctVal"].InnerText;
 
                                     try
@@ -314,6 +333,12 @@ namespace StockResearchPlatform.Services
             // Replace all '.' with ' '
             input = input.Replace('.', ' ');
 
+            // Remove the word "The" from the string
+            input = Regex.Replace(input, @"\bThe\b", "", RegexOptions.IgnoreCase);
+
+            // Remove extra spaces after removing "The"
+            input = input.TrimStart();
+
             // Split the string into words
             string[] words = input.Split(' ');
 
@@ -330,8 +355,16 @@ namespace StockResearchPlatform.Services
                 }
             }
 
-            // Join the words back together
+            // Join the words back together and remove any trailing spaces
             string formattedString = string.Join(" ", words).Trim();
+
+            // Remove all commas
+            formattedString = formattedString.Replace(',', ' ');
+
+            formattedString = formattedString.Replace('-', ' ');
+
+            // Replace consecutive spaces with single spaces using Regex
+            formattedString = Regex.Replace(formattedString, @"\s{2,}", " ");
 
             return formattedString;
         }
