@@ -352,7 +352,7 @@ namespace StockResearchPlatform.Services
             // Join the words back together
             string formattedString = string.Join(" ", words);
 
-
+            formattedString = formattedString.Replace('-', ' ');
             formattedString = formattedString.Replace(',', ' ').Trim();
 
             formattedString = Regex.Replace(formattedString, @"\s{2,}", " ");
