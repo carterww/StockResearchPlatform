@@ -1,3 +1,16 @@
+commit 6c96c92a7393542b9fc7ef76ec2fcbcc0e5577f6
+Merge: 18f4b68 3407db3
+Author: carterww <carterww@hotmail.com>
+Date:   Sun Apr 23 21:16:26 2023 -0500
+
+    Merge remote-tracking branch 'origin/david'
+
+commit 18f4b68e1ca9af9f22ec78ba0d8e4cccd51fb590
+Author: Ali Al-Raisi <ali.alraisi285@topper.wku.edu>
+Date:   Sun Apr 23 20:47:35 2023 -0500
+
+    Update log.txt
+
 commit 3407db368666d198279660c734b5dd9da1fbf7f1
 Author: D4vid134 <davidqiu29@icloud.com>
 Date:   Sun Apr 23 19:32:29 2023 -0500
@@ -35,10 +48,17 @@ Date:   Sun Apr 23 16:30:46 2023 -0500
     search bar updated
 
 commit 0ba1eac109d8f62493af9f3205f8cb7d94cf3d68
+Merge: aa91bda 5ba1c94
 Author: Ali Al-Raisi <ali.alraisi285@topper.wku.edu>
 Date:   Sun Apr 23 12:19:10 2023 -0500
 
-    Merge remote-tracking branch into alireal
+    Merge remote-tracking branch 'origin/master' into alireal
+
+commit 5ba1c949c4e9f2ee7eddacbb37c692c3b8b6b908
+Author: carterww <carterww@hotmail.com>
+Date:   Sat Apr 22 21:02:56 2023 -0500
+
+    Create log.txt
 
 commit c9bfec41adfc3c46acadd28fb3ed077da182bc5d
 Author: carterww <carterww@hotmail.com>
