@@ -7,14 +7,44 @@
 @inject PolygonDividendService _dividendService;
 @inject NavigationManager UriHelper
 
+<style>
+	table {
+		width: 100%;
+	}
+
+	th {
+		padding: 20px 15px;
+		text-align: center;
+		font-weight: 500;
+		font-size: 12px;
+		text-transform: uppercase;
+	}
+
+	td {
+		padding: 15px;
+		text-align: left;
+		vertical-align: middle;
+		font-weight: 300;
+		font-size: 12px;
+	}
+	#main {
+		font-size:large;
+		text-align:center;
+	}
+	#data {
+		text-align: right;
+	}
+</style>
+
 <h1>Stock Comparison</h1>
 
-<input type="text" @bind=CurrentTicker placeholder="Ticker" />
-<button @onclick=AddStock type="button" disabled="@(stocks.Count >= 3)">Add Stock</button>
+<input type="text" @bind=CurrentTicker placeholder="Search Ticker" />
+<button @onclick=AddStock type="button" disabled="@(stocks.Count >= 3)">Add to Comparison</button>
+<br />
 <br />
 <table>
 	<tr>
-		<th></th>
+		<th id="main"></th>
 		@if (stocks.Count >= 1)
 		{
 			<th>
@@ -35,295 +65,295 @@
 		}
 	</tr>
 	<tr>
-		<td>Current Price</td>
+		<td id="main">Current Price</td>
 		@if (stocks.Count >= 1)
 		{
-			<td>
+			<td id="data">
 				@(String.Format("{0:C}", stocks[0].Item3.ticker.lastQuote == null ? stocks[0].Item3.ticker.day.c : stocks[0].Item3.ticker.lastQuote.P))
 			</td>
 		}
 		@if (stocks.Count >= 2)
 		{
-			<td>
+			<td id="data">
 				@(String.Format("{0:C}", stocks[1].Item3.ticker.lastQuote == null ? stocks[1].Item3.ticker.day.c : stocks[1].Item3.ticker.lastQuote.P))
 			</td>
 		}
 		@if (stocks.Count >= 3)
 		{
-			<td>
+			<td id="data">
 				@(String.Format("{0:C}", stocks[2].Item3.ticker.lastQuote == null ? stocks[2].Item3.ticker.day.c : stocks[2].Item3.ticker.lastQuote.P))
 			</td>
 		}
 	</tr>
 	<tr>
-		<td>Today's Change</td>
+		<td id="main">Today's Change</td>
 		@if (stocks.Count >= 1)
 		{
-			<td>
+			<td id="data">
 				@(String.Format("{0:0.00}%", stocks[0].Item3.ticker.todaysChangePerc))
 			</td>
 		}
 		@if (stocks.Count >= 2)
 		{
-			<td>
+			<td id="data">
 				@(String.Format("{0:0.00}%", stocks[1].Item3.ticker.todaysChangePerc))
 			</td>
 		}
 		@if (stocks.Count >= 3)
 		{
-			<td>
+			<td id="data">
 				@(String.Format("{0:0.00}%", stocks[2].Item3.ticker.todaysChangePerc))
 			</td>
 		}
 	</tr>
 	<tr>
-		<td>Market Cap</td>
+		<td id="main">Market Cap</td>
 		@if (stocks.Count >= 1)
 		{
-			<td>
+			<td id="data">
 				@(String.Format("{0:C}", stocks[0].Item1.results.market_cap))
 			</td>
 		}
 		@if (stocks.Count >= 2)
 		{
-			<td>
+			<td id="data">
 				@(String.Format("{0:C}", stocks[1].Item1.results.market_cap))
 			</td>
 		}
 		@if (stocks.Count >= 3)
 		{
-			<td>
+			<td id="data">
 				@(String.Format("{0:C}", stocks[2].Item1.results.market_cap))
 			</td>
 		}
 	</tr>
 	<tr>
-		<td>Sector</td>
+		<td id="main">Sector</td>
 		@if (stocks.Count >= 1)
 		{
-			<td>
+			<td id="data">
 				@stocks[0].Item1.results.sic_description
 			</td>
 		}
 		@if (stocks.Count >= 2)
 		{
-			<td>
+			<td id="data">
 				@stocks[1].Item1.results.sic_description
 			</td>
 		}
 		@if (stocks.Count >= 3)
 		{
-			<td>
+			<td id="data">
 				@stocks[2].Item1.results.sic_description
 			</td>
 		}
 	</tr>
 	<tr>
-		<td>Assets</td>
+		<td id="main">Assets</td>
 		@if (stocks.Count >= 1)
 		{
-			<td>
+			<td id="data">
 				@(String.Format("{0:C}", stocks[0].Item2.results.Count != 0 ? stocks[0].Item2.results[0].financials.balance_sheet.assets.value : 0))
 			</td>
 		}
 		@if (stocks.Count >= 2)
 		{
-			<td>
+			<td id="data">
 				@(String.Format("{0:C}", stocks[1].Item2.results.Count != 0 ? stocks[1].Item2.results[0].financials.balance_sheet.assets.value : 0))
 			</td>
 		}
 		@if (stocks.Count >= 3)
 		{
-			<td>
+			<td id="data">
 				@(String.Format("{0:C}", stocks[2].Item2.results.Count != 0 ? stocks[2].Item2.results[0].financials.balance_sheet.assets.value : 0))
 			</td>
 		}
 	</tr>
 	<tr>
-		<td>Liabilties</td>
+		<td id="main">Liabilties</td>
 		@if (stocks.Count >= 1)
 		{
-			<td>
+			<td id="data">
 				@(String.Format("{0:C}", stocks[0].Item2.results.Count != 0 ? stocks[0].Item2.results[0].financials.balance_sheet.liabilities.value : 0))
 			</td>
 		}
 		@if (stocks.Count >= 2)
 		{
-			<td>
+			<td id="data">
 				@(String.Format("{0:C}", stocks[1].Item2.results.Count != 0 ? stocks[1].Item2.results[0].financials.balance_sheet.liabilities.value : 0))
 			</td>
 		}
 		@if (stocks.Count >= 3)
 		{
-			<td>
+			<td id="data">
 				@(String.Format("{0:C}", stocks[2].Item2.results.Count != 0 ? stocks[2].Item2.results[0].financials.balance_sheet.liabilities.value : 0))
 			</td>
 		}
 	</tr>
 	<tr>
-		<td>Net Cash Flow</td>
+		<td id="main">Net Cash Flow</td>
 		@if (stocks.Count >= 1)
 		{
-			<td>
+			<td id="data">
 				@(String.Format("{0:C}", stocks[0].Item2.results.Count != 0 ? stocks[0].Item2.results[0].financials.cash_flow_statement.net_cash_flow.value : 0))
 			</td>
 		}
 		@if (stocks.Count >= 2)
 		{
-			<td>
+			<td id="data">
 				@(String.Format("{0:C}", stocks[1].Item2.results.Count != 0 ? stocks[1].Item2.results[0].financials.cash_flow_statement.net_cash_flow.value : 0))
 			</td>
 		}
 		@if (stocks.Count >= 3)
 		{
-			<td>
+			<td id="data">
 				@(String.Format("{0:C}", stocks[2].Item2.results.Count != 0 ? stocks[1].Item2.results[0].financials.cash_flow_statement.net_cash_flow.value : 0))
 			</td>
 		}
 	</tr>
 	<tr>
-		<td>Revenue</td>
+		<td id="main">Revenue</td>
 		@if (stocks.Count >= 1)
 		{
-			<td>
+			<td id="data">
 				@(String.Format("{0:C}", stocks[0].Item2.results.Count != 0 ? stocks[0].Item2.results[0].financials.income_statement.revenues.value : 0))
 			</td>
 		}
 		@if (stocks.Count >= 2)
 		{
-			<td>
+			<td id="data">
 				@(String.Format("{0:C}", stocks[1].Item2.results.Count != 0 ? stocks[1].Item2.results[0].financials.income_statement.revenues.value : 0))
 			</td>
 		}
 		@if (stocks.Count >= 3)
 		{
-			<td>
+			<td id="data">
 				@(String.Format("{0:C}", stocks[2].Item2.results.Count != 0 ? stocks[2].Item2.results[0].financials.income_statement.revenues.value : 0))
 			</td>
 		}
 	</tr>
 	<tr>
-		<td>Expenses</td>
+		<td id="main">Expenses</td>
 		@if (stocks.Count >= 1)
 		{
-			<td>
+			<td id="data">
 				@(String.Format("{0:C}", stocks[0].Item2.results.Count != 0 ? stocks[0].Item2.results[0].financials.income_statement.costs_and_expenses.value : 0))
 			</td>
 		}
 		@if (stocks.Count >= 2)
 		{
-			<td>
+			<td id="data">
 				@(String.Format("{0:C}", stocks[1].Item2.results.Count != 0 ? stocks[1].Item2.results[0].financials.income_statement.costs_and_expenses.value : 0))
 			</td>
 		}
 		@if (stocks.Count >= 3)
 		{
-			<td>
+			<td id="data">
 				@(String.Format("{0:C}", stocks[2].Item2.results.Count != 0 ? stocks[2].Item2.results[0].financials.income_statement.costs_and_expenses.value : 0))
 			</td>
 		}
 	</tr>
 	<tr>
-		<td>EPS</td>
+		<td id="main">EPS</td>
 		@if (stocks.Count >= 1)
 		{
-			<td>
+			<td id="data">
 				@(String.Format("{0:C}", stocks[0].Item2.results.Count != 0 ? stocks[0].Item2.results[0].financials.income_statement.basic_earnings_per_share.value : 0))
 			</td>
 		}
 		@if (stocks.Count >= 2)
 		{
-			<td>
+			<td id="data">
 				@(String.Format("{0:C}", stocks[1].Item2.results.Count != 0 ? stocks[1].Item2.results[0].financials.income_statement.basic_earnings_per_share.value : 0))
 			</td>
 		}
 		@if (stocks.Count >= 3)
 		{
-			<td>
+			<td id="data">
 				@(String.Format("{0:C}", stocks[2].Item2.results.Count != 0 ? stocks[2].Item2.results[0].financials.income_statement.basic_earnings_per_share.value : 0))
 			</td>
 		}
 	</tr>
 	<tr>
-		<td>Dividend Amount</td>
+		<td id="main">Dividend Amount</td>
 		@if (stocks.Count >= 1)
 		{
-			<td>
+			<td id="data">
 				@(String.Format("{0:C}", stocks[0].Item4.results.Count != 0 ? stocks[0].Item4.results[0].cash_amount : 0))
 			</td>
 		}
 		@if (stocks.Count >= 2)
 		{
-			<td>
+			<td id="data">
 				@(String.Format("{0:C}", stocks[1].Item4.results.Count != 0 ? stocks[1].Item4.results[0].cash_amount : 0))
 			</td>
 		}
 		@if (stocks.Count >= 3)
 		{
-			<td>
+			<td id="data">
 				@(String.Format("{0:C}", stocks[2].Item4.results.Count != 0 ? stocks[2].Item4.results[0].cash_amount : 0))
 			</td>
 		}
 	</tr>
 	<tr>
-		<td>Forward Dividend Yield</td>
+		<td id="main">Forward Dividend Yield</td>
 		@if (stocks.Count >= 1)
 		{
-				<td>
+			<td id="data">
 				@(String.Format("{0:P2}", (((stocks[0].Item4.results.Count != 0 ? stocks[0].Item4.results[0].cash_amount : 0) * (stocks[0].Item4.results.Count != 0 ? stocks[0].Item4.results[0].frequency : 0)) / (stocks[0].Item3.ticker.lastQuote == null ? stocks[0].Item3.ticker.day.c : stocks[0].Item3.ticker.lastQuote.P))))
-				</td>
+			</td>
 		}
 		@if (stocks.Count >= 2)
 		{
-			<td>
+			<td id="data">
 				@(String.Format("{0:P2}", (((stocks[1].Item4.results.Count != 0 ? stocks[1].Item4.results[0].cash_amount : 0) * (stocks[1].Item4.results.Count != 0 ? stocks[1].Item4.results[0].frequency : 0)) / (stocks[1].Item3.ticker.lastQuote == null ? stocks[1].Item3.ticker.day.c : stocks[0].Item3.ticker.lastQuote.P))))
 			</td>
 		}
 		@if (stocks.Count >= 3)
 		{
-			<td>
+			<td id="data">
 				@(String.Format("{0:P2}", (((stocks[2].Item4.results.Count != 0 ? stocks[2].Item4.results[0].cash_amount : 0) * (stocks[2].Item4.results.Count != 0 ? stocks[2].Item4.results[0].frequency : 0)) / (stocks[2].Item3.ticker.lastQuote == null ? stocks[2].Item3.ticker.day.c : stocks[0].Item3.ticker.lastQuote.P))))
 			</td>
 		}
 	</tr>
 	<tr>
-		<td>Next Pay Date</td>
+		<td id="main">Next Pay Date</td>
 		@if (stocks.Count >= 1)
 		{
-			<td>
+			<td id="data">
 				@(stocks[0].Item4.results.Count != 0 ? stocks[0].Item4.results[0].pay_date : "N/A")
 			</td>
 		}
 		@if (stocks.Count >= 2)
 		{
-			<td>
+			<td id="data">
 				@(stocks[1].Item4.results.Count != 0 ? stocks[1].Item4.results[0].pay_date : "N/A")
 			</td>
 		}
 		@if (stocks.Count >= 3)
 		{
-			<td>
+			<td id="data">
 				@(stocks[2].Item4.results.Count != 0 ? stocks[2].Item4.results[0].pay_date : "N/A")
 			</td>
 		}
 	</tr>
 	<tr>
-		<td>Dividend Frequency</td>
+		<td id="main">Dividend Frequency</td>
 		@if (stocks.Count >= 1)
 		{
-			<td>
+			<td id ="data">
 				@(InterpretFrequency(stocks[0].Item4.results.Count != 0 ? stocks[0].Item4.results[0].frequency : 0))
 			</td>
 		}
 		@if (stocks.Count >= 2)
 		{
-			<td>
+			<td id="data">
 				@(InterpretFrequency(stocks[1].Item4.results.Count != 0 ? stocks[1].Item4.results[0].frequency : 0))
 			</td>
 		}
 		@if (stocks.Count >= 3)
 		{
-			<td>
+			<td id="data">
 				@(InterpretFrequency(stocks[1].Item4.results.Count != 0 ? stocks[1].Item4.results[0].frequency : 0))
 			</td>
 		}

@@ -16,7 +16,31 @@
 @inject AuthenticationStateProvider AuthenticationStateProvide
 @inject UserManager<User> UserManager
 
-<h3>Dividend Ledger</h3>
+<style>
+	#amount{
+		text-align:right;
+	}
+
+	#header {
+		text-align:center;
+	}
+
+	#table-section-selector {
+		display: flex;
+		text-decoration: none;
+		list-style-type: none;
+		width: 300;
+		justify-content: space-between;
+		align-items: center;
+		border: solid;
+		border-color: lightblue;
+		margin: 2px 2px;
+		padding: 8px;
+		border-radius: 6px;
+	}
+</style>
+
+<h1>Dividend Ledger</h1>
 <ul id="table-section-selector">
 	<li>
 		<a @onclick="() => ChangeSection(DividendDisplayEnum.ledger)">Dividend Ledger</a>
@@ -25,13 +49,13 @@
 		<a @onclick="() => ChangeSection(DividendDisplayEnum.upcoming)">Upcoming Dividends</a>
 	</li>
 </ul>
-
+<br />
 @if (this.CurrentDisplay == DividendDisplayEnum.ledger)
 {
 	<tr>
-		<th>Ticker</th>
-		<th>Pay Date</th>
-		<th>Amount</th>
+		<th id="header">Ticker</th>
+		<th id="header">Pay Date</th>
+		<th id="header">Amount</th>
 		<th></th>
 		<th></th>
 	</tr>
@@ -42,7 +66,7 @@
 			<tr>
 				<td>@item.FK_Stock.Ticker.ToUpper()</td>
 				<td>@item.Date.ToString("dd MMMM yyyy")</td>
-				<td>@String.Format("{0:C}" ,item.Amount)</td>
+				<td id="amount">@String.Format("{0:C}" ,item.Amount)</td>
 				<td><a role="button">Edit</a></td>
 				<td><a role="button" @onclick="() => this.RemoveLedgerEntry(item)">Remove</a></td>
 			</tr>
@@ -59,11 +83,11 @@
 else
 {
 	<tr>
-		<th>Ticker</th>
-		<th>Declaration Date</th>
-		<th>Ex Dividend Date</th>
-		<th>Pay Date</th>
-		<th>Amount Per Share</th>
+		<th id="header">Ticker</th>
+		<th id="header">Declaration Date</th>
+		<th id="header">Ex Dividend Date</th>
+		<th id="header">Pay Date</th>
+		<th id="header">Amount Per Share</th>
 	</tr>
 
 	@foreach (var item in (UpcomingDividends ?? new List<Models.DividendInfo>()))
@@ -73,7 +97,7 @@ else
 			<td>@item.DeclarationDate.ToString("dd MMMM yyyy")</td>
 			<td>@item.ExDividendDate.ToString("dd MMMM yyyy")</td>
 			<td>@item.PayDate.ToString("dd MMMM yyyy")</td>
-			<td>@String.Format("{0:C}" ,item.Cashamount)</td>
+			<td id="amount">@String.Format("{0:C}" ,item.Cashamount)</td>
 		</tr>
 	}
 }

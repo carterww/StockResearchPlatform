@@ -6,15 +6,62 @@
 @inject StockSearchService stockSearchService
 @inject NavigationManager UriHelper
 
+<style>
+	.button {
+		background-color: lightcyan;
+		border-color: blue;
+		padding: 10px;
+		text-align: center;
+		text-decoration: none;
+		display: inline-block;
+		margin: 2px 2px;
+		cursor: pointer;
+	}
+
+	.compareText {
+		color: black; 
+		font-size: 16px;
+	}
+
+	.button1 {
+		border-radius: 8px;
+	}
+
+	#table-section-selector {
+		font-size: larger;
+		display: flex;
+		text-decoration: none;
+		list-style-type: none;
+		width: 300px;
+		justify-content: space-between;
+		align-items: center;
+		border: solid;
+		border-color: lightblue;
+		margin: 2px 2px;
+		padding:8px;
+		border-radius: 6px;
+	}
+
+	#price-info{
+		display: flex;
+		width: 200px;
+		justify-content: space-between;
+		font-weight: bold;
+	}
+</style>
+
 <PageTitle>@($"{stock?.ShortName} {stock?.Symbol}")</PageTitle>
 
 <h1>@stock?.ShortName</h1>
-
+<div id="price-info">
+	<span>Price</span>
+	<span>Change%</span>
+</div>
 <div id="price-info">
 	<span>@stock?.Price</span>
 	<span>@stock?.ChangePercent</span>
 </div>
-
+<br />
 <ul id="table-section-selector">
 	<li>
 		<a @onclick="() => changeSection(TableSection.Summary)">Summary</a>
@@ -143,7 +190,7 @@
 			</div>
 			<div class="col-sm-4">
 				<div class="d-flex justify-content-between entry">
-					<p class="label">Last Split Date</p>
+					<p class="label">Last Split Factor</p>
 					<p class="data">@stock?.LastSplitFactor</p>
 				</div>
 			</div>
@@ -418,7 +465,7 @@
 
 }
 
-<a href="@($"/stockcomparison?ticker={queryParams["ticker"]}")">Compare</a>
+<button class="button button1"><a class="compareText" href="@($"/stockcomparison?ticker={queryParams["ticker"]}")">Compare</a></button>
 
 <link rel="stylesheet" href="css/quote.css" />
 

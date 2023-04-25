@@ -11,20 +11,54 @@
 @inject PolygonTickerService polygonTickerService
 @inject IJSRuntime JSRuntime
 
+<style>
+    #header {
+        text-align: center;
+    }
+
+    #data{
+        text-align:right;
+    }
+
+    .button {
+        background-color: lightcyan;
+        border-color: blue;
+        padding: 10px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        margin: 2px 2px;
+        cursor: pointer;
+        border-radius: 8px;
+    }
+
+    .button1 {
+        background-color: lightcyan;
+        border-color: blue;
+    }
+
+    .button2 {
+        background-color: #FFCCCB;
+        border-color: red;
+    }
+
+</style>
+
+
 <h1>@this.PortfolioDisplayModel.Portfolio?.Name</h1>
 
 <table>
     @if(this.PortfolioDisplayModel.Stocks != null && this.PortfolioDisplayModel.Stocks.Count > 0)
     {
         <tr>
-            <th>Ticker</th>
-            <th>Quantity</th>
-            <th>Cost Per Share</th>
-            <th>Cost Basis</th>
-            <th>Current Share Price</th>
-            <th>Current Value</th>
-            <th>200-Day SMA</th>
-            <th>Distance From 200-Day SMA</th>
+            <th id="header">Ticker</th>
+            <th id="header">Quantity</th>
+            <th id="header">Cost Per Share</th>
+            <th id="header">Cost Basis</th>
+            <th id="header">Current Share Price</th>
+            <th id="header">Current Value</th>
+            <th id="header">200-Day SMA</th>
+            <th id="header">Distance From 200-Day SMA</th>
         </tr>
         double totalCostBasis = 0.0;
         double totalCurrentValue = 0.0;
@@ -37,13 +71,13 @@
             totalCurrentValue += currentStockValue;
             <tr>
                 <td>@stock.Key.Ticker.ToUpper()</td>
-                <td>@String.Format("{0:0.00}" ,stock.Value.NumberOfShares)</td>
-                <td>@String.Format("{0:C}" ,stock.Value.CostBasis)</td>
-                <td>@String.Format("{0:C}" ,currentStockCostBasis)</td>
-                <td>@String.Format("{0:C}" ,PortfolioDisplayModel.CurrentPricingData[stock.Key].ticker.day.c)</td>
-                <td>@String.Format("{0:C}" ,currentStockValue)</td>
-                <td>@String.Format("{0:C}" ,currentStockSma)</td>
-                <td>@String.Format("{0:0.00}", ((PortfolioDisplayModel.CurrentPricingData[stock.Key].ticker.day.c - currentStockSma) / currentStockSma) * 100 )%</td>
+                <td id="data">@String.Format("{0:0.00}" ,stock.Value.NumberOfShares)</td>
+                <td id="data">@String.Format("{0:C}" ,stock.Value.CostBasis)</td>
+                <td id="data">@String.Format("{0:C}" ,currentStockCostBasis)</td>
+                <td id="data">@String.Format("{0:C}" ,PortfolioDisplayModel.CurrentPricingData[stock.Key].ticker.day.c)</td>
+                <td id="data">@String.Format("{0:C}" ,currentStockValue)</td>
+                <td id="data">@String.Format("{0:C}" ,currentStockSma)</td>
+                <td id="data">@String.Format("{0:0.00}", ((PortfolioDisplayModel.CurrentPricingData[stock.Key].ticker.day.c - currentStockSma) / currentStockSma) * 100 )%</td>
                 <td><a role="button">Edit</a></td>
                 <td><a role="button" @onclick="() => this.removeStock(stock.Value)">Remove</a></td>
             </tr>
@@ -52,9 +86,9 @@
             <td></td>
             <td></td>
             <td></td>
-            <td>@String.Format("{0:C}", totalCostBasis)</td>
+            <td id="data">@String.Format("{0:C}", totalCostBasis)</td>
             <td></td>
-            <td>@String.Format("{0:C}", totalCurrentValue)</td>
+            <td id="data">@String.Format("{0:C}", totalCurrentValue)</td>
             <td></td>
             <td></td>
         </tr>
@@ -62,13 +96,16 @@
 </table>
 <input type="text" @bind=this.PortfolioDisplayModel.AddStockTicker hidden="@this.PortfolioDisplayModel.HideNewStock" placeholder="Ticker" />
 <br />
+<br />
 <input type="number" @bind=this.PortfolioDisplayModel.AddStockCostBasis hidden="@this.PortfolioDisplayModel.HideNewStock" step="0.01" placeholder="Cost Per Share" />
+<br />
 <br />
 <input type="number" @bind=this.PortfolioDisplayModel.AddStockNumOfShares hidden="@this.PortfolioDisplayModel.HideNewStock" step="0.01" placeholder="Number Of Shares" />
 <br />
+<br />
 
-<button type="button" hidden="@this.PortfolioDisplayModel.HideNewStock" @onclick=submitNewStock>Add</button>
-<button type="button" hidden="@this.PortfolioDisplayModel.HideNewStock" @onclick=cancelNewStock>Cancel</button>
+<button class="button button1" type="button" hidden="@this.PortfolioDisplayModel.HideNewStock" @onclick=submitNewStock>Add</button>
+<button class="button button2" type="button" hidden="@this.PortfolioDisplayModel.HideNewStock" @onclick=cancelNewStock>Cancel</button>
 <button @onclick=createNewStock hidden="@(this.PortfolioDisplayModel.HideNewStock == false)">Add Stock</button>
 <button @onclick="async () => await atomicBreakDown()" hidden="@(this.PortfolioDisplayModel.HideNewStock == false)">Atomic Breakdown</button>
 <button @onclick="async () => await createPieChart()" hidden="@(this.PortfolioDisplayModel.HideNewStock == false)">Portfolio Exposure Pie Chart</button>
@@ -90,9 +127,9 @@
         <table>
             <thead>
                 <tr>
-                    <th>Category</th>
-                    <th>Value</th>
-                    <th>Percent</th>
+                    <th id="header">Category</th>
+                    <th id="header">Value</th>
+                    <th id="header">Percent</th>
                 </tr>
             </thead>
             <tbody>
@@ -103,9 +140,9 @@
                     var percent = BreakdownDataByPercent.ContainsKey(key) ? BreakdownDataByPercent[key] : 0.0;
 
                     <tr>
-                        <td>@key</td>
-                        <td>@String.Format("{0:C}", value)</td>
-                        <td>@String.Format("{0:0.000%}", percent)</td>
+                        <td id="data">@key</td>
+                        <td id="data">@String.Format("{0:C}", value)</td>
+                        <td id="data">@String.Format("{0:0.000%}", percent)</td>
                     </tr>
                 }
             </tbody>
