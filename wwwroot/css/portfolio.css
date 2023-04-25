@@ -3,6 +3,7 @@
     table-layout: fixed;
     border: 1px solid black;
     border-collapse: collapse;
+    background-color: white?
 }
 
 th {
@@ -64,4 +65,8 @@ td {
 
 button {
     border-radius: 8px;
+}
+
+body {
+    background-image: linear-gradient(to top left, white, lightyellow);
 }

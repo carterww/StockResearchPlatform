@@ -50,3 +50,37 @@ td {
 button {
     border-radius: 8px;
 }
+
+#header {
+    text-align: center;
+}
+
+#data {
+    text-align: right;
+}
+
+.button {
+    background-color: lightcyan;
+    border-color: blue;
+    padding: 10px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    margin: 2px 2px;
+    cursor: pointer;
+    border-radius: 8px;
+}
+
+.button1 {
+    background-color: lightcyan;
+    border-color: blue;
+}
+
+.button2 {
+    background-color: #FFCCCB;
+    border-color: red;
+}
+
+body {
+    background-image: linear-gradient(to top left, white, lightyellow);
+}

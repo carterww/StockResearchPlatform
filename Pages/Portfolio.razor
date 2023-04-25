@@ -12,69 +12,71 @@
 @inject PortfolioService _portfolioService;
 @inject PortfolioComparisonService _compareService;
 
-<h1>Portfolio</h1>
+<body>
+	<h1>Portfolio</h1>
 
-<div class="spinner" hidden="@(Loading == false)"></div>
-<ul>
-	@foreach(var portfolio in portfolios)
+	<div class="spinner" hidden="@(Loading == false)"></div>
+	<ul>
+		@foreach(var portfolio in portfolios)
+		{
+			<input type="checkbox" checked="@checkedPortfolios.Contains(portfolio)" @onchange="eventArgs => { portfolioChecked(portfolio, eventArgs.Value); }" id="@portfolio?.Name" />
+			<li style="cursor: pointer; display:inline;" @onclick=" () => redirectToPortfolio(portfolio) "> @portfolio?.Name</li>
+			<br>
+		}
+	</ul>
+	<input type="text" @bind=newPortfolioName hidden="@hidePortfolioInput"/>
+	<button class="button1" type="button" hidden="@hidePortfolioInput" @onclick=submitNewPortfolio>Add</button>
+	<button class ="button2"  type="button" hidden="@hidePortfolioInput" @onclick=cancelNewPortfolio>Cancel</button>
+	<button @onclick=createNewPortfolio hidden="@(hidePortfolioInput == false)">Add Portfolio</button>
+	<button @onclick=comparePortfolioToggle disabled="@checkedPortfolios.Contains(null)">Compare Portfolios</button>
+
+	@if (compareResults != null)
 	{
-		<input type="checkbox" checked="@checkedPortfolios.Contains(portfolio)" @onchange="eventArgs => { portfolioChecked(portfolio, eventArgs.Value); }" id="@portfolio?.Name" />
-		<li style="cursor: pointer; display:inline;" @onclick=" () => redirectToPortfolio(portfolio) "> @portfolio?.Name</li>
-		<br>
+		<table style="margin-top: 20px;">
+			<tr>
+				<th></th>
+				<th id="header">@(compareResults.Values.First().Value.PortfolioName ?? "Portfolio")</th>
+				<th id="header">@(compareResults.Values.Last().Value.PortfolioName ?? "Portfolio")</th>
+			</tr>
+			<tr>
+				<td>Time Period</td>
+				<td id="data">@(compareResults.NumberOfMonths) Months</td>
+				<td id="data">@(compareResults.NumberOfMonths) Months</td>
+			</tr>
+			<tr>
+				<td>Total Return</td>
+				<td id="data">@(String.Format("{0: 0.00}", compareResults.Values.First().Value.TotalReturn * 100))%</td>
+				<td id="data">@(String.Format("{0: 0.00}", compareResults.Values.Last().Value.TotalReturn * 100))%</td>
+			</tr>
+			<tr>
+				<td>Jensen's Alpha</td>
+				<td id="data">@(String.Format("{0: 0.000}", compareResults.Values.First().Value.JensensAlpha))</td>
+				<td id="data">@(String.Format("{0: 0.000}", compareResults.Values.Last().Value.JensensAlpha))</td>
+			</tr>
+			<tr>
+				<td>Alpha</td>
+				<td id="data">@(String.Format("{0: 0.000}", compareResults.Values.First().Value.Alpha))</td>
+				<td id="data">@(String.Format("{0: 0.000}", compareResults.Values.Last().Value.Alpha))</td>
+			</tr>
+			<tr>
+				<td>Beta</td>
+				<td id="data">@(String.Format("{0: 0.000}", compareResults.Values.First().Value.Beta))</td>
+				<td id="data">@(String.Format("{0: 0.000}", compareResults.Values.Last().Value.Beta))</td>
+			</tr>
+		</table>
+
+		<br />
+		<div style="width: 50%">
+			<p>
+				<b><a href="https://www.investopedia.com/terms/j/jensensmeasure.asp#:~:text=The%20Jensen's%20measure%2C%20or%20Jensen's,and%20the%20average%20market%20return." target="_blank">Jensen's Alpha</a></b> is is a risk-adjusted performance measure that represents the average return on a portfolio or investment, above or below that predicted by the capital asset pricing model (CAPM), given the portfolio's or investment's beta and the average market return.
+				We use a Risk-Free Return of 3.6% and the S&amp;P 500 as the average market return.
+			</p>
+			<p><b><a href="https://www.investopedia.com/terms/a/alpha.asp" target="_blank">Alpha</a></b> is the performance of a portfolio relative to a benchmark, it is often considered to represent the value that a portfolio manager adds to or subtracts from a fund's return.</p>
+			<p><b><a href="https://www.investopedia.com/ask/answers/070615/what-formula-calculating-beta.asp" target="_blank">Beta</a></b> is a measure used in fundamental analysis to determine the volatility of an asset or portfolio in relation to the overall market. An investment that swings more than the market over time has a beta greater than 1.0. If a investment moves less than the market, the investment's beta is less than 1.0.</p>
+		</div>
 	}
-</ul>
-<input type="text" @bind=newPortfolioName hidden="@hidePortfolioInput"/>
-<button class="button1" type="button" hidden="@hidePortfolioInput" @onclick=submitNewPortfolio>Add</button>
-<button class ="button2"  type="button" hidden="@hidePortfolioInput" @onclick=cancelNewPortfolio>Cancel</button>
-<button @onclick=createNewPortfolio hidden="@(hidePortfolioInput == false)">Add Portfolio</button>
-<button @onclick=comparePortfolioToggle disabled="@checkedPortfolios.Contains(null)">Compare Portfolios</button>
 
-@if (compareResults != null)
-{
-	<table style="margin-top: 20px;">
-		<tr>
-			<th></th>
-			<th id="header">@(compareResults.Values.First().Value.PortfolioName ?? "Portfolio")</th>
-			<th id="header">@(compareResults.Values.Last().Value.PortfolioName ?? "Portfolio")</th>
-		</tr>
-		<tr>
-			<td>Time Period</td>
-			<td id="data">@(compareResults.NumberOfMonths) Months</td>
-			<td id="data">@(compareResults.NumberOfMonths) Months</td>
-		</tr>
-		<tr>
-			<td>Total Return</td>
-			<td id="data">@(String.Format("{0: 0.00}", compareResults.Values.First().Value.TotalReturn * 100))%</td>
-			<td id="data">@(String.Format("{0: 0.00}", compareResults.Values.Last().Value.TotalReturn * 100))%</td>
-		</tr>
-		<tr>
-			<td>Jensen's Alpha</td>
-			<td id="data">@(String.Format("{0: 0.000}", compareResults.Values.First().Value.JensensAlpha))</td>
-			<td id="data">@(String.Format("{0: 0.000}", compareResults.Values.Last().Value.JensensAlpha))</td>
-		</tr>
-		<tr>
-			<td>Alpha</td>
-			<td id="data">@(String.Format("{0: 0.000}", compareResults.Values.First().Value.Alpha))</td>
-			<td id="data">@(String.Format("{0: 0.000}", compareResults.Values.Last().Value.Alpha))</td>
-		</tr>
-		<tr>
-			<td>Beta</td>
-			<td id="data">@(String.Format("{0: 0.000}", compareResults.Values.First().Value.Beta))</td>
-			<td id="data">@(String.Format("{0: 0.000}", compareResults.Values.Last().Value.Beta))</td>
-		</tr>
-	</table>
-
-	<br />
-	<div style="width: 50%">
-		<p>
-			<b><a href="https://www.investopedia.com/terms/j/jensensmeasure.asp#:~:text=The%20Jensen's%20measure%2C%20or%20Jensen's,and%20the%20average%20market%20return." target="_blank">Jensen's Alpha</a></b> is is a risk-adjusted performance measure that represents the average return on a portfolio or investment, above or below that predicted by the capital asset pricing model (CAPM), given the portfolio's or investment's beta and the average market return.
-			We use a Risk-Free Return of 3.6% and the S&amp;P 500 as the average market return.
-		</p>
-		<p><b><a href="https://www.investopedia.com/terms/a/alpha.asp" target="_blank">Alpha</a></b> is the performance of a portfolio relative to a benchmark, it is often considered to represent the value that a portfolio manager adds to or subtracts from a fund's return.</p>
-		<p><b><a href="https://www.investopedia.com/ask/answers/070615/what-formula-calculating-beta.asp" target="_blank">Beta</a></b> is a measure used in fundamental analysis to determine the volatility of an asset or portfolio in relation to the overall market. An investment that swings more than the market over time has a beta greater than 1.0. If a investment moves less than the market, the investment's beta is less than 1.0.</p>
-	</div>
-}
-
+</body>
 <link rel="stylesheet" href="css/portfolio.css" />
 
 @code {

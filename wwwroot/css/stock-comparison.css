@@ -2,6 +2,7 @@
     width: 80%;
     border: 1px solid black;
     border-collapse: collapse;
+    background-color:white;
 }
 
 th {
@@ -64,3 +65,7 @@ td a {
         background-color: #f3d3d9;
         border-color: red;
     }
+
+body {
+    background-image: linear-gradient(to bottom right, white, lightgreen);
+}
