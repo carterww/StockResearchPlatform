@@ -30,3 +30,30 @@
 #table-section-selector li {
     cursor: pointer;
 }
+
+.button {
+    background-color: lightcyan;
+    border-color: blue;
+    padding: 10px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    margin: 2px 2px;
+    cursor: pointer;
+}
+
+.compareText {
+    color: black;
+    font-size: 16px;
+}
+
+.button1 {
+    border-radius: 8px;
+}
+
+#price-info {
+    display: flex;
+    width: 200px;
+    justify-content: space-between;
+    font-weight: bold;
+}

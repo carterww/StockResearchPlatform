@@ -16,42 +16,28 @@
 @inject AuthenticationStateProvider AuthenticationStateProvide
 @inject UserManager<User> UserManager
 
-<style>
-	#amount{
-		text-align:right;
-	}
-
-	#header {
-		text-align:center;
-	}
-
-	#table-section-selector {
-		display: flex;
-		text-decoration: none;
-		list-style-type: none;
-		width: 300;
-		justify-content: space-between;
-		align-items: center;
-		border: solid;
-		border-color: lightblue;
-		margin: 2px 2px;
-		padding: 8px;
-		border-radius: 6px;
-	}
-</style>
-
 <h1>Dividend Ledger</h1>
 <ul id="table-section-selector">
 	<li>
-		<a @onclick="() => ChangeSection(DividendDisplayEnum.ledger)">Dividend Ledger</a>
+		<a id="ledger" @onclick="() => ChangeSection(DividendDisplayEnum.ledger)">Dividend Ledger</a>
 	</li>
 	<li>
-		<a @onclick="() => ChangeSection(DividendDisplayEnum.upcoming)">Upcoming Dividends</a>
+		<a id ="upcoming" @onclick="() => ChangeSection(DividendDisplayEnum.upcoming)">Upcoming Dividends</a>
 	</li>
 </ul>
 <br />
 @if (this.CurrentDisplay == DividendDisplayEnum.ledger)
 {
+	<style>
+		#ledger {
+			color: blue;
+			font-weight: bold;
+			text-decoration: underline;
+			font-size: larger;
+			text-transform: uppercase;
+			padding:inherit;
+		}
+	</style>
 	<tr>
 		<th id="header">Ticker</th>
 		<th id="header">Pay Date</th>
@@ -82,6 +68,16 @@
 }
 else
 {
+	<style>
+		#upcoming {
+			color: blue;
+			font-weight: bold;
+			text-decoration: underline;
+			font-size: larger;
+			text-transform: uppercase;
+			padding: inherit;
+		}
+	</style>
 	<tr>
 		<th id="header">Ticker</th>
 		<th id="header">Declaration Date</th>

@@ -43,3 +43,25 @@ td {
         transform: rotate(360deg)
     }
 }
+
+#header {
+    text-align: center;
+}
+
+#data {
+    text-align: right;
+}
+
+.button1 {
+    background-color: lightcyan;
+    border-color: blue;
+}
+
+.button2 {
+    background-color: #FFCCCB;
+    border-color: red;
+}
+
+button {
+    border-radius: 8px;
+}

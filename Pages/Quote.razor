@@ -6,50 +6,6 @@
 @inject StockSearchService stockSearchService
 @inject NavigationManager UriHelper
 
-<style>
-	.button {
-		background-color: lightcyan;
-		border-color: blue;
-		padding: 10px;
-		text-align: center;
-		text-decoration: none;
-		display: inline-block;
-		margin: 2px 2px;
-		cursor: pointer;
-	}
-
-	.compareText {
-		color: black; 
-		font-size: 16px;
-	}
-
-	.button1 {
-		border-radius: 8px;
-	}
-
-	#table-section-selector {
-		font-size: larger;
-		display: flex;
-		text-decoration: none;
-		list-style-type: none;
-		width: 300px;
-		justify-content: space-between;
-		align-items: center;
-		border: solid;
-		border-color: lightblue;
-		margin: 2px 2px;
-		padding:8px;
-		border-radius: 6px;
-	}
-
-	#price-info{
-		display: flex;
-		width: 200px;
-		justify-content: space-between;
-		font-weight: bold;
-	}
-</style>
-
 <PageTitle>@($"{stock?.ShortName} {stock?.Symbol}")</PageTitle>
 
 <h1>@stock?.ShortName</h1>
@@ -64,17 +20,27 @@
 <br />
 <ul id="table-section-selector">
 	<li>
-		<a @onclick="() => changeSection(TableSection.Summary)">Summary</a>
+		<a id="summary"@onclick="() => changeSection(TableSection.Summary)">Summary</a>
 	</li>
 	<li>
-		<a @onclick="() => changeSection(TableSection.Statistics)">Statistics</a>
+		<a id="statistic" @onclick="() => changeSection(TableSection.Statistics)">Statistics</a>
 	</li>
 	<li>
-		<a @onclick="() => changeSection(TableSection.Financials)">Financials</a>
+		<a id="finance" @onclick="() => changeSection(TableSection.Financials)">Financials</a>
 	</li>
 </ul>
 @if(currentSection == TableSection.Summary)
 {
+	<style>
+		#summary {
+			color:blue;
+			font-weight: bold;
+			text-decoration: underline;
+			font-size:larger;
+			text-transform: uppercase;
+		}
+	</style>
+
 	<div class="table" id="@TableSection.Summary">
 		<div class="row">
 			<div class="col-sm-4">
@@ -201,6 +167,16 @@
 
 @if (currentSection == TableSection.Statistics)
 {
+	<style>
+		#statistic {
+			color: blue;
+			font-weight: bold;
+			text-decoration: underline;
+			font-size: larger;
+			text-transform: uppercase;
+		}
+	</style>
+
 	<div class="table" id="@TableSection.Statistics">
 		<div class="row">
 			<div class="col-sm-4">
@@ -326,6 +302,16 @@
 
 @if (currentSection == TableSection.Financials)
 {
+	<style>
+		#finance {
+			color: blue;
+			font-weight: bold;
+			text-decoration: underline;
+			font-size: larger;
+			text-transform: uppercase;
+		}
+	</style>
+
 	<div class="table" id="@TableSection.Financials">
 		<div class="row">
 			<div class="col-sm-4">

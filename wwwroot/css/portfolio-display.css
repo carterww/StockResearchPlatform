@@ -38,3 +38,15 @@ td {
     width: 100%;
     height: auto;
 }
+
+#amount {
+    text-align: right;
+}
+
+#header {
+    text-align: center;
+}
+
+button {
+    border-radius: 8px;
+}

@@ -7,39 +7,10 @@
 @inject PolygonDividendService _dividendService;
 @inject NavigationManager UriHelper
 
-<style>
-	table {
-		width: 100%;
-	}
-
-	th {
-		padding: 20px 15px;
-		text-align: center;
-		font-weight: 500;
-		font-size: 12px;
-		text-transform: uppercase;
-	}
-
-	td {
-		padding: 15px;
-		text-align: left;
-		vertical-align: middle;
-		font-weight: 300;
-		font-size: 12px;
-	}
-	#main {
-		font-size:large;
-		text-align:center;
-	}
-	#data {
-		text-align: right;
-	}
-</style>
-
 <h1>Stock Comparison</h1>
 
 <input type="text" @bind=CurrentTicker placeholder="Search Ticker" />
-<button @onclick=AddStock type="button" disabled="@(stocks.Count >= 3)">Add to Comparison</button>
+<button id="compare" @onclick=AddStock type="button" disabled="@(stocks.Count >= 3)">Add to Comparison</button>
 <br />
 <br />
 <table>
@@ -47,19 +18,19 @@
 		<th id="main"></th>
 		@if (stocks.Count >= 1)
 		{
-			<th>
+			<th id="stock1">
 				@stocks.First().Item1.results.name
 			</th>
 		}
 		@if (stocks.Count >= 2)
 		{
-			<th>
+			<th id="stock2">
 				@stocks[1].Item1.results.name
 			</th>
 		}
 		@if (stocks.Count >= 3)
 		{
-			<th>
+			<th id="stock3">
 				@stocks[2].Item1.results.name
 			</th>
 		}
@@ -362,7 +333,7 @@
 
 </table>
 
-<link rel="stylesheet" href="css/portfolio-display.css" />
+<link rel="stylesheet" href="css/stock-comparison.css" />
 
 @code {
 	Dictionary<string, string> queryParams = new Dictionary<string, string>();

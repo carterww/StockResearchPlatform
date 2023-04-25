@@ -1,0 +1,66 @@
+﻿table {
+    width: 80%;
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+
+th {
+    font-size: 20px;
+    font-weight: 600;
+    border: 1px solid black;
+    padding: 0 10px;
+    text-transform: uppercase;
+    text-align: center;
+}
+
+tr {
+    border: 1px solid black;
+}
+
+td {
+    font-size: 16px;
+    border: 1px solid black;
+    padding: 0 10px;
+}
+
+td a {
+    text-decoration: underline !important;
+    text-decoration-color: blue !important;
+    color: blue !important;
+}
+
+#data {
+    text-align: right;
+}
+
+#main {
+    text-align: center;
+    font-weight: bold;
+}
+
+#stock1 {
+    background-color: #FFCCCB;
+}
+
+#stock2 {
+    background-color: lightblue;
+}
+
+#stock3 {
+    background-color: lightyellow;
+}
+
+#compare {
+    background-color: lightcyan;
+    border-color: blue;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    cursor: pointer;
+    border-radius: 8px;
+}
+
+    #compare:disabled {
+        background-color: #f3d3d9;
+        border-color: red;
+    }
