@@ -45,7 +45,7 @@ td {
 }
 
 tr {
-    background-color: white;
+    background-color: #F0F8FF;
 }
 
 #header {
@@ -88,7 +88,7 @@ button {
 }
 
 body {
-    background-image: linear-gradient(to bottom left, white, lightblue);
+    background: #F0F8FF;
 }
 
 

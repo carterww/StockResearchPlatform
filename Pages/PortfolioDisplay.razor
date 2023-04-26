@@ -61,15 +61,16 @@
             </tr>
         }
     </table>
+    <br />
     <input type="text" @bind=this.PortfolioDisplayModel.AddStockTicker hidden="@this.PortfolioDisplayModel.HideNewStock" placeholder="Ticker" />
-    <br />
-    <br />
+    <br hidden="@this.PortfolioDisplayModel.HideNewStock"/>
+    <br hidden="@this.PortfolioDisplayModel.HideNewStock"/>
     <input type="number" @bind=this.PortfolioDisplayModel.AddStockCostBasis hidden="@this.PortfolioDisplayModel.HideNewStock" step="0.01" placeholder="Cost Per Share" />
-    <br />
-    <br />
+    <br hidden="@this.PortfolioDisplayModel.HideNewStock" />
+    <br hidden="@this.PortfolioDisplayModel.HideNewStock"/>
     <input type="number" @bind=this.PortfolioDisplayModel.AddStockNumOfShares hidden="@this.PortfolioDisplayModel.HideNewStock" step="0.01" placeholder="Number Of Shares" />
-    <br />
-    <br />
+    <br hidden="@this.PortfolioDisplayModel.HideNewStock" />
+    <br hidden="@this.PortfolioDisplayModel.HideNewStock" />
 
     <button class="button button1" type="button" hidden="@this.PortfolioDisplayModel.HideNewStock" @onclick=submitNewStock>Add</button>
     <button class="button button2" type="button" hidden="@this.PortfolioDisplayModel.HideNewStock" @onclick=cancelNewStock>Cancel</button>
@@ -107,7 +108,7 @@
                         var percent = BreakdownDataByPercent.ContainsKey(key) ? BreakdownDataByPercent[key] : 0.0;
 
                         <tr>
-                            <td id="data">@key</td>
+                            <td>@key</td>
                             <td id="data">@String.Format("{0:C}", value)</td>
                             <td id="data">@String.Format("{0:0.000%}", percent)</td>
                         </tr>
