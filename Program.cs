@@ -12,7 +12,7 @@ using StockResearchPlatform.Services.PortfolioComparison;
 /**********************************************************
             CHANGE CONNECTION STRING HERE
 **********************************************************/
-const string CURRENT_CON_STRING_NAME = "AliConnection";
+const string CURRENT_CON_STRING_NAME = "ProductionConnection";
 
 var builder = WebApplication.CreateBuilder(args);
 

@@ -95,7 +95,7 @@
             <table>
                 <thead>
                     <tr>
-                        <th id="header">Category</th>
+                        <th id="header">Stock</th>
                         <th id="header">Value</th>
                         <th id="header">Percent</th>
                     </tr>
@@ -124,42 +124,6 @@
             {
                 <button @onclick="() => ShowAll()">Show All</button>
             }
-        }
-    }
-    else
-    {
-        <h2>Atomic Breakdown</h2>
-        <table>
-            <thead>
-                <tr>
-                    <th>Stock</th>
-                    <th>Value</th>
-                    <th>Percent</th>
-                </tr>
-            </thead>
-            <tbody>
-                @for (int i = 0; i < BreakdownData.Count && i < itemsToShow; i++)
-                {
-                    var key = BreakdownData.ElementAt(i).Key;
-                    var value = BreakdownData.ElementAt(i).Value;
-                    var percent = BreakdownDataByPercent.ContainsKey(key) ? BreakdownDataByPercent[key] : 0.0;
-
-                    <tr>
-                        <td>@key</td>
-                        <td>@String.Format("{0:C}", value)</td>
-                        <td>@String.Format("{0:0.000%}", percent)</td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-        <br />
-        @if (itemsToShow < BreakdownData.Count)
-        {
-            <button @onclick="() => LoadMoreItems()">Show More</button>
-        }
-        @if (itemsToShow != BreakdownData.Count)
-        {
-            <button @onclick="() => ShowAll()">Show All</button>
         }
     }
 
