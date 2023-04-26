@@ -1,3 +1,84 @@
+commit 62577a2edf529c8db9067d2d5c00239457e271bb
+Author: carterww <carterww@hotmail.com>
+Date:   Tue Apr 25 21:36:46 2023 -0500
+
+    Final Fixes
+
+commit 48f9673c1024d2fd28ec647871c477f90fcd24b5
+Author: carterww <carterww@hotmail.com>
+Date:   Tue Apr 25 21:30:26 2023 -0500
+
+    Migrations
+
+commit 127325e187439a6759620e61d4fd15646db0f82b
+Merge: 0fa3343 e0d5a46
+Author: carterww <carterww@hotmail.com>
+Date:   Tue Apr 25 21:29:17 2023 -0500
+
+    Merge remote-tracking branch 'origin/Ali-3.0'
+
+commit e0d5a46de8321672348b883feda6df38cc3b6806
+Author: D4vid134 <davidqiu29@icloud.com>
+Date:   Tue Apr 25 19:54:27 2023 -0500
+
+    various styling updates
+
+commit 4edf5cbf9bc707279faa0382811744eb22ce8b75
+Author: Ali Al-Raisi <ali.alraisi285@topper.wku.edu>
+Date:   Tue Apr 25 18:17:32 2023 -0500
+
+    more QOL Changes
+
+commit 20051e7ce7039f7845e3ce5c340d66543365b6b7
+Author: Ali Al-Raisi <ali.alraisi285@topper.wku.edu>
+Date:   Tue Apr 25 17:50:17 2023 -0500
+
+    Stock Search Tab Changes
+
+commit 961092e44985c2d0b614398674aa1d303d56b3b3
+Author: Ali Al-Raisi <ali.alraisi285@topper.wku.edu>
+Date:   Tue Apr 25 12:43:52 2023 -0500
+
+    Update NavMenu.razor
+
+commit 267deb32e3bbd8e194d1f4d356b2ecba775e9523
+Author: Ali Al-Raisi <ali.alraisi285@topper.wku.edu>
+Date:   Tue Apr 25 12:26:59 2023 -0500
+
+    added different background colors to all pages
+
+commit 614fd8a8c9317aeb63311cba6490d7afc5f9bef6
+Author: Ali Al-Raisi <ali.alraisi285@topper.wku.edu>
+Date:   Tue Apr 25 11:00:08 2023 -0500
+
+    Home Page Update
+
+commit 21b2264af29eea7b1d38806b9f9d13efb75656c2
+Author: Ali Al-Raisi <ali.alraisi285@topper.wku.edu>
+Date:   Tue Apr 25 10:05:39 2023 -0500
+
+    more QOL changes
+    
+    all the styles have been moved to the css file except for dividend ledger and stock search, plus all buttons now have a radius of 8px (they have rounded edges) and when a stock comparison reaches its limit, the button turns red and the stock comparison have colored headers
+
+commit 5d017c635673e7a499b30f1c04563d622f91b93f
+Author: Ali Al-Raisi <ali.alraisi285@topper.wku.edu>
+Date:   Mon Apr 24 19:36:09 2023 -0500
+
+    Style and QOL changes
+
+commit 0fa334315441531923b28c13224776cb414b3d01
+Author: D4vid134 <davidqiu29@icloud.com>
+Date:   Mon Apr 24 16:59:15 2023 -0500
+
+    Update PortfolioDisplay.razor
+
+commit 7a7293be032935ccbb0f7557cfe4a73d3a0b91a2
+Author: carterww <carterww@hotmail.com>
+Date:   Mon Apr 24 16:07:31 2023 -0500
+
+    Update log.txt
+
 commit f7bc368732d23d00df2138a8e1ffbb7cb9b52279
 Author: carterww <carterww@hotmail.com>
 Date:   Mon Apr 24 15:58:06 2023 -0500
@@ -52,6 +133,12 @@ Author: Ali Al-Raisi <ali.alraisi285@topper.wku.edu>
 Date:   Sun Apr 23 17:47:14 2023 -0500
 
     Update log.txt
+
+commit 66789694481817636c2024bef1a3196986f4571d
+Author: Ali Al-Raisi <ali.alraisi285@topper.wku.edu>
+Date:   Sun Apr 23 16:30:46 2023 -0500
+
+    search bar updated
 
 commit 0ba1eac109d8f62493af9f3205f8cb7d94cf3d68
 Merge: aa91bda 5ba1c94
