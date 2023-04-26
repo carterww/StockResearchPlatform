@@ -326,7 +326,7 @@
 		@if (stocks.Count >= 3)
 		{
 			<td id="data">
-				@(InterpretFrequency(stocks[1].Item4.results.Count != 0 ? stocks[1].Item4.results[0].frequency : 0))
+				@(InterpretFrequency(stocks[2].Item4.results.Count != 0 ? stocks[2].Item4.results[0].frequency : 0))
 			</td>
 		}
 	</tr>
