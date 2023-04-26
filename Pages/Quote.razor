@@ -7,418 +7,522 @@
 @inject NavigationManager UriHelper
 
 <PageTitle>@($"{stock?.ShortName} {stock?.Symbol}")</PageTitle>
-
-<h1>@stock?.ShortName</h1>
-
-<div id="price-info">
-	<span>@stock?.Price</span>
-	<span>@stock?.ChangePercent</span>
-</div>
-
-<ul id="table-section-selector">
-	<li>
-		<a @onclick="() => changeSection(TableSection.Summary)">Summary</a>
-	</li>
-	<li>
-		<a @onclick="() => changeSection(TableSection.Statistics)">Statistics</a>
-	</li>
-	<li>
-		<a @onclick="() => changeSection(TableSection.Financials)">Financials</a>
-	</li>
-</ul>
-@if(currentSection == TableSection.Summary)
-{
-	<div class="table" id="@TableSection.Summary">
-		<div class="row">
-			<div class="col-sm-4">
-				<div class="d-flex justify-content-between entry">
-					<p class="label">Symbol</p>
-					<p class="data">@stock?.Symbol</p>
-				</div>
-			</div>
-			<div class="col-sm-4">
-				<div class="d-flex justify-content-between entry">
-					<p class="label">Company</p>
-					<p class="data">@stock?.ShortName</p>
-				</div>
-			</div>
-		</div>
-
-		<div class="row">
-			<div class="col-sm-4">
-				<div class="d-flex justify-content-between entry">
-					<p class="label">Volume</p>
-					<p class="data">@stock?.Volume</p>
-				</div>
-			</div>
-			<div class="col-sm-4">
-				<div class="d-flex justify-content-between entry">
-					<p class="label">Market Capitalization</p>
-					<p class="data">@stock?.MarketCap</p>
-				</div>
-			</div>
-		</div>
-
-		<div class="row">
-			<div class="col-sm-4">
-				<div class="d-flex justify-content-between entry">
-					<p class="label">Forward Annual Dividend</p>
-					<p class="data">@stock?.ForwardAnnualDividend</p>
-				</div>
-			</div>
-			<div class="col-sm-4">
-				<div class="d-flex justify-content-between entry">
-					<p class="label">Forward Annual Dividend Yield</p>
-					<p class="data">@stock?.ForwardAnnualDividendYield</p>
-				</div>
-			</div>
-		</div>
-
-		<div class="row">
-			<div class="col-sm-4">
-				<div class="d-flex justify-content-between entry">
-					<p class="label">Trailing Dividend</p>
-					<p class="data">@stock?.TrailingAnnualDividend</p>
-				</div>
-			</div>
-			<div class="col-sm-4">
-				<div class="d-flex justify-content-between entry">
-					<p class="label">Trailing Dividend Yield</p>
-					<p class="data">@stock?.TrailingAnnualDividendYield</p>
-				</div>
-			</div>
-		</div>
-
-		<div class="row">
-			<div class="col-sm-4">
-				<div class="d-flex justify-content-between entry">
-					<p class="label">5 Year Avg Dividend Yield</p>
-					<p class="data">@stock?.FiveYearAverageDividendYield</p>
-				</div>
-			</div>
-			<div class="col-sm-4">
-				<div class="d-flex justify-content-between entry">
-					<p class="label">Forward Dividend</p>
-					<p class="data">@stock?.ForwardDividend</p>
-				</div>
-			</div>
-		</div>
-
-		<div class="row">
-			<div class="col-sm-4">
-				<div class="d-flex justify-content-between entry">
-					<p class="label">Ex Dividend Date</p>
-					<p class="data">@stock?.ExDividendDate.ToString()</p>
-				</div>
-			</div>
-			<div class="col-sm-4">
-				<div class="d-flex justify-content-between entry">
-					<p class="label">Dividend Date</p>
-					<p class="data">@stock?.DividendDate.ToString()</p>
-				</div>
-			</div>
-		</div>
-
-		<div class="row">
-			<div class="col-sm-4">
-				<div class="d-flex justify-content-between entry">
-					<p class="label">1 Year Target Estimate</p>
-					<p class="data">@stock?.YearTargetEstimate</p>
-				</div>
-			</div>
-			<div class="col-sm-4">
-				<div class="d-flex justify-content-between entry">
-					<p class="label">Earnings Date</p>
-					<p class="data">@stock?.EarningsDate.ToString()</p>
-				</div>
-			</div>
-		</div>
-
-		<div class="row">
-			<div class="col-sm-4">
-				<div class="d-flex justify-content-between entry">
-					<p class="label">Last Split Date</p>
-					<p class="data">@stock?.LastSplitDate.ToString()</p>
-				</div>
-			</div>
-			<div class="col-sm-4">
-				<div class="d-flex justify-content-between entry">
-					<p class="label">Last Split Date</p>
-					<p class="data">@stock?.LastSplitFactor</p>
-				</div>
-			</div>
-		</div>
-
+<body>
+	<h1>@stock?.ShortName</h1>
+	<div id="price-info">
+		<span>Price</span>
+		<span>Change%</span>
 	</div>
-}
-
-@if (currentSection == TableSection.Statistics)
-{
-	<div class="table" id="@TableSection.Statistics">
-		<div class="row">
-			<div class="col-sm-4">
-				<div class="d-flex justify-content-between entry">
-					<p class="label">Open</p>
-					<p class="data">@stock?.Open</p>
-				</div>
-			</div>
-			<div class="col-sm-4">
-				<div class="d-flex justify-content-between entry">
-					<p class="label">Price</p>
-					<p class="data">@stock?.Price</p>
-				</div>
-			</div>
-		</div>
-
-		<div class="row">
-			<div class="col-sm-4">
-				<div class="d-flex justify-content-between entry">
-					<p class="label">Day Low</p>
-					<p class="data">@stock?.DayLow</p>
-				</div>
-			</div>
-			<div class="col-sm-4">
-				<div class="d-flex justify-content-between entry">
-					<p class="label">Day High</p>
-					<p class="data">@stock?.DayHigh</p>
-				</div>
-			</div>
-		</div>
-
-		<div class="row">
-			<div class="col-sm-4">
-				<div class="d-flex justify-content-between entry">
-					<p class="label">Year Low</p>
-					<p class="data">@stock?.YearLow</p>
-				</div>
-			</div>
-			<div class="col-sm-4">
-				<div class="d-flex justify-content-between entry">
-					<p class="label">Year High</p>
-					<p class="data">@stock?.YearHigh</p>
-				</div>
-			</div>
-		</div>
-
-		<div class="row">
-			<div class="col-sm-4">
-				<div class="d-flex justify-content-between entry">
-					<p class="label">Average 10 Day Volume</p>
-					<p class="data">@stock?.AverageVolume10Day</p>
-				</div>
-			</div>
-			<div class="col-sm-4">
-				<div class="d-flex justify-content-between entry">
-					<p class="label">Average 90 Day Volume</p>
-					<p class="data">@stock?.AverageVolume90Day</p>
-				</div>
-			</div>
-		</div>
-
-		<div class="row">
-			<div class="col-sm-4">
-				<div class="d-flex justify-content-between entry">
-					<p class="label">P/E Ratio</p>
-					<p class="data">@stock?.PriceEarningsRatio</p>
-				</div>
-			</div>
-			<div class="col-sm-4">
-				<div class="d-flex justify-content-between entry">
-					<p class="label">Beta</p>
-					<p class="data">@stock?.Beta</p>
-				</div>
-			</div>
-		</div>
-
-		<div class="row">
-			<div class="col-sm-4">
-				<div class="d-flex justify-content-between entry">
-					<p class="label">Float</p>
-					<p class="data">@stock?.Float</p>
-				</div>
-			</div>
-			<div class="col-sm-4">
-				<div class="d-flex justify-content-between entry">
-					<p class="label">Shares Short</p>
-					<p class="data">@stock?.SharesShort</p>
-				</div>
-			</div>
-		</div>
-
-		<div class="row">
-			<div class="col-sm-4">
-				<div class="d-flex justify-content-between entry">
-					<p class="label">% Held By Insiders</p>
-					<p class="data">@stock?.PercentHeldByInsiders</p>
-				</div>
-			</div>
-			<div class="col-sm-4">
-				<div class="d-flex justify-content-between entry">
-					<p class="label">% Held By Institutions</p>
-					<p class="data">@stock?.PercentHeldByInstitutions</p>
-				</div>
-			</div>
-		</div>
-
-		<div class="row">
-			<div class="col-sm-4">
-				<div class="d-flex justify-content-between entry">
-					<p class="label">Shares Outstanding</p>
-					<p class="data">@stock?.SharesOutstanding</p>
-				</div>
-			</div>
-			<div class="col-sm-4">
-				<div class="d-flex justify-content-between entry">
-					<p class="label">Dividend Payout Ratio</p>
-					<p class="data">@stock?.DividendPayoutRatio</p>
-				</div>
-			</div>
-		</div>
+	<div id="price-info">
+		<span>@stock?.Price</span>
+		<span>@stock?.ChangePercent</span>
 	</div>
-}
+	<br />
+	<ul id="table-section-selector">
+		<li>
+			<a id="summary"@onclick="() => changeSection(TableSection.Summary)">Summary</a>
+		</li>
+		<li>
+			<a id="statistic" @onclick="() => changeSection(TableSection.Statistics)">Statistics</a>
+		</li>
+		<li>
+			<a id="finance" @onclick="() => changeSection(TableSection.Financials)">Financials</a>
+		</li>
+	</ul>
+	@if(currentSection == TableSection.Summary)
+	{
+		<style>
+			#summary {
+				border: solid;
+				border-radius: 4px;
+				background-color: #F0F8FF;
+				padding-top: 5px;
+				padding-left: 5px;
+				padding-right: 5px;
+				padding-bottom: 5px;
+				box-shadow: 0 2px 2px rgba(0, 0, 0.1, 0.1), 0 4px 8px darkgray
+			}
 
-@if (currentSection == TableSection.Financials)
-{
-	<div class="table" id="@TableSection.Financials">
-		<div class="row">
-			<div class="col-sm-4">
-				<div class="d-flex justify-content-between entry">
-					<p class="label">Earnings Per Share</p>
-					<p class="data">@stock?.EarningsPerShare</p>
+			#statistic:hover {
+				border:solid;
+				border-radius: 4px;
+				background-color: #F0F8FF;
+				padding-top: 5px;
+				padding-left: 5px;
+				padding-right: 5px;
+				padding-bottom: 5px;
+			}
+
+			#finance:hover {
+				border: solid;
+				background-color: #F0F8FF;
+				border-radius: 4px;
+				padding-top: 5px;
+				padding-left: 5px;
+				padding-right: 5px;
+				padding-bottom: 5px;
+			}
+		</style>
+
+		<div class="table" id="@TableSection.Summary">
+			<div class="row">
+				<div class="col-sm-4">
+					<div class="d-flex justify-content-between entry">
+						<p class="label">Symbol</p>
+						<p class="data">@stock?.Symbol</p>
+					</div>
+				</div>
+				<div class="col-sm-4">
+					<div class="d-flex justify-content-between entry">
+						<p class="label">Company</p>
+						<p class="data">@stock?.ShortName</p>
+					</div>
 				</div>
 			</div>
-			<div class="col-sm-4">
-				<div class="d-flex justify-content-between entry">
-					<p class="label">Profit Margin</p>
-					<p class="data">@stock?.ProfitMargin</p>
+
+			<div class="row">
+				<div class="col-sm-4">
+					<div class="d-flex justify-content-between entry">
+						<p class="label">Volume</p>
+						<p class="data">@stock?.Volume</p>
+					</div>
+				</div>
+				<div class="col-sm-4">
+					<div class="d-flex justify-content-between entry">
+						<p class="label">Market Capitalization</p>
+						<p class="data">@stock?.MarketCap</p>
+					</div>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col-sm-4">
+					<div class="d-flex justify-content-between entry">
+						<p class="label">Forward Annual Dividend</p>
+						<p class="data">@stock?.ForwardAnnualDividend</p>
+					</div>
+				</div>
+				<div class="col-sm-4">
+					<div class="d-flex justify-content-between entry">
+						<p class="label">Forward Annual Dividend Yield</p>
+						<p class="data">@stock?.ForwardAnnualDividendYield</p>
+					</div>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col-sm-4">
+					<div class="d-flex justify-content-between entry">
+						<p class="label">Trailing Dividend</p>
+						<p class="data">@stock?.TrailingAnnualDividend</p>
+					</div>
+				</div>
+				<div class="col-sm-4">
+					<div class="d-flex justify-content-between entry">
+						<p class="label">Trailing Dividend Yield</p>
+						<p class="data">@stock?.TrailingAnnualDividendYield</p>
+					</div>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col-sm-4">
+					<div class="d-flex justify-content-between entry">
+						<p class="label">5 Year Avg Dividend Yield</p>
+						<p class="data">@stock?.FiveYearAverageDividendYield</p>
+					</div>
+				</div>
+				<div class="col-sm-4">
+					<div class="d-flex justify-content-between entry">
+						<p class="label">Forward Dividend</p>
+						<p class="data">@stock?.ForwardDividend</p>
+					</div>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col-sm-4">
+					<div class="d-flex justify-content-between entry">
+						<p class="label">Ex Dividend Date</p>
+						<p class="data">@stock?.ExDividendDate.ToString()</p>
+					</div>
+				</div>
+				<div class="col-sm-4">
+					<div class="d-flex justify-content-between entry">
+						<p class="label">Dividend Date</p>
+						<p class="data">@stock?.DividendDate.ToString()</p>
+					</div>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col-sm-4">
+					<div class="d-flex justify-content-between entry">
+						<p class="label">1 Year Target Estimate</p>
+						<p class="data">@stock?.YearTargetEstimate</p>
+					</div>
+				</div>
+				<div class="col-sm-4">
+					<div class="d-flex justify-content-between entry">
+						<p class="label">Earnings Date</p>
+						<p class="data">@stock?.EarningsDate.ToString()</p>
+					</div>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col-sm-4">
+					<div class="d-flex justify-content-between entry">
+						<p class="label">Last Split Date</p>
+						<p class="data">@stock?.LastSplitDate.ToString()</p>
+					</div>
+				</div>
+				<div class="col-sm-4">
+					<div class="d-flex justify-content-between entry">
+						<p class="label">Last Split Factor</p>
+						<p class="data">@stock?.LastSplitFactor</p>
+					</div>
+				</div>
+			</div>
+
+		</div>
+	}
+
+	@if (currentSection == TableSection.Statistics)
+	{
+		<style>
+			#statistic {
+				border: solid;
+				border-radius: 4px;
+				background-color: #F0F8FF;
+				padding-top: 5px;
+				padding-left: 5px;
+				padding-right: 5px;
+				padding-bottom: 5px;
+				box-shadow: 0 2px 2px rgba(0, 0, 0.1, 0.1), 0 4px 8px darkgray
+			}
+
+			#summary:hover {
+				border: solid;
+				border-radius: 4px;
+				background-color: #F0F8FF;
+				padding-top: 5px;
+				padding-left: 5px;
+				padding-right: 5px;
+				padding-bottom: 5px;
+			}
+
+			#finance:hover {
+				border: solid;
+				background-color: #F0F8FF;
+				border-radius: 4px;
+				padding-top: 5px;
+				padding-left: 5px;
+				padding-right: 5px;
+				padding-bottom: 5px;
+			}
+		</style>
+
+		<div class="table" id="@TableSection.Statistics">
+			<div class="row">
+				<div class="col-sm-4">
+					<div class="d-flex justify-content-between entry">
+						<p class="label">Open</p>
+						<p class="data">@stock?.Open</p>
+					</div>
+				</div>
+				<div class="col-sm-4">
+					<div class="d-flex justify-content-between entry">
+						<p class="label">Price</p>
+						<p class="data">@stock?.Price</p>
+					</div>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col-sm-4">
+					<div class="d-flex justify-content-between entry">
+						<p class="label">Day Low</p>
+						<p class="data">@stock?.DayLow</p>
+					</div>
+				</div>
+				<div class="col-sm-4">
+					<div class="d-flex justify-content-between entry">
+						<p class="label">Day High</p>
+						<p class="data">@stock?.DayHigh</p>
+					</div>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col-sm-4">
+					<div class="d-flex justify-content-between entry">
+						<p class="label">Year Low</p>
+						<p class="data">@stock?.YearLow</p>
+					</div>
+				</div>
+				<div class="col-sm-4">
+					<div class="d-flex justify-content-between entry">
+						<p class="label">Year High</p>
+						<p class="data">@stock?.YearHigh</p>
+					</div>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col-sm-4">
+					<div class="d-flex justify-content-between entry">
+						<p class="label">Average 10 Day Volume</p>
+						<p class="data">@stock?.AverageVolume10Day</p>
+					</div>
+				</div>
+				<div class="col-sm-4">
+					<div class="d-flex justify-content-between entry">
+						<p class="label">Average 90 Day Volume</p>
+						<p class="data">@stock?.AverageVolume90Day</p>
+					</div>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col-sm-4">
+					<div class="d-flex justify-content-between entry">
+						<p class="label">P/E Ratio</p>
+						<p class="data">@stock?.PriceEarningsRatio</p>
+					</div>
+				</div>
+				<div class="col-sm-4">
+					<div class="d-flex justify-content-between entry">
+						<p class="label">Beta</p>
+						<p class="data">@stock?.Beta</p>
+					</div>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col-sm-4">
+					<div class="d-flex justify-content-between entry">
+						<p class="label">Float</p>
+						<p class="data">@stock?.Float</p>
+					</div>
+				</div>
+				<div class="col-sm-4">
+					<div class="d-flex justify-content-between entry">
+						<p class="label">Shares Short</p>
+						<p class="data">@stock?.SharesShort</p>
+					</div>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col-sm-4">
+					<div class="d-flex justify-content-between entry">
+						<p class="label">% Held By Insiders</p>
+						<p class="data">@stock?.PercentHeldByInsiders</p>
+					</div>
+				</div>
+				<div class="col-sm-4">
+					<div class="d-flex justify-content-between entry">
+						<p class="label">% Held By Institutions</p>
+						<p class="data">@stock?.PercentHeldByInstitutions</p>
+					</div>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col-sm-4">
+					<div class="d-flex justify-content-between entry">
+						<p class="label">Shares Outstanding</p>
+						<p class="data">@stock?.SharesOutstanding</p>
+					</div>
+				</div>
+				<div class="col-sm-4">
+					<div class="d-flex justify-content-between entry">
+						<p class="label">Dividend Payout Ratio</p>
+						<p class="data">@stock?.DividendPayoutRatio</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	}
+
+	@if (currentSection == TableSection.Financials)
+	{
+		<style>
+			#finance {
+				border: solid;
+				border-radius: 4px;
+				background-color: #F0F8FF;
+				padding-top: 5px;
+				padding-left: 5px;
+				padding-right: 5px;
+				padding-bottom: 5px;
+				box-shadow: 0 2px 2px rgba(0, 0, 0.1, 0.1), 0 4px 8px darkgray
+			}
+
+			#summary:hover {
+				border: solid;
+				border-radius: 4px;
+				background-color: #F0F8FF;
+				padding-top: 5px;
+				padding-left: 5px;
+				padding-right: 5px;
+				padding-bottom: 5px;
+			}
+
+			#statistic:hover {
+				border: solid;
+				background-color: #F0F8FF;
+				border-radius: 4px;
+				padding-top: 5px;
+				padding-left: 5px;
+				padding-right: 5px;
+				padding-bottom: 5px;
+			}
+		</style>
+
+		<div class="table" id="@TableSection.Financials">
+			<div class="row">
+				<div class="col-sm-4">
+					<div class="d-flex justify-content-between entry">
+						<p class="label">Earnings Per Share</p>
+						<p class="data">@stock?.EarningsPerShare</p>
+					</div>
+				</div>
+				<div class="col-sm-4">
+					<div class="d-flex justify-content-between entry">
+						<p class="label">Profit Margin</p>
+						<p class="data">@stock?.ProfitMargin</p>
+					</div>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col-sm-4">
+					<div class="d-flex justify-content-between entry">
+						<p class="label">Operating Margin</p>
+						<p class="data">@stock?.OperatingMargin</p>
+					</div>
+				</div>
+				<div class="col-sm-4">
+					<div class="d-flex justify-content-between entry">
+						<p class="label">Return on Assets</p>
+						<p class="data">@stock?.ReturnOnAssets</p>
+					</div>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col-sm-4">
+					<div class="d-flex justify-content-between entry">
+						<p class="label">Return on Equity</p>
+						<p class="data">@stock?.ReturnOnEquity</p>
+					</div>
+				</div>
+				<div class="col-sm-4">
+					<div class="d-flex justify-content-between entry">
+						<p class="label">Revenue</p>
+						<p class="data">@stock?.Revenue</p>
+					</div>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col-sm-4">
+					<div class="d-flex justify-content-between entry">
+						<p class="label">Revenue Per Share</p>
+						<p class="data">@stock?.RevenuePerShare</p>
+					</div>
+				</div>
+				<div class="col-sm-4">
+					<div class="d-flex justify-content-between entry">
+						<p class="label">Quartly Revenue Growth</p>
+						<p class="data">@stock?.QuarterlyRevenueGrowth</p>
+					</div>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col-sm-4">
+					<div class="d-flex justify-content-between entry">
+						<p class="label">Gross Profit</p>
+						<p class="data">@stock?.GrossProfit</p>
+					</div>
+				</div>
+				<div class="col-sm-4">
+					<div class="d-flex justify-content-between entry">
+						<p class="label">EBITDA</p>
+						<p class="data">@stock?.EDBITDA</p>
+					</div>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col-sm-4">
+					<div class="d-flex justify-content-between entry">
+						<p class="label">Quartly Earnings Growth</p>
+						<p class="data">@stock?.QuarterlyEarningsGrowth</p>
+					</div>
+				</div>
+				<div class="col-sm-4">
+					<div class="d-flex justify-content-between entry">
+						<p class="label">Cash</p>
+						<p class="data">@stock?.Cash</p>
+					</div>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col-sm-4">
+					<div class="d-flex justify-content-between entry">
+						<p class="label">Cash Per Share</p>
+						<p class="data">@stock?.CashPerShare</p>
+					</div>
+				</div>
+				<div class="col-sm-4">
+					<div class="d-flex justify-content-between entry">
+						<p class="label">Debt</p>
+						<p class="data">@stock?.Debt</p>
+					</div>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col-sm-4">
+					<div class="d-flex justify-content-between entry">
+						<p class="label">Debt to Equity Ratio</p>
+						<p class="data">@stock?.DebtToEquityRatio</p>
+					</div>
+				</div>
+				<div class="col-sm-4">
+					<div class="d-flex justify-content-between entry">
+						<p class="label">Book Value Per Share</p>
+						<p class="data">@stock?.BookValuePerShare</p>
+					</div>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col-sm-4">
+					<div class="d-flex justify-content-between entry">
+						<p class="label">Operating Cash Flow</p>
+						<p class="data">@stock?.OperatingCashFlow</p>
+					</div>
+				</div>
+				<div class="col-sm-4">
+					<div class="d-flex justify-content-between entry">
+						<p class="label">Levered Free Cash Flow</p>
+						<p class="data">@stock?.LeveredFreeCashFlow</p>
+					</div>
 				</div>
 			</div>
 		</div>
 
-		<div class="row">
-			<div class="col-sm-4">
-				<div class="d-flex justify-content-between entry">
-					<p class="label">Operating Margin</p>
-					<p class="data">@stock?.OperatingMargin</p>
-				</div>
-			</div>
-			<div class="col-sm-4">
-				<div class="d-flex justify-content-between entry">
-					<p class="label">Return on Assets</p>
-					<p class="data">@stock?.ReturnOnAssets</p>
-				</div>
-			</div>
-		</div>
+	}
 
-		<div class="row">
-			<div class="col-sm-4">
-				<div class="d-flex justify-content-between entry">
-					<p class="label">Return on Equity</p>
-					<p class="data">@stock?.ReturnOnEquity</p>
-				</div>
-			</div>
-			<div class="col-sm-4">
-				<div class="d-flex justify-content-between entry">
-					<p class="label">Revenue</p>
-					<p class="data">@stock?.Revenue</p>
-				</div>
-			</div>
-		</div>
+	<button class="button button1"><a class="compareText" href="@($"/stockcomparison?ticker={queryParams["ticker"]}")">Compare</a></button>
 
-		<div class="row">
-			<div class="col-sm-4">
-				<div class="d-flex justify-content-between entry">
-					<p class="label">Revenue Per Share</p>
-					<p class="data">@stock?.RevenuePerShare</p>
-				</div>
-			</div>
-			<div class="col-sm-4">
-				<div class="d-flex justify-content-between entry">
-					<p class="label">Quartly Revenue Growth</p>
-					<p class="data">@stock?.QuarterlyRevenueGrowth</p>
-				</div>
-			</div>
-		</div>
-
-		<div class="row">
-			<div class="col-sm-4">
-				<div class="d-flex justify-content-between entry">
-					<p class="label">Gross Profit</p>
-					<p class="data">@stock?.GrossProfit</p>
-				</div>
-			</div>
-			<div class="col-sm-4">
-				<div class="d-flex justify-content-between entry">
-					<p class="label">EBITDA</p>
-					<p class="data">@stock?.EDBITDA</p>
-				</div>
-			</div>
-		</div>
-
-		<div class="row">
-			<div class="col-sm-4">
-				<div class="d-flex justify-content-between entry">
-					<p class="label">Quartly Earnings Growth</p>
-					<p class="data">@stock?.QuarterlyEarningsGrowth</p>
-				</div>
-			</div>
-			<div class="col-sm-4">
-				<div class="d-flex justify-content-between entry">
-					<p class="label">Cash</p>
-					<p class="data">@stock?.Cash</p>
-				</div>
-			</div>
-		</div>
-
-		<div class="row">
-			<div class="col-sm-4">
-				<div class="d-flex justify-content-between entry">
-					<p class="label">Cash Per Share</p>
-					<p class="data">@stock?.CashPerShare</p>
-				</div>
-			</div>
-			<div class="col-sm-4">
-				<div class="d-flex justify-content-between entry">
-					<p class="label">Debt</p>
-					<p class="data">@stock?.Debt</p>
-				</div>
-			</div>
-		</div>
-
-		<div class="row">
-			<div class="col-sm-4">
-				<div class="d-flex justify-content-between entry">
-					<p class="label">Debt to Equity Ratio</p>
-					<p class="data">@stock?.DebtToEquityRatio</p>
-				</div>
-			</div>
-			<div class="col-sm-4">
-				<div class="d-flex justify-content-between entry">
-					<p class="label">Book Value Per Share</p>
-					<p class="data">@stock?.BookValuePerShare</p>
-				</div>
-			</div>
-		</div>
-
-		<div class="row">
-			<div class="col-sm-4">
-				<div class="d-flex justify-content-between entry">
-					<p class="label">Operating Cash Flow</p>
-					<p class="data">@stock?.OperatingCashFlow</p>
-				</div>
-			</div>
-			<div class="col-sm-4">
-				<div class="d-flex justify-content-between entry">
-					<p class="label">Levered Free Cash Flow</p>
-					<p class="data">@stock?.LeveredFreeCashFlow</p>
-				</div>
-			</div>
-		</div>
-	</div>
-
-}
-
-<a href="@($"/stockcomparison?ticker={queryParams["ticker"]}")">Compare</a>
+</body>
 
 <link rel="stylesheet" href="css/quote.css" />
 

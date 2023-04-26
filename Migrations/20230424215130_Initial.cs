@@ -280,6 +280,32 @@ namespace StockResearchPlatform.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
+                name: "DividendInfo",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    FK_Stock = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
+                    UpdatedOn = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    DeclarationDate = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    ExDividendDate = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    PayDate = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    RecordDate = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    Cashamount = table.Column<double>(type: "double", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DividendInfo", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_DividendInfo_Stocks_FK_Stock",
+                        column: x => x.FK_Stock,
+                        principalTable: "Stocks",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
                 name: "MutualFunds",
                 columns: table => new
                 {
@@ -337,7 +363,8 @@ namespace StockResearchPlatform.Migrations
                     FK_Stock = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
                     FK_Portfolio = table.Column<int>(type: "int", nullable: false),
                     NumberOfShares = table.Column<double>(type: "double", nullable: false),
-                    CostBasis = table.Column<double>(type: "double", nullable: false)
+                    CostBasis = table.Column<double>(type: "double", nullable: false),
+                    CreatedOn = table.Column<DateTime>(type: "datetime(6)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -395,6 +422,11 @@ namespace StockResearchPlatform.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_DividendInfo_FK_Stock",
+                table: "DividendInfo",
+                column: "FK_Stock");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_DividendLedgers_FK_UserId",
                 table: "DividendLedgers",
                 column: "FK_UserId");
@@ -442,6 +474,9 @@ namespace StockResearchPlatform.Migrations
 
             migrationBuilder.DropTable(
                 name: "AspNetUserTokens");
+
+            migrationBuilder.DropTable(
+                name: "DividendInfo");
 
             migrationBuilder.DropTable(
                 name: "MutualFunds");

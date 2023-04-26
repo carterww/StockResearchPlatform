@@ -15,23 +15,45 @@
 @inject PortfolioService _portfolioService
 @inject AuthenticationStateProvider AuthenticationStateProvide
 @inject UserManager<User> UserManager
-
-<h3>Dividend Ledger</h3>
+<h1>Dividend Ledger</h1>
 <ul id="table-section-selector">
 	<li>
-		<a @onclick="() => ChangeSection(DividendDisplayEnum.ledger)">Dividend Ledger</a>
+		<a id="ledger" @onclick="() => ChangeSection(DividendDisplayEnum.ledger)">Dividend Ledger</a>
 	</li>
 	<li>
-		<a @onclick="() => ChangeSection(DividendDisplayEnum.upcoming)">Upcoming Dividends</a>
+		<a id ="upcoming" @onclick="() => ChangeSection(DividendDisplayEnum.upcoming)">Upcoming Dividends</a>
 	</li>
 </ul>
-
+<br />
 @if (this.CurrentDisplay == DividendDisplayEnum.ledger)
 {
+	<style>
+		#ledger {
+			border: solid;
+			border-radius: 4px;
+			background-color: #F0F8FF;
+			padding-top: 5px;
+			padding-left: 5px;
+			padding-right: 5px;
+			padding-bottom: 5px;
+			box-shadow: 0 2px 2px rgba(0, 0, 0.1, 0.1), 0 4px 8px darkgray
+		}
+
+		#upcoming:hover {
+			border: solid;
+			border-radius: 4px;
+			background-color: #F0F8FF;
+			padding-top: 5px;
+			padding-left: 5px;
+			padding-right: 5px;
+			padding-bottom: 5px;
+		}
+
+	</style>
 	<tr>
-		<th>Ticker</th>
-		<th>Pay Date</th>
-		<th>Amount</th>
+		<th id="header">Ticker</th>
+		<th id="header">Pay Date</th>
+		<th id="header">Amount</th>
 		<th></th>
 		<th></th>
 	</tr>
@@ -42,7 +64,7 @@
 			<tr>
 				<td>@item.FK_Stock.Ticker.ToUpper()</td>
 				<td>@item.Date.ToString("dd MMMM yyyy")</td>
-				<td>@String.Format("{0:C}" ,item.Amount)</td>
+				<td id="amount">@String.Format("{0:C}" ,item.Amount)</td>
 				<td><a role="button">Edit</a></td>
 				<td><a role="button" @onclick="() => this.RemoveLedgerEntry(item)">Remove</a></td>
 			</tr>
@@ -58,12 +80,35 @@
 }
 else
 {
+	<style>
+		#upcoming {
+			border: solid;
+			border-radius: 4px;
+			background-color: #F0F8FF;
+			padding-top: 5px;
+			padding-left: 5px;
+			padding-right: 5px;
+			padding-bottom: 5px;
+			box-shadow: 0 2px 2px rgba(0, 0, 0.1, 0.1), 0 4px 8px darkgray
+
+		}
+
+		#ledger:hover {
+			border: solid;
+			border-radius: 4px;
+			background-color: #F0F8FF;
+			padding-top: 5px;
+			padding-left: 5px;
+			padding-right: 5px;
+			padding-bottom: 5px;
+		}
+	</style>
 	<tr>
-		<th>Ticker</th>
-		<th>Declaration Date</th>
-		<th>Ex Dividend Date</th>
-		<th>Pay Date</th>
-		<th>Amount Per Share</th>
+		<th id="header">Ticker</th>
+		<th id="header">Declaration Date</th>
+		<th id="header">Ex Dividend Date</th>
+		<th id="header">Pay Date</th>
+		<th id="header">Amount Per Share</th>
 	</tr>
 
 	@foreach (var item in (UpcomingDividends ?? new List<Models.DividendInfo>()))
@@ -73,13 +118,13 @@ else
 			<td>@item.DeclarationDate.ToString("dd MMMM yyyy")</td>
 			<td>@item.ExDividendDate.ToString("dd MMMM yyyy")</td>
 			<td>@item.PayDate.ToString("dd MMMM yyyy")</td>
-			<td>@String.Format("{0:C}" ,item.Cashamount)</td>
+			<td id="amount">@String.Format("{0:C}" ,item.Cashamount)</td>
 		</tr>
 	}
 }
 
-<link rel="stylesheet" href="css/portfolio-display.css" />
-<link rel="stylesheet" href="css/quote.css" />
+<link rel="stylesheet" href="css/dividend-ledger.css" />
+
 
 @code {
 	public Guid Uid;

@@ -1,7 +1,8 @@
 ﻿table {
     width: 80%;
     border: 1px solid black;
-    border-collapse:collapse;
+    border-collapse: collapse;
+    background-color: white;
 }
 
 th {
@@ -43,8 +44,13 @@ td {
     text-align: right;
 }
 
+tr {
+    background-color: #F0F8FF;
+}
+
 #header {
     text-align: center;
+
 }
 
 button {
@@ -83,4 +89,67 @@ button {
 
 body {
     background: #F0F8FF;
+}
+
+
+.table {
+    background-color: white;
+}
+
+    /* Label to data in table. ie Market Cap, Forward Dividend Yield, etc. */
+    .table .label {
+        margin: 10px 0 0 0;
+    }
+
+    /* Data for label ie 4.9B, 8.9%, etc */
+    .table .data {
+        margin: 10px 0 0 0;
+    }
+
+.entry {
+    border-bottom: 1px solid black;
+    align-items: flex-end;
+}
+
+#table-section-selector {
+    display: flex;
+    text-decoration: none;
+    list-style-type: none;
+    width: 300px;
+    justify-content: space-between;
+    align-items: center;
+    padding-left: 0;
+
+}
+
+    #table-section-selector li {
+        cursor: pointer;
+    }
+
+.button {
+    background-color: lightcyan;
+    border-color: blue;
+    padding: 10px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    margin: 2px 2px;
+    cursor: pointer;
+}
+
+.compareText {
+    color: black;
+    font-size: 16px;
+}
+
+.button1 {
+    border-radius: 8px;
+}
+
+#price-info {
+    display: flex;
+    width: 200px;
+    justify-content: space-between;
+    font-weight: bold;
+    background-color: white;
 }

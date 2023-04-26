@@ -11,78 +11,120 @@
 @inject PolygonTickerService polygonTickerService
 @inject IJSRuntime JSRuntime
 
-<h1>@this.PortfolioDisplayModel.Portfolio?.Name</h1>
+<body>
+    <h1>@this.PortfolioDisplayModel.Portfolio?.Name</h1>
 
-<table>
-    @if(this.PortfolioDisplayModel.Stocks != null && this.PortfolioDisplayModel.Stocks.Count > 0)
-    {
-        <tr>
-            <th>Ticker</th>
-            <th>Quantity</th>
-            <th>Cost Per Share</th>
-            <th>Cost Basis</th>
-            <th>Current Share Price</th>
-            <th>Current Value</th>
-            <th>200-Day SMA</th>
-            <th>Distance From 200-Day SMA</th>
-        </tr>
-        double totalCostBasis = 0.0;
-        double totalCurrentValue = 0.0;
-        @foreach (var stock in this.PortfolioDisplayModel.Stocks)
+    <table>
+        @if(this.PortfolioDisplayModel.Stocks != null && this.PortfolioDisplayModel.Stocks.Count > 0)
         {
-            var currentStockCostBasis = stock.Value.NumberOfShares * stock.Value.CostBasis;
-            var currentStockValue = PortfolioDisplayModel.CurrentPricingData[stock.Key].ticker.day.c * stock.Value.NumberOfShares;
-            var currentStockSma = PortfolioDisplayModel.StockToSimpleMovingAverage[stock.Key].results.values[0].value;
-            totalCostBasis += currentStockCostBasis;
-            totalCurrentValue += currentStockValue;
             <tr>
-                <td>@stock.Key.Ticker.ToUpper()</td>
-                <td>@String.Format("{0:0.00}" ,stock.Value.NumberOfShares)</td>
-                <td>@String.Format("{0:C}" ,stock.Value.CostBasis)</td>
-                <td>@String.Format("{0:C}" ,currentStockCostBasis)</td>
-                <td>@String.Format("{0:C}" ,PortfolioDisplayModel.CurrentPricingData[stock.Key].ticker.day.c)</td>
-                <td>@String.Format("{0:C}" ,currentStockValue)</td>
-                <td>@String.Format("{0:C}" ,currentStockSma)</td>
-                <td>@String.Format("{0:0.00}", ((PortfolioDisplayModel.CurrentPricingData[stock.Key].ticker.day.c - currentStockSma) / currentStockSma) * 100 )%</td>
-                <td><a role="button">Edit</a></td>
-                <td><a role="button" @onclick="() => this.removeStock(stock.Value)">Remove</a></td>
+                <th id="header">Ticker</th>
+                <th id="header">Quantity</th>
+                <th id="header">Cost Per Share</th>
+                <th id="header">Cost Basis</th>
+                <th id="header">Current Share Price</th>
+                <th id="header">Current Value</th>
+                <th id="header">200-Day SMA</th>
+                <th id="header">Distance From 200-Day SMA</th>
+            </tr>
+            double totalCostBasis = 0.0;
+            double totalCurrentValue = 0.0;
+            @foreach (var stock in this.PortfolioDisplayModel.Stocks)
+            {
+                var currentStockCostBasis = stock.Value.NumberOfShares * stock.Value.CostBasis;
+                var currentStockValue = PortfolioDisplayModel.CurrentPricingData[stock.Key].ticker.day.c * stock.Value.NumberOfShares;
+                var currentStockSma = PortfolioDisplayModel.StockToSimpleMovingAverage[stock.Key].results.values[0].value;
+                totalCostBasis += currentStockCostBasis;
+                totalCurrentValue += currentStockValue;
+                <tr>
+                    <td>@stock.Key.Ticker.ToUpper()</td>
+                    <td id="data">@String.Format("{0:0.00}" ,stock.Value.NumberOfShares)</td>
+                    <td id="data">@String.Format("{0:C}" ,stock.Value.CostBasis)</td>
+                    <td id="data">@String.Format("{0:C}" ,currentStockCostBasis)</td>
+                    <td id="data">@String.Format("{0:C}" ,PortfolioDisplayModel.CurrentPricingData[stock.Key].ticker.day.c)</td>
+                    <td id="data">@String.Format("{0:C}" ,currentStockValue)</td>
+                    <td id="data">@String.Format("{0:C}" ,currentStockSma)</td>
+                    <td id="data">@String.Format("{0:0.00}", ((PortfolioDisplayModel.CurrentPricingData[stock.Key].ticker.day.c - currentStockSma) / currentStockSma) * 100 )%</td>
+                    <td><a role="button">Edit</a></td>
+                    <td><a role="button" @onclick="() => this.removeStock(stock.Value)">Remove</a></td>
+                </tr>
+            }
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td id="data">@String.Format("{0:C}", totalCostBasis)</td>
+                <td></td>
+                <td id="data">@String.Format("{0:C}", totalCurrentValue)</td>
+                <td></td>
+                <td></td>
             </tr>
         }
-        <tr>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td>@String.Format("{0:C}", totalCostBasis)</td>
-            <td></td>
-            <td>@String.Format("{0:C}", totalCurrentValue)</td>
-            <td></td>
-            <td></td>
-        </tr>
-    }
-</table>
-<input type="text" @bind=this.PortfolioDisplayModel.AddStockTicker hidden="@this.PortfolioDisplayModel.HideNewStock" placeholder="Ticker" />
-<br />
-<input type="number" @bind=this.PortfolioDisplayModel.AddStockCostBasis hidden="@this.PortfolioDisplayModel.HideNewStock" step="0.01" placeholder="Cost Per Share" />
-<br />
-<input type="number" @bind=this.PortfolioDisplayModel.AddStockNumOfShares hidden="@this.PortfolioDisplayModel.HideNewStock" step="0.01" placeholder="Number Of Shares" />
-<br />
+    </table>
+    <br />
+    <input type="text" @bind=this.PortfolioDisplayModel.AddStockTicker hidden="@this.PortfolioDisplayModel.HideNewStock" placeholder="Ticker" />
+    <br hidden="@this.PortfolioDisplayModel.HideNewStock"/>
+    <br hidden="@this.PortfolioDisplayModel.HideNewStock"/>
+    <input type="number" @bind=this.PortfolioDisplayModel.AddStockCostBasis hidden="@this.PortfolioDisplayModel.HideNewStock" step="0.01" placeholder="Cost Per Share" />
+    <br hidden="@this.PortfolioDisplayModel.HideNewStock" />
+    <br hidden="@this.PortfolioDisplayModel.HideNewStock"/>
+    <input type="number" @bind=this.PortfolioDisplayModel.AddStockNumOfShares hidden="@this.PortfolioDisplayModel.HideNewStock" step="0.01" placeholder="Number Of Shares" />
+    <br hidden="@this.PortfolioDisplayModel.HideNewStock" />
+    <br hidden="@this.PortfolioDisplayModel.HideNewStock" />
 
-<button type="button" hidden="@this.PortfolioDisplayModel.HideNewStock" @onclick=submitNewStock>Add</button>
-<button type="button" hidden="@this.PortfolioDisplayModel.HideNewStock" @onclick=cancelNewStock>Cancel</button>
-<button @onclick=createNewStock hidden="@(this.PortfolioDisplayModel.HideNewStock == false)">Add Stock</button>
-<button @onclick="async () => await atomicBreakDown()" hidden="@(this.PortfolioDisplayModel.HideNewStock == false)">Atomic Breakdown</button>
-<button @onclick="async () => await createPieChart()" hidden="@(this.PortfolioDisplayModel.HideNewStock == false)">Portfolio Exposure Pie Chart</button>
+    <button class="button button1" type="button" hidden="@this.PortfolioDisplayModel.HideNewStock" @onclick=submitNewStock>Add</button>
+    <button class="button button2" type="button" hidden="@this.PortfolioDisplayModel.HideNewStock" @onclick=cancelNewStock>Cancel</button>
+    <button @onclick=createNewStock hidden="@(this.PortfolioDisplayModel.HideNewStock == false)">Add Stock</button>
+    <button @onclick="async () => await atomicBreakDown()" hidden="@(this.PortfolioDisplayModel.HideNewStock == false)">Atomic Breakdown</button>
+    <button @onclick="async () => await createPieChart()" hidden="@(this.PortfolioDisplayModel.HideNewStock == false)">Portfolio Exposure Pie Chart</button>
 
-<br />
-<div class="pie-chart-wrapper">
-    <canvas id="@CanvasId" height="10" class="responsive-pie-chart"></canvas>
-</div>
+    <br />
+    <div class="pie-chart-wrapper">
+        <canvas id="@CanvasId" height="10" class="responsive-pie-chart"></canvas>
+    </div>
 
-@if (IsAtomicBreakdownCalled == true)
-{
-    @if (BreakdownData.Count == 0)
+    @if (IsAtomicBreakdownCalled == true)
     {
-        <h2>Loading Data. May take a few minutes.</h2>
+        @if (BreakdownData.Count == 0)
+        {
+            <h2>Loading Data. May take a few minutes.</h2>
+        }
+        else
+        {
+            <h2>Atomic Breakdown</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th id="header">Category</th>
+                        <th id="header">Value</th>
+                        <th id="header">Percent</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (int i = 0; i < BreakdownData.Count && i < itemsToShow; i++)
+                    {
+                        var key = BreakdownData.ElementAt(i).Key;
+                        var value = BreakdownData.ElementAt(i).Value;
+                        var percent = BreakdownDataByPercent.ContainsKey(key) ? BreakdownDataByPercent[key] : 0.0;
+
+                        <tr>
+                            <td>@key</td>
+                            <td id="data">@String.Format("{0:C}", value)</td>
+                            <td id="data">@String.Format("{0:0.000%}", percent)</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            <br />
+            @if (itemsToShow < BreakdownData.Count)
+            {
+                <button @onclick="() => LoadMoreItems()">Show More</button>
+            }
+            @if (itemsToShow != BreakdownData.Count)
+            {
+                <button @onclick="() => ShowAll()">Show All</button>
+            }
+        }
     }
     else
     {
@@ -120,12 +162,8 @@
             <button @onclick="() => ShowAll()">Show All</button>
         }
     }
-}
-else
-{
-}
 
-
+</body>
 <link rel="stylesheet" href="css/portfolio-display.css" />
 
 @code {
